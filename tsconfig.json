@@ -8,13 +8,15 @@
     "out": "./.tmp/build/visual.js"
   },
   "files": [
-    "typings/index.d.ts",
     ".api/v1.2.0/PowerBI-visuals.d.ts",
+    "typings/index.d.ts",
 
     "node_modules/@powerbi-visuals-utils/animatorcommon/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/arrayextensions/lib/index.d.ts",
 
-    "node_modules/@powerbi-visuals-utils/color/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/controls-touchutils/lib/index.d.ts",
+
+    "node_modules/@powerbi-visuals-utils/color/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/colorhelper/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/colorutility/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/converterhelper/lib/index.d.ts",
@@ -40,7 +42,6 @@
     "node_modules/@powerbi-visuals-utils/textmeasurementservice/lib/index.d.ts",
 
     "node_modules/@powerbi-visuals-utils/valueformatter/lib/index.d.ts",
-
 
     "node_modules/@powerbi-visuals-utils/rect/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/shapes/lib/index.d.ts",
