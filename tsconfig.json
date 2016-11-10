@@ -18,6 +18,7 @@
     "node_modules/@powerbi-visuals-utils/colorhelper/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/colorutility/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/converterhelper/lib/index.d.ts",
+    "node_modules/@powerbi-visuals-utils/controls-touchutils/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/cssconstants/lib/index.d.ts",
 
     "node_modules/@powerbi-visuals-utils/datalabelutils/lib/index.d.ts",
