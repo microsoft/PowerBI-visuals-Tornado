@@ -383,7 +383,7 @@ module powerbi.extensibility.visual {
                         tooltipInfo = TooltipBuilder.createTooltipInfo(formatStringProp, categorical, formattedCategoryValue, value, null, null, seriesIndex, i, highlightedValue);
 
                         highlightedDataPoints.push({
-                            value: highlightedValue,
+                            value: highlightedValue as number,
                             minValue: minValue,
                             maxValue: currentMaxValue,
                             formatString: formatString,
