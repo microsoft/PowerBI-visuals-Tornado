@@ -185,8 +185,8 @@ module powerbi.extensibility.visual {
     export class TornadoChart implements IVisual {
         private static ClassName: string = "tornado-chart";
 
-        private static Properties: any = TornadoChart.getProperties(TornadoChart.capabilities);
-        public static getProperties(capabilities: VisualCapabilities): any {
+        private static Properties: any = TornadoChart.getProperties([]/*TornadoChart.capabilities*/);
+        public static getProperties(capabilities: any/*VisualCapabilities*/): any {
             let result = {};
             for(let objectKey in capabilities.objects) {
                 result[objectKey] = {};
@@ -346,7 +346,7 @@ module powerbi.extensibility.visual {
                 for (let i: number = 0; i < category.values.length; i++) {
                     let value = currentSeries.values[i] == null || isNaN(<number>currentSeries.values[i]) ? 0 : <number>currentSeries.values[i];
 
-                    let identity = selectionIdBuilder
+                    let identity: ISelectionId = selectionIdBuilder
                         .withCategory(category, i)
                         .withSeries(values, columnGroup)
                         .withMeasure(measureName)
@@ -376,7 +376,8 @@ module powerbi.extensibility.visual {
                     });
 
                     if (hasHighlights) {
-                        let highlightIdentity: any = SelectionId.createWithHighlight(identity);
+
+                        let highlightIdentity: any = identity;/*SelectionId.createWithHighlight(identity);*/
                         let highlight: PrimitiveValue = <number>currentSeries.highlights[i];
                         let highlightedValue = highlight != null ? highlight : 0;
                         tooltipInfo = TooltipBuilder.createTooltipInfo(formatStringProp, categorical, formattedCategoryValue, value, null, null, seriesIndex, i, highlightedValue);
@@ -425,9 +426,15 @@ module powerbi.extensibility.visual {
                 identity: DataViewScopeIdentity = columnGroup ? columnGroup.identity : null,
                 queryName: string = source ? source.queryName : null;
 
+            /*
             let selectionId: ISelectionId = identity
                 ? SelectionId.createWithId(identity)
                 : selectionIdBuilder
+                    .withSeries(dataViewValueColumns, columnGroup)
+                    .withMeasure(queryName)
+                    .createSelectionId();
+                    */
+            let selectionId: ISelectionId = selectionIdBuilder
                     .withSeries(dataViewValueColumns, columnGroup)
                     .withMeasure(queryName)
                     .createSelectionId();

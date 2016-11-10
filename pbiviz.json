@@ -26,12 +26,12 @@
     "node_modules/@powerbi-visuals-utils/animatorcommon/lib/index.js",
     "node_modules/@powerbi-visuals-utils/arrayextensions/lib/index.js",
 
+    "node_modules/@powerbi-visuals-utils/color/lib/index.js",
     "node_modules/@powerbi-visuals-utils/colorhelper/lib/index.js",
     "node_modules/@powerbi-visuals-utils/colorutility/lib/index.js",
     "node_modules/@powerbi-visuals-utils/converterhelper/lib/index.js",
     "node_modules/@powerbi-visuals-utils/cssconstants/lib/index.js",
 
-    "node_modules/@powerbi-visuals-utils/datacolorpalette/lib/index.js",
     "node_modules/@powerbi-visuals-utils/datalabelutils/lib/index.js",
     "node_modules/@powerbi-visuals-utils/dataviewobjects/lib/index.js",
     "node_modules/@powerbi-visuals-utils/datarolehelper/lib/index.js",
@@ -53,7 +53,11 @@
     "node_modules/@powerbi-visuals-utils/localstorageservice/lib/index.js",
 
     "node_modules/@powerbi-visuals-utils/pixelconverter/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/point/lib/index.js",
     "node_modules/@powerbi-visuals-utils/prototype/lib/index.js",
+
+    "node_modules/@powerbi-visuals-utils/rect/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/shapes/lib/index.js",
 
     "node_modules/@powerbi-visuals-utils/stringextensions/lib/index.js",
     "node_modules/@powerbi-visuals-utils/svgutil/lib/index.js",

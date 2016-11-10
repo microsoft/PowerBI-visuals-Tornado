@@ -13,12 +13,13 @@
 
     "node_modules/@powerbi-visuals-utils/animatorcommon/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/arrayextensions/lib/index.d.ts",
+
+    "node_modules/@powerbi-visuals-utils/color/lib/index.js",
     "node_modules/@powerbi-visuals-utils/colorhelper/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/colorutility/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/converterhelper/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/cssconstants/lib/index.d.ts",
 
-    "node_modules/@powerbi-visuals-utils/datacolorpalette/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/datalabelutils/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/dataviewobjects/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/displayunitsystem/lib/index.d.ts",
@@ -29,6 +30,7 @@
     "node_modules/@powerbi-visuals-utils/formattingservice/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/imargin/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/pixelconverter/lib/index.d.ts",
+    "node_modules/@powerbi-visuals-utils/point/lib/index.d.ts",
 
     "node_modules/@powerbi-visuals-utils/tooltipbuilder/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/tooltipmanager/lib/index.d.ts",
@@ -37,8 +39,13 @@
     "node_modules/@powerbi-visuals-utils/textmeasurementservice/lib/index.d.ts",
 
     "node_modules/@powerbi-visuals-utils/valueformatter/lib/index.d.ts",
+
+
+    "node_modules/@powerbi-visuals-utils/rect/lib/index.d.ts",
+    "node_modules/@powerbi-visuals-utils/shapes/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/stringextensions/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/svgutil/lib/index.d.ts",
+
     "node_modules/@powerbi-visuals-utils/interactivityservice/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/legend/lib/index.d.ts",
 
