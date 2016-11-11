@@ -185,22 +185,6 @@ module powerbi.extensibility.visual {
     export class TornadoChart implements IVisual {
         private static ClassName: string = "tornado-chart";
 
-        private static Properties: any = TornadoChart.getProperties([]/*TornadoChart.capabilities*/);
-        public static getProperties(capabilities: any/*VisualCapabilities*/): any {
-            let result = {};
-            for(let objectKey in capabilities.objects) {
-                result[objectKey] = {};
-                for(let propKey in capabilities.objects[objectKey].properties) {
-                    result[objectKey][propKey] = <DataViewObjectPropertyIdentifier> {
-                        objectName: objectKey,
-                        propertyName: propKey
-                    };
-                }
-            }
-
-            return result;
-        }
-
         private static Columns: ClassAndSelector = {
             "class": "columns",
             selector: ".columns"
@@ -304,7 +288,7 @@ module powerbi.extensibility.visual {
             let values: DataViewValueColumns = categorical.values;
 
             let category: DataViewCategoricalColumn = categories[0];
-            let formatStringProp: DataViewObjectPropertyIdentifier = TornadoChart.Properties.general.formatString;
+            let formatStringProp: DataViewObjectPropertyIdentifier = tornadoChartProperties.general.formatString;
             let maxValue: number = d3.max(<number[]>values[0].values);
             let settings: TornadoChartSettings = TornadoChart.parseSettings(dataView.metadata.objects, maxValue, colors);
             let hasDynamicSeries = !!values.source;
@@ -318,9 +302,12 @@ module powerbi.extensibility.visual {
             let dataPoints: TornadoChartPoint[] = [];
             let highlightedDataPoints: TornadoChartPoint[] = [];
 
-            let categorySourceFormatString: string = valueFormatter.getFormatString(category.source, formatStringProp);
+            let categorySourceFormatter = valueFormatter.create({
+                format: valueFormatter.getFormatStringByColumn(category.source)
+            });
+
             let categoriesLabels: TextData[] = category.values.map(value => {
-                let formattedCategoryValue = valueFormatter.format(value, categorySourceFormatString);
+                let formattedCategoryValue = categorySourceFormatter.format(value);
                 return TornadoChart.getTextData(formattedCategoryValue, textOptions, true);
             });
 
@@ -455,7 +442,7 @@ module powerbi.extensibility.visual {
             }
 
             let color: string = TornadoChart.getColor(
-                TornadoChart.Properties.dataPoint.fill,
+                tornadoChartProperties.dataPoint.fill,
                 ["purple", "teal"][index],
                 objects, colors);
 
@@ -580,7 +567,7 @@ module powerbi.extensibility.visual {
             let fontSize: string;
             this.hostService = options.host;
             let element: JQuery = $(options.element);
-            //this.colors = style.colorPalette.dataColors;
+            this.colors = options.host.colorPalette;
 
             this.interactivityService = createInteractivityService(this.hostService);
             this.selectionIdBuilder = this.hostService.createSelectionIdBuilder();
@@ -697,7 +684,7 @@ module powerbi.extensibility.visual {
 
             let displayUnits: number = DataViewObjects.getValue<number>(
                 objects,
-                TornadoChart.Properties.labels.labelDisplayUnits,
+                tornadoChartProperties.labels.labelDisplayUnits,
                 TornadoChart.DefaultTornadoChartSettings.labelSettings.displayUnits);
 
             let labelSettings = TornadoChart.DefaultTornadoChartSettings.labelSettings;
@@ -710,23 +697,23 @@ module powerbi.extensibility.visual {
 
             return {
                 labelOutsideFillColor: TornadoChart.getColor(
-                    TornadoChart.Properties.labels.outsideFill,
+                    tornadoChartProperties.labels.outsideFill,
                     TornadoChart.DefaultTornadoChartSettings.labelOutsideFillColor,
                     objects,
                     colors),
 
                 labelSettings: {
-                    show: DataViewObjects.getValue<boolean>(objects, TornadoChart.Properties.labels.show, labelSettings.show),
+                    show: DataViewObjects.getValue<boolean>(objects, tornadoChartProperties.labels.show, labelSettings.show),
                     precision: precision,
-                    fontSize: DataViewObjects.getValue<number>(objects, TornadoChart.Properties.labels.fontSize, labelSettings.fontSize),
+                    fontSize: DataViewObjects.getValue<number>(objects, tornadoChartProperties.labels.fontSize, labelSettings.fontSize),
                     displayUnits: displayUnits,
-                    labelColor: TornadoChart.getColor(TornadoChart.Properties.labels.insideFill, labelSettings.labelColor, objects, colors),
+                    labelColor: TornadoChart.getColor(tornadoChartProperties.labels.insideFill, labelSettings.labelColor, objects, colors),
                 },
-                showCategories: DataViewObjects.getValue<boolean>(objects, TornadoChart.Properties.categories.show, TornadoChart.DefaultTornadoChartSettings.showCategories),
-                showLegend: DataViewObjects.getValue<boolean>(objects, TornadoChart.Properties.legend.show, TornadoChart.DefaultTornadoChartSettings.showLegend),
-                legendFontSize: DataViewObjects.getValue<number>(objects, TornadoChart.Properties.legend.fontSize, TornadoChart.DefaultTornadoChartSettings.legendFontSize),
-                legendColor: TornadoChart.getColor(TornadoChart.Properties.legend.labelColor, TornadoChart.DefaultTornadoChartSettings.legendColor, objects, colors),
-                categoriesFillColor: TornadoChart.getColor(TornadoChart.Properties.categories.fill, TornadoChart.DefaultTornadoChartSettings.categoriesFillColor, objects, colors),
+                showCategories: DataViewObjects.getValue<boolean>(objects, tornadoChartProperties.categories.show, TornadoChart.DefaultTornadoChartSettings.showCategories),
+                showLegend: DataViewObjects.getValue<boolean>(objects, tornadoChartProperties.legend.show, TornadoChart.DefaultTornadoChartSettings.showLegend),
+                legendFontSize: DataViewObjects.getValue<number>(objects, tornadoChartProperties.legend.fontSize, TornadoChart.DefaultTornadoChartSettings.legendFontSize),
+                legendColor: TornadoChart.getColor(tornadoChartProperties.legend.labelColor, TornadoChart.DefaultTornadoChartSettings.legendColor, objects, colors),
+                categoriesFillColor: TornadoChart.getColor(tornadoChartProperties.categories.fill, TornadoChart.DefaultTornadoChartSettings.categoriesFillColor, objects, colors),
                 getLabelValueFormatter: getLabelValueFormatter
             };
         }
@@ -734,7 +721,7 @@ module powerbi.extensibility.visual {
         private static getPrecision(objects: DataViewObjects): number {
             let precision: number = DataViewObjects.getValue<number>(
                 objects,
-                TornadoChart.Properties.labels.labelPrecision,
+                tornadoChartProperties.labels.labelPrecision,
                 TornadoChart.DefaultTornadoChartSettings.labelSettings.precision);
 
             return Math.min(Math.max(0, precision), TornadoChart.MaxPrecision);
@@ -850,6 +837,7 @@ module powerbi.extensibility.visual {
         }
 
         private renderMiddleSection(): void {
+            debugger;
             let tornadoChartDataView: TornadoChartDataView = this.dataView;
             this.calculateDataPoints(tornadoChartDataView.dataPoints);
             this.calculateDataPoints(tornadoChartDataView.highlightedDataPoints);
@@ -1197,11 +1185,13 @@ module powerbi.extensibility.visual {
                 height: this.viewport.height + this.margin.top + this.margin.bottom,
                 width: this.viewport.width + this.margin.left + this.margin.right,
             };
+
             this.legend.drawLegend(legendData, viewport);
             Legend.positionChartArea(this.root, this.legend);
 
-            if (legendData.dataPoints.length > 0 && settings.showLegend)
+            if (legendData.dataPoints.length > 0 && settings.showLegend) {
                 this.updateViewport();
+            }
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
@@ -1216,36 +1206,27 @@ module powerbi.extensibility.visual {
 
             switch (options.objectName) {
                 case "dataPoint": {
-                    this.enumerateDataPoint();
-
-                    break;
+                    return this.enumerateDataPoint();
                 }
                 case "categoryAxis": {
-                    this.enumerateCategoryAxis();
-
-                    break;
+                    return this.enumerateCategoryAxis();
                 }
                 case "labels": {
                     this.enumerateLabels(settings);
-
-                    break;
                 }
                 case "legend": {
                     if (!this.dataView.hasDynamicSeries) {
-                        return;
+                        return [];
                     }
 
-                    this.enumerateLegend(settings);
-
-                    break;
+                    return this.enumerateLegend(settings);
                 }
                 case "categories": {
-                    this.enumerateCategories(settings);
-
-                    break;
+                    return  this.enumerateCategories(settings);
                 }
-                default:
+                default: {
                     return [];
+                }
             }
         }
 

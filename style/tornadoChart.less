@@ -24,8 +24,15 @@
  *  THE SOFTWARE.
  */
 
-@regularFontFamily: helvetica, arial, sans-serif;
+/**
+ * Imports external styles.
+ * We compile it as a less file in order to wrap the external CSS rules.
+ */
+@import (less) "node_modules/@powerbi-visuals-utils/tooltipmanager/lib/index.css";
+@import (less) "node_modules/@powerbi-visuals-utils/interactivityservice/lib/index.css";
+@import (less) "node_modules/@powerbi-visuals-utils/legend/lib/index.css";
 
+@regularFontFamily: helvetica, arial, sans-serif;
 @neutralSecondaryAltColor: #777777;
 
 .tornado-chart {

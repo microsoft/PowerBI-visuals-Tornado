@@ -74,6 +74,14 @@
         "general": {
             "displayName": "General",
             "properties": {
+                "formatString": {
+                    "displayName": "formatString",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                }
             }
         },
         "dataPoint": {
@@ -230,7 +238,11 @@
                 },
                 "fontSize": {
                     "displayName": "TextSize",
-                    "type": { "formatting": { "fontSize": true } }
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
                 }
             }
         },

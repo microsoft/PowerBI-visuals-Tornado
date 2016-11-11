@@ -29,6 +29,9 @@
     "node_modules/@powerbi-visuals-utils/displayunitsystemtype/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/double/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/enumtype/lib/index.d.ts",
+
+
+    "node_modules/@powerbi-visuals-utils/fontutils/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/formatting/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/formattingservice/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/imargin/lib/index.d.ts",
@@ -41,6 +44,7 @@
 
     "node_modules/@powerbi-visuals-utils/textmeasurementservice/lib/index.d.ts",
 
+    "node_modules/@powerbi-visuals-utils/valuetype/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/valueformatter/lib/index.d.ts",
 
     "node_modules/@powerbi-visuals-utils/rect/lib/index.d.ts",
@@ -51,6 +55,7 @@
     "node_modules/@powerbi-visuals-utils/interactivityservice/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/legend/lib/index.d.ts",
 
+    "src/properties.ts",
     "src/scrolling.ts",
     "src/webBehavior.ts",
     "src/tornadoChart.ts"

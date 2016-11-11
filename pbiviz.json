@@ -22,6 +22,8 @@
     "node_modules/d3/d3.min.js",
     "node_modules/jquery/dist/jquery.min.js",
     "node_modules/lodash/lodash.min.js",
+    "node_modules/globalize/lib/globalize.js",
+    "node_modules/globalize/lib/cultures/globalize.culture.es-US.js",
 
     "node_modules/@powerbi-visuals-utils/animatorcommon/lib/index.js",
     "node_modules/@powerbi-visuals-utils/arrayextensions/lib/index.js",
@@ -30,10 +32,14 @@
     "node_modules/@powerbi-visuals-utils/colorhelper/lib/index.js",
     "node_modules/@powerbi-visuals-utils/colorutility/lib/index.js",
     "node_modules/@powerbi-visuals-utils/converterhelper/lib/index.js",
-    "node_modules/@powerbi-visuals-utils/conrols-touchutils/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/controls-touchutils/lib/index.js",
     "node_modules/@powerbi-visuals-utils/cssconstants/lib/index.js",
 
-    "node_modules/@powerbi-visuals-utils/datalabelutils/lib/index.js",
+
+    "node_modules/@powerbi-visuals-utils/stringextensions/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/regexpextensions/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/pointerutils/lib/index.js",
+
     "node_modules/@powerbi-visuals-utils/dataviewobjects/lib/index.js",
     "node_modules/@powerbi-visuals-utils/datarolehelper/lib/index.js",
     "node_modules/@powerbi-visuals-utils/datetimesequence/lib/index.js",
@@ -44,12 +50,13 @@
     "node_modules/@powerbi-visuals-utils/enumextensions/lib/index.js",
     "node_modules/@powerbi-visuals-utils/enumtype/lib/index.js",
 
+    "node_modules/@powerbi-visuals-utils/fontutils/lib/index.js",
     "node_modules/@powerbi-visuals-utils/formatting/lib/index.js",
     "node_modules/@powerbi-visuals-utils/formattingservice/lib/index.js",
 
     "node_modules/@powerbi-visuals-utils/imargin/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/interactivityutils/lib/index.js",
     "node_modules/@powerbi-visuals-utils/interactivityservice/lib/index.js",
-    "node_modules/@powerbi-visuals-utils/legend/lib/index.js",
 
     "node_modules/@powerbi-visuals-utils/localstorageservice/lib/index.js",
 
@@ -60,7 +67,6 @@
     "node_modules/@powerbi-visuals-utils/rect/lib/index.js",
     "node_modules/@powerbi-visuals-utils/shapes/lib/index.js",
 
-    "node_modules/@powerbi-visuals-utils/stringextensions/lib/index.js",
     "node_modules/@powerbi-visuals-utils/svgutil/lib/index.js",
 
     "node_modules/@powerbi-visuals-utils/tooltipbuilder/lib/index.js",
@@ -69,7 +75,10 @@
     "node_modules/@powerbi-visuals-utils/textmeasurementservice/lib/index.js",
 
     "node_modules/@powerbi-visuals-utils/valuetype/lib/index.js",
-    "node_modules/@powerbi-visuals-utils/valueformatter/lib/index.js"
+    "node_modules/@powerbi-visuals-utils/valueformatter/lib/index.js",
+
+    "node_modules/@powerbi-visuals-utils/datalabelutils/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/legend/lib/index.js"
   ],
   "style": "style/tornadoChart.less",
   "capabilities": "capabilities.json",
