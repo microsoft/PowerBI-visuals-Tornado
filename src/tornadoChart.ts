@@ -86,6 +86,10 @@ module powerbi.extensibility.visual {
     import TooltipEvent = powerbi.visuals.TooltipEvent;
     import TooltipDataItem = powerbi.visuals.TooltipDataItem;
     import TooltipBuilder = powerbi.visuals.TooltipBuilder;
+    import ITooltipService = powerbi.visuals.ITooltipService;
+    import TooltipEventArgs = powerbi.visuals.TooltipEventArgs;
+    import createTooltipService = powerbi.visuals.createTooltipService;
+
     import Legend = powerbi.visuals.Legend;
     import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
     import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
@@ -262,7 +266,7 @@ module powerbi.extensibility.visual {
                 show: true,
                 precision: null,
                 fontSize: TornadoChart.DefaultFontSize,
-                displayUnits: 0,
+                displayUnits: 1,
                 labelColor: dataLabelUtils.defaultInsideLabelColor,
             },
             showCategories: true,
@@ -292,7 +296,8 @@ module powerbi.extensibility.visual {
             let maxValue: number = d3.max(<number[]>values[0].values);
             let settings: TornadoChartSettings = TornadoChart.parseSettings(dataView.metadata.objects, maxValue, colors);
             let hasDynamicSeries = !!values.source;
-            let hasHighlights: boolean = !!(values.length > 0 && values[0].highlights);
+            let hasHighlights: boolean = values.length > 0 && _.some(values[0].highlights);
+            debugger;
             let labelHeight = TextMeasurementService.estimateSvgTextHeight({
                 fontFamily: dataLabelUtils.StandardFontFamily,
                 fontSize: PixelConverter.fromPoint(settings.labelSettings.fontSize),
@@ -536,6 +541,7 @@ module powerbi.extensibility.visual {
         private dataView: TornadoChartDataView;
         private heightColumn: number = 0;
         private selectionIdBuilder: ISelectionIdBuilder;
+        private tooltipService: ITooltipService;
 
         private get allLabelsWidth(): number {
             return (this.dataView.settings.showCategories
@@ -552,22 +558,13 @@ module powerbi.extensibility.visual {
                 ? this.allColumnsWidth/2
                 : this.allColumnsWidth;
         }
-        /*
-        constructor(tornadoChartConstructorOptions?: TornadoChartConstructorOptions) {
-            if (tornadoChartConstructorOptions) {
-                this.svg = tornadoChartConstructorOptions.svg || this.svg;
-                this.margin = tornadoChartConstructorOptions.margin || this.margin;
-                this.columnPadding = tornadoChartConstructorOptions.columnPadding || this.columnPadding;
-                this.animator = tornadoChartConstructorOptions.animator;
-            }
-        }
-        */
 
         constructor(options: VisualConstructorOptions) {
             let fontSize: string;
             this.hostService = options.host;
             let element: JQuery = $(options.element);
             this.colors = options.host.colorPalette;
+            this.tooltipService = createTooltipService(options.host);
 
             this.interactivityService = createInteractivityService(this.hostService);
             this.selectionIdBuilder = this.hostService.createSelectionIdBuilder();
@@ -799,6 +796,7 @@ module powerbi.extensibility.visual {
             tornadoChartDataView.highlightedDataPoints = _.filter(tornadoChartDataView.highlightedDataPoints, (d: TornadoChartPoint) => d.categoryIndex >= startIndexRound && d.categoryIndex < endIndexRound);
 
             this.dataView = tornadoChartDataView;
+
             this.computeHeightColumn();
             this.renderMiddleSection();
             this.renderAxes();
@@ -837,7 +835,6 @@ module powerbi.extensibility.visual {
         }
 
         private renderMiddleSection(): void {
-            debugger;
             let tornadoChartDataView: TornadoChartDataView = this.dataView;
             this.calculateDataPoints(tornadoChartDataView.dataPoints);
             this.calculateDataPoints(tornadoChartDataView.highlightedDataPoints);
@@ -932,9 +929,13 @@ module powerbi.extensibility.visual {
         }
 
         private renderTooltip(selection: UpdateSelection<any>): void {
-            TooltipManager.addTooltip(selection, (tooltipEvent: TooltipEvent) => {
-                return (<TornadoChartPoint>tooltipEvent.data).tooltipData;
-            });
+            this.tooltipService.addTooltip(
+                selection,
+                (tooltipEvent: TooltipEventArgs<RadarChartDatapoint>) => {
+                  return (<TornadoChartPoint>tooltipEvent.data).tooltipData;
+                },
+                null,
+                true);
         }
 
         private getColumnWidth(value: number, minValue: number, maxValue: number, width: number): number {
@@ -1212,7 +1213,7 @@ module powerbi.extensibility.visual {
                     return this.enumerateCategoryAxis();
                 }
                 case "labels": {
-                    this.enumerateLabels(settings);
+                    return this.enumerateLabels(settings);
                 }
                 case "legend": {
                     if (!this.dataView.hasDynamicSeries) {
@@ -1357,8 +1358,10 @@ module powerbi.extensibility.visual {
         export let DefaultOpacity: number = 1.0;
 
         export function getFillOpacity(selected: boolean, highlight: boolean, hasSelection: boolean, hasPartialHighlights: boolean): number {
-            if ((hasPartialHighlights && !highlight) || (hasSelection && !selected))
+
+            if ((hasPartialHighlights && !highlight) || (hasSelection && !selected)) {
                 return DimmedOpacity;
+            }
             return DefaultOpacity;
         }
     }
