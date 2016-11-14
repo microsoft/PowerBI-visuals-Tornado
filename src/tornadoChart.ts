@@ -271,7 +271,7 @@ module powerbi.extensibility.visual {
             categoriesFillColor: "#777"
         };
 
-        public static converter(dataView: DataView, selectionIdBuilder: ISelectionIdBuilder, textOptions: TornadoChartTextOptions, colors: IColorPalette): TornadoChartDataView {
+        public static converter(dataView: DataView, hostService: IVisualHost, textOptions: TornadoChartTextOptions, colors: IColorPalette): TornadoChartDataView {
             if (!dataView ||
                 !dataView.categorical ||
                 !dataView.categorical.categories ||
@@ -324,7 +324,7 @@ module powerbi.extensibility.visual {
                 let columnGroup: DataViewValueColumnGroup = groupedValues && groupedValues.length > seriesIndex
                     && groupedValues[seriesIndex].values ? groupedValues[seriesIndex] : null;
 
-                let parsedSeries: TornadoChartSeries = TornadoChart.parseSeries(dataView, values, selectionIdBuilder, seriesIndex, hasDynamicSeries, columnGroup, colors);
+                let parsedSeries: TornadoChartSeries = TornadoChart.parseSeries(dataView, values, hostService, seriesIndex, hasDynamicSeries, columnGroup, colors);
 
                 series.push(parsedSeries);
 
@@ -334,7 +334,7 @@ module powerbi.extensibility.visual {
                 for (let i: number = 0; i < category.values.length; i++) {
                     let value: PrimitiveValue = currentSeries.values[i] == null || isNaN(<number>currentSeries.values[i]) ? 0 : <number>currentSeries.values[i];
 
-                    let identity: ISelectionId = selectionIdBuilder
+                    let identity: ISelectionId = hostService.createSelectionIdBuilder()
                         .withCategory(category, i)
                         .withSeries(values, columnGroup)
                         .withMeasure(measureName)
@@ -408,7 +408,7 @@ module powerbi.extensibility.visual {
         public static parseSeries(
             dataView: DataView,
             dataViewValueColumns: DataViewValueColumns,
-            selectionIdBuilder: ISelectionIdBuilder,
+            hostService: IVisualHost,
             index: number,
             isGrouped: boolean,
             columnGroup: DataViewValueColumnGroup,
@@ -419,16 +419,7 @@ module powerbi.extensibility.visual {
                 identity: DataViewScopeIdentity = columnGroup ? columnGroup.identity : null,
                 queryName: string = source ? source.queryName : null;
 
-            /*
-            let selectionId: ISelectionId = identity
-                ? SelectionId.createWithId(identity)
-                : selectionIdBuilder
-                    .withSeries(dataViewValueColumns, columnGroup)
-                    .withMeasure(queryName)
-                    .createSelectionId();
-                    */
-
-            let selectionId: ISelectionId = selectionIdBuilder
+            let selectionId: ISelectionId = hostService.createSelectionIdBuilder()
                     .withSeries(dataViewValueColumns, columnGroup)
                     .withMeasure(queryName)
                     .createSelectionId();
@@ -568,7 +559,6 @@ module powerbi.extensibility.visual {
             this.tooltipService = createTooltipService(options.host);
 
             this.interactivityService = createInteractivityService(this.hostService);
-            this.selectionIdBuilder = this.hostService.createSelectionIdBuilder();
 
             let root: Selection<any> = this.root = d3.select(options.element)
                 .append("svg");
@@ -623,7 +613,7 @@ module powerbi.extensibility.visual {
                 width: Math.max(0, visualUpdateOptions.viewport.width - this.margin.left - this.margin.right)
             };
 
-            this.dataView = TornadoChart.converter(this.validateDataView(visualUpdateOptions.dataViews[0]), this.selectionIdBuilder, this.textOptions, this.colors);
+            this.dataView = TornadoChart.converter(this.validateDataView(visualUpdateOptions.dataViews[0]), this.hostService, this.textOptions, this.colors);
             if (!this.dataView || this.scrolling.scrollViewport.height < TornadoChart.CategoryMinHeight) {
                 this.clearData();
                 return;
