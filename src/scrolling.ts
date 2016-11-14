@@ -43,7 +43,10 @@ module powerbi.extensibility.visual {
             };
         }
 
-        private static ScrollBarMinLength = 15;
+        private static ScrollBarMinLength: number = 15;
+        private static ExtentFillOpacity: number = 0.125;
+        private static DefaultScaleMultipler: number = 1;
+
         private isYScrollBarVisible: boolean;
         private brushGraphicsContextY: Selection<any>;
         private scrollYBrush: any = d3.svg.brush();
@@ -74,8 +77,8 @@ module powerbi.extensibility.visual {
         }
 
         public renderY(data: TornadoChartDataView, onScroll: () => {}): void {
-            this.isYScrollBarVisible = this.isScrollable &&
-                this.getPrefferedHeight() > this.viewport.height
+            this.isYScrollBarVisible = this.isScrollable
+                && this.getPrefferedHeight() > this.viewport.height
                 && this.viewport.height > 0
                 && this.viewport.width > 0;
 
@@ -99,7 +102,7 @@ module powerbi.extensibility.visual {
                     position[1] += (wheelDelta > 0) ? halfScrollsize : -halfScrollsize;
 
                     if (position[0] < 0) {
-                        let offset: number = 0 - position[0];
+                        let offset: number = -position[0];
                         position[0] += offset;
                         position[1] += offset;
                     }
@@ -113,7 +116,7 @@ module powerbi.extensibility.visual {
                     this.scrollYBrush.extent(position);
                     this.brushGraphicsContextY.select('.extent').attr('y', position[0]);
                 }
-                let scrollPosition = extentData.toScrollPosition(position, scrollSpaceLength);
+                let scrollPosition: number[] = extentData.toScrollPosition(position, scrollSpaceLength);
                 onScroll.call(this, jQuery.extend(true, {}, data), scrollPosition[0], scrollPosition[1]);
                 this.setScrollBarSize(this.brushGraphicsContextY, extentData.value[1], true);
             };
@@ -160,7 +163,7 @@ module powerbi.extensibility.visual {
             brushGraphicsContext.selectAll(".resize").remove();
             brushGraphicsContext.select(".background").remove();
             brushGraphicsContext.selectAll(".extent").style({
-                "fill-opacity": 0.125,
+                "fill-opacity": TornadoChartScrolling.ExtentFillOpacity,
                 "cursor": "default",
             });
         }
@@ -174,12 +177,12 @@ module powerbi.extensibility.visual {
             let value: number = scrollSpaceLength * scrollSpaceLength / svgLength;
 
             let scaleMultipler: number = TornadoChartScrolling.ScrollBarMinLength <= value
-                ? 1
+                ? TornadoChartScrolling.DefaultScaleMultipler
                 : value / TornadoChartScrolling.ScrollBarMinLength;
 
             value = Math.max(value, TornadoChartScrolling.ScrollBarMinLength);
 
-            let toScrollPosition = (extent: number[], scrollSpaceLength: number) => {
+            let toScrollPosition = (extent: number[], scrollSpaceLength: number): number[] => {
                 let scrollSize: number = extent[1] - extent[0];
                 let scrollPosition: number = extent[0] / (scrollSpaceLength - scrollSize);
 

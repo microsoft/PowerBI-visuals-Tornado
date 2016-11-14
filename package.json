@@ -55,8 +55,8 @@
     "@powerbi-visuals-utils/valuetype": "git+https://github.com/ignatvilesov/powerbi-visuals-utils-valuetype.git",
     "d3": "3.5.17",
     "globalize": "0.1.0-a2",
-    "jquery": "^3.1.1",
-    "lodash": "^4.16.4"
+    "jquery": "3.1.1",
+    "lodash": "4.16.4"
   },
   "scripts": {
     "postinstall": "typings install && pbiviz update 1.2.0",

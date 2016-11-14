@@ -60,11 +60,13 @@ module powerbi.extensibility.visual {
         }
 
         public renderSelection(hasSelection: boolean) {
-            let hasHighlights = this.interactivityService.hasSelection();
-            this.columns.style("fill-opacity", (d: TornadoChartPoint) => tornadoChartUtils.getFillOpacity(d.selected,
-                d.highlight,
-                !d.highlight && hasSelection,
-                !d.selected && hasHighlights));
+            let hasHighlights: boolean = this.interactivityService.hasSelection();
+            this.columns.style("fill-opacity", (d: TornadoChartPoint) => {
+                return tornadoChartUtils.getFillOpacity(d.selected,
+                    d.highlight,
+                    !d.highlight && hasSelection,
+                    !d.selected && hasHighlights);
+            });
         }
     }
 }

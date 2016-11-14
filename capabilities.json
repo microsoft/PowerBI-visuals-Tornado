@@ -1,89 +1,64 @@
 {
-    "dataRoles": [
-        {
-            "displayName": "Group",
-            "name": "Category",
-            "kind": "Grouping"
-        },
-        {
-            "displayName": "Legend",
-            "name": "Series",
-            "kind": "Grouping"
-        },
-        {
-            "displayName": "Values",
-            "name": "Values",
-            "kind": "Measure"
-        }
-    ],
-    "dataViewMappings": [
-        {
-            "conditions": [
-                {
-                    "Category": {
-                        "max": 1
-                    },
-                    "Values": {
-                        "min": 0,
-                        "max": 1
-                    },
-                    "Series": {
-                        "min": 0,
-                        "max": 1
-                    }
-                },
-                {
-                    "Category": {
-                        "max": 1
-                    },
-                    "Values": {
-                        "min": 2,
-                        "max": 2
-                    },
-                    "Series": {
-                        "max": 0
-                    }
+    "dataRoles": [{
+        "displayName": "Group",
+        "name": "Category",
+        "kind": "Grouping"
+    }, {
+        "displayName": "Legend",
+        "name": "Series",
+        "kind": "Grouping"
+    }, {
+        "displayName": "Values",
+        "name": "Values",
+        "kind": "Measure"
+    }],
+    "dataViewMappings": [{
+        "conditions": [{
+            "Category": {
+                "max": 1
+            },
+            "Values": {
+                "min": 0,
+                "max": 1
+            },
+            "Series": {
+                "min": 0,
+                "max": 1
+            }
+        }, {
+            "Category": {
+                "max": 1
+            },
+            "Values": {
+                "min": 2,
+                "max": 2
+            },
+            "Series": {
+                "max": 0
+            }
+        }],
+        "categorical": {
+            "categories": {
+                "for": {
+                    "in": "Category"
                 }
-            ],
-            "categorical": {
-                "categories": {
-                    "for": {
-                        "in": "Category"
-                    }
-                },
-                "values": {
-                    "group": {
-                        "by": "Series",
-                        "select": [
-                            {
-                                "for": {
-                                    "in": "Values"
-                                }
-                            }
-                        ],
-                        "dataReductionAlgorithm": {
-                            "top": {
-                            }
+            },
+            "values": {
+                "group": {
+                    "by": "Series",
+                    "select": [{
+                        "for": {
+                            "in": "Values"
                         }
+                    }],
+                    "dataReductionAlgorithm": {
+                        "top": {}
                     }
                 }
             }
         }
-    ],
+    }],
     "objects": {
-        "general": {
-            "displayName": "General",
-            "properties": {
-                "formatString": {
-                    "displayName": "formatString",
-                    "type": {
-                        "formatting": {
-                            "fontSize": true
-                        }
-                    }
-                }
-            }
-        },
         "dataPoint": {
             "displayName": "Data Colors",
             "properties": {
@@ -178,40 +153,31 @@
                     "displayName": "Position",
                     "description": "Legend position",
                     "type": {
-                        "enumeration": [
-                            {
-                                "value": "Top",
-                                "displayName": "Top"
-                            },
-                            {
-                                "value": "Bottom",
-                                "displayName": "Bottom"
-                            },
-                            {
-                                "value": "Left",
-                                "displayName": "Left"
-                            },
-                            {
-                                "value": "Right",
-                                "displayName": "Right"
-                            },
-                            {
-                                "value": "TopCenter",
-                                "displayName": "Top Center"
-                            },
-                            {
-                                "value": "BottomCenter",
-                                "displayName": "Bottom Center"
-                            },
-                            {
-                                "value": "LeftCenter",
-                                "displayName": "Left Center"
-                            },
-                            {
-                                "value": "RightCenter",
-                                "displayName": "Right Center"
-                            }
-                        ]
+                        "enumeration": [{
+                            "value": "Top",
+                            "displayName": "Top"
+                        }, {
+                            "value": "Bottom",
+                            "displayName": "Bottom"
+                        }, {
+                            "value": "Left",
+                            "displayName": "Left"
+                        }, {
+                            "value": "Right",
+                            "displayName": "Right"
+                        }, {
+                            "value": "TopCenter",
+                            "displayName": "Top Center"
+                        }, {
+                            "value": "BottomCenter",
+                            "displayName": "Bottom Center"
+                        }, {
+                            "value": "LeftCenter",
+                            "displayName": "Left Center"
+                        }, {
+                            "value": "RightCenter",
+                            "displayName": "Right Center"
+                        }]
                     }
                 },
                 "showTitle": {
@@ -224,7 +190,9 @@
                 "titleText": {
                     "displayName": "Legend Name",
                     "description": "Legend Name",
-                    "type": { "text": true }
+                    "type": {
+                        "text": true
+                    }
                 },
                 "labelColor": {
                     "displayName": "Color",
@@ -260,7 +228,7 @@
                     "type": {
                         "fill": {
                             "solid": {
-                               "color": true
+                                "color": true
                             }
                         }
                     }

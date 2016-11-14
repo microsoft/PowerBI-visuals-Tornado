@@ -4,10 +4,10 @@
     "displayName": "Tornado",
     "guid": "TornadoChart1452517688218",
     "visualClassName": "TornadoChart",
-    "version": "1.0.0",
+    "version": "0.6.0",
     "description": "A bar chart with category values listed vertically. Use for comparing the relative importance of a variable between two distinct groups.",
     "supportUrl": "http://community.powerbi.com",
-    "gitHubUrl": "https://github.com/Microsoft/PowerBI-visuals-ChicletSlicer"
+    "gitHubUrl": "https://github.com/Microsoft/PowerBI-visuals-Tornado"
   },
   "apiVersion": "1.2.0",
   "author": {
@@ -34,7 +34,6 @@
     "node_modules/@powerbi-visuals-utils/converterhelper/lib/index.js",
     "node_modules/@powerbi-visuals-utils/controls-touchutils/lib/index.js",
     "node_modules/@powerbi-visuals-utils/cssconstants/lib/index.js",
-
 
     "node_modules/@powerbi-visuals-utils/stringextensions/lib/index.js",
     "node_modules/@powerbi-visuals-utils/regexpextensions/lib/index.js",
@@ -82,6 +81,5 @@
     "node_modules/@powerbi-visuals-utils/legend/lib/index.js"
   ],
   "style": "style/tornadoChart.less",
-  "capabilities": "capabilities.json",
-  "dependencies": "dependencies.json"
+  "capabilities": "capabilities.json"
 }
