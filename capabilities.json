@@ -60,7 +60,8 @@
     }],
     "objects": {
         "dataPoint": {
-            "displayName": "Data Colors",
+            "displayName": "Data colors",
+            "description": "Display data color options",
             "properties": {
                 "fill": {
                     "displayName": "Fill",

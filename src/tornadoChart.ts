@@ -92,6 +92,8 @@ module powerbi.extensibility.visual {
     import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
     import VisualObjectInstance = powerbi.VisualObjectInstance;
 
+    import IVisualSelectionId = powerbi.visuals.ISelectionId;
+
     export interface TornadoChartTextOptions {
         fontFamily?: string;
         fontSize?: number;
@@ -287,6 +289,7 @@ module powerbi.extensibility.visual {
             let category: DataViewCategoricalColumn = categories[0];
             let formatStringProp: DataViewObjectPropertyIdentifier = tornadoChartProperties.general.formatString;
             let maxValue: number = d3.max(<number[]>values[0].values);
+
             let settings: TornadoChartSettings = TornadoChart.parseSettings(dataView.metadata.objects, maxValue, colors);
             let hasDynamicSeries: boolean = !!values.source;
             let hasHighlights: boolean = values.length > 0 && _.some(values[0].highlights);
@@ -424,6 +427,7 @@ module powerbi.extensibility.visual {
                     .withMeasure(queryName)
                     .createSelectionId();
                     */
+
             let selectionId: ISelectionId = selectionIdBuilder
                     .withSeries(dataViewValueColumns, columnGroup)
                     .withMeasure(queryName)
@@ -435,10 +439,10 @@ module powerbi.extensibility.visual {
                     ? source.groupName : source.displayName
                     : null;
 
-            if (isGrouped && columnGroup) {
+            if (isGrouped && columnGroup && columnGroup.objects) {
                 categoryAxisObject = columnGroup.objects ? columnGroup.objects['categoryAxis'] : null;
                 objects = columnGroup.objects;
-            } else if (source) {
+            } else if (source && source.objects ) {
                 objects = source.objects;
                 categoryAxisObject = objects ? objects['categoryAxis'] : null;
             } else if (dataView.metadata.objects) {
@@ -1217,19 +1221,20 @@ module powerbi.extensibility.visual {
         private enumerateDataPoint(): VisualObjectInstance[] {
             if (!this.dataView ||
                 !this.dataView.series) {
-                return;
+                return [];
             }
 
-            let series: TornadoChartSeries[] = this.dataView.series;
             let instances: VisualObjectInstance[] = [];
 
-            for (let i: number = 0, length: number = series.length; i < length; i++) {
+            for (let series of this.dataView.series) {
                 instances.push({
                     objectName: "dataPoint",
-                    displayName: series[i].name,
-                    selector: ColorHelper.normalizeSelector((<powerbi.visuals.ISelectionId>series[i].selectionId).getSelector(), false),
+                    displayName: series.name,
+                    selector: ColorHelper.normalizeSelector(
+                        (series.selectionId as IVisualSelectionId).getSelector(),
+                        false),
                     properties: {
-                        fill: { solid: { color: series[i].fill } }
+                        fill: { solid: { color: series.fill } }
                     }
                 });
             }
@@ -1239,19 +1244,21 @@ module powerbi.extensibility.visual {
 
         private enumerateCategoryAxis(): VisualObjectInstance[] {
             if (!this.dataView || !this.dataView.series) {
-                return;
+                return [];
             }
 
             let series: TornadoChartSeries[] = this.dataView.series;
             let instances: VisualObjectInstance[] = [];
 
-            for (let i: number = 0, length: number = series.length; i < length; i++) {
+            for (let series of this.dataView.series) {
                 instances.push({
                     objectName: "categoryAxis",
-                    displayName: series[i].name,
-                    selector: series[i].selectionId ? (<powerbi.visuals.ISelectionId>series[i].selectionId).getSelector() : null,
+                    displayName: series.name,
+                    selector: ColorHelper.normalizeSelector(
+                        (series.selectionId as IVisualSelectionId).getSelector(),
+                        false),
                     properties: {
-                        end: series[i].categoryAxisEnd,
+                        end: series.categoryAxisEnd,
                     }
                 });
             }
