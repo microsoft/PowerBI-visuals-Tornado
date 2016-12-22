@@ -357,7 +357,7 @@ module powerbi.extensibility.visual {
 
                     let highlight: PrimitiveValue = null;
                     if (hasHighlights) {
-                        let highlightIdentity: ISelectionId = identity;/*SelectionId.createWithHighlight(identity);*/
+                        let highlightIdentity: ISelectionId = identity;
                         highlight = <number>currentSeries.highlights[i];
                         let highlightedValue: number = highlight != null ? highlight : value;
                         tooltipInfo = TooltipBuilder.createTooltipInfo(formatStringProp, categorical, formattedCategoryValue, value, null, null, seriesIndex, i, highlightedValue);
