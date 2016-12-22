@@ -292,7 +292,7 @@ module powerbi.extensibility.visual {
 
             let settings: TornadoChartSettings = TornadoChart.parseSettings(dataView.metadata.objects, maxValue, colors);
             let hasDynamicSeries: boolean = !!values.source;
-            let hasHighlights: boolean = values.length > 0 && _.some(values[0].highlights);
+            let hasHighlights: boolean = values.length > 0 && _.some(values, (value) =>_.some(value.highlights));
 
             let labelHeight: number = TextMeasurementService.estimateSvgTextHeight({
                 fontFamily: dataLabelUtils.StandardFontFamily,
@@ -355,22 +355,10 @@ module powerbi.extensibility.visual {
 
                     let formatString: string = dataView.categorical.values[seriesIndex].source.format;
 
-                    dataPoints.push({
-                        value: value,
-                        minValue: minValue,
-                        maxValue: currentMaxValue,
-                        formatString: formatString,
-                        color: parsedSeries.fill,
-                        selected: false,
-                        identity: identity,
-                        tooltipData: tooltipInfo,
-                        categoryIndex: i,
-                    });
-
+                    let highlight: PrimitiveValue = null;
                     if (hasHighlights) {
-
-                        let highlightIdentity: ISelectionId = identity;/*SelectionId.createWithHighlight(identity);*/
-                        let highlight: PrimitiveValue = <number>currentSeries.highlights[i];
+                        let highlightIdentity: ISelectionId = identity;
+                        highlight = <number>currentSeries.highlights[i];
                         let highlightedValue: number = highlight != null ? highlight : value;
                         tooltipInfo = TooltipBuilder.createTooltipInfo(formatStringProp, categorical, formattedCategoryValue, value, null, null, seriesIndex, i, highlightedValue);
 
@@ -387,6 +375,20 @@ module powerbi.extensibility.visual {
                             highlight: !!highlight,
                         });
                     }
+
+                    dataPoints.push({
+                        value: value,
+                        minValue: minValue,
+                        maxValue: currentMaxValue,
+                        formatString: formatString,
+                        color: parsedSeries.fill,
+                        selected: false,
+                        identity: identity,
+                        tooltipData: tooltipInfo,
+                        categoryIndex: i,
+                        highlight: hasHighlights && !!highlight,
+                    });
+
                 }
             }
 
@@ -619,11 +621,6 @@ module powerbi.extensibility.visual {
                 return;
             }
 
-            if (this.dataView && this.interactivityService) {
-                this.interactivityService.applySelectionStateToData(this.dataView.dataPoints);
-                this.interactivityService.applySelectionStateToData(this.dataView.highlightedDataPoints);
-            }
-
             this.render();
         }
 
@@ -762,7 +759,9 @@ module powerbi.extensibility.visual {
                 }
             }
 
-            if (this.interactivityService) {
+            if (this.dataView.hasHighlights) {
+                this.interactivityService.clearSelection();
+            } else {
                 this.interactivityService.applySelectionStateToData(tornadoChartDataView.dataPoints);
                 this.interactivityService.applySelectionStateToData(tornadoChartDataView.highlightedDataPoints);
             }
@@ -894,6 +893,7 @@ module powerbi.extensibility.visual {
 
             if (interactivityService) {
                 interactivityService.applySelectionStateToData(columnsData);
+
                 let behaviorOptions: TornadoBehaviorOptions = {
                     columns: columnsSelection,
                     clearCatcher: this.clearCatcher,
