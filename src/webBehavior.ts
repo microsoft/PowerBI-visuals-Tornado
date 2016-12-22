@@ -27,18 +27,12 @@
 module powerbi.extensibility.visual {
     // d3
     import Selection = d3.Selection;
-    import UpdateSelection = d3.selection.Update;
-    import ISemanticFilter = data.ISemanticFilter;
-
-    // powerbi.data
-    import Selector = powerbi.data.Selector;
-    import ISQExpr = powerbi.data.ISQExpr;
 
     // powerbi.visuals
-    import IInteractiveBehavior = powerbi.visuals.IInteractiveBehavior;
-    import SelectableDataPoint = powerbi.visuals.SelectableDataPoint;
-    import IInteractivityService = powerbi.visuals.IInteractivityService;
-    import ISelectionHandler = powerbi.visuals.ISelectionHandler;
+    import IInteractiveBehavior = powerbi.extensibility.utils.interactivity.IInteractiveBehavior;
+    import SelectableDataPoint = powerbi.extensibility.utils.interactivity.SelectableDataPoint;
+    import IInteractivityService = powerbi.extensibility.utils.interactivity.IInteractivityService;
+    import ISelectionHandler = powerbi.extensibility.utils.interactivity.ISelectionHandler;
 
     export class TornadoWebBehavior implements IInteractiveBehavior {
         private columns: Selection<any>;
@@ -62,7 +56,8 @@ module powerbi.extensibility.visual {
         public renderSelection(hasSelection: boolean) {
             let hasHighlights: boolean = this.interactivityService.hasSelection();
             this.columns.style("fill-opacity", (d: TornadoChartPoint) => {
-                return tornadoChartUtils.getFillOpacity(d.selected,
+                return tornadoChartUtils.getFillOpacity(
+                    d.selected,
                     d.highlight,
                     !d.highlight && hasSelection,
                     !d.selected && hasHighlights);

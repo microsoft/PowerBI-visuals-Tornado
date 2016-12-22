@@ -25,13 +25,13 @@
  */
 
 module powerbi.extensibility.visual {
-
     // d3
     import Selection = d3.Selection;
     import UpdateSelection = d3.selection.Update;
 
-    import SVGUtil = powerbi.visuals.SVGUtil;
-    import IMargin = powerbi.visuals.IMargin;
+    // powerbi.extensibility.utils.svg
+    import IMargin = powerbi.extensibility.utils.svg.IMargin;
+    import translate = powerbi.extensibility.utils.svg.translate;
 
     export class TornadoChartScrolling {
         public isScrollable: boolean;
@@ -154,7 +154,7 @@ module powerbi.extensibility.visual {
             });
 
             brushGraphicsContext.attr({
-                "transform": SVGUtil.translate(brushX, 0),
+                "transform": translate(brushX, 0),
                 "drag-resize-disabled": "true" /*disables resizing of the visual when dragging the scrollbar in edit mode*/
             });
 
@@ -169,8 +169,13 @@ module powerbi.extensibility.visual {
         }
 
         private setScrollBarSize(brushGraphicsContext: Selection<any>, minExtent: number, isVertical: boolean): void {
-            brushGraphicsContext.selectAll("rect").attr(isVertical ? "width" : "height", TornadoChart.ScrollBarWidth);
-            brushGraphicsContext.selectAll("rect").attr(isVertical ? "height" : "width", minExtent);
+            brushGraphicsContext
+                .selectAll("rect")
+                .attr(isVertical ? "width" : "height", TornadoChart.ScrollBarWidth);
+
+            brushGraphicsContext
+                .selectAll("rect")
+                .attr(isVertical ? "height" : "width", minExtent);
         }
 
         private getExtentData(svgLength: number, scrollSpaceLength: number): any {
@@ -198,8 +203,11 @@ module powerbi.extensibility.visual {
         }
 
         public clearData(): void {
-            if (this.brushGraphicsContextY)
-                this.brushGraphicsContextY.selectAll("*").remove();
+            if (this.brushGraphicsContextY) {
+                this.brushGraphicsContextY
+                    .selectAll("*")
+                    .remove();
+            }
         }
     }
 }
