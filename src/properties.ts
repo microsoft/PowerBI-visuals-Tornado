@@ -25,11 +25,7 @@
  */
 
 module powerbi.extensibility.visual {
-
     export let tornadoChartProperties = {
-        general: {
-             formatString: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'formatString' },
-        },
         dataPoint: {
             fill: <DataViewObjectPropertyIdentifier>{ objectName: 'dataPoint', propertyName: 'fill' }
         },
