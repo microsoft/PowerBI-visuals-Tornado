@@ -456,12 +456,12 @@ module powerbi.extensibility.visual {
                     : null;
 
             if (isGrouped && columnGroup && columnGroup.objects) {
-                categoryAxisObject = columnGroup.objects ? columnGroup.objects['categoryAxis'] : null;
+                categoryAxisObject = columnGroup.objects ? columnGroup.objects["categoryAxis"] : null;
                 objects = columnGroup.objects;
             } else if (source && source.objects) {
                 objects = source.objects;
-                categoryAxisObject = objects ? objects['categoryAxis'] : null;
-            } else if (dataView.metadata.objects) {
+                categoryAxisObject = objects ? objects["categoryAxis"] : null;
+            } else if (dataView && dataView.metadata && dataView.metadata.objects) {
                 objects = dataView.metadata.objects;
             }
 
@@ -470,7 +470,7 @@ module powerbi.extensibility.visual {
                 ["purple", "teal"][index],
                 objects, colors);
 
-            let categoryAxisEnd: number = categoryAxisObject ? categoryAxisObject['end'] : null;
+            let categoryAxisEnd: number = categoryAxisObject ? categoryAxisObject["end"] : null;
 
             return <TornadoChartSeries>{
                 fill: color,
@@ -593,7 +593,7 @@ module powerbi.extensibility.visual {
 
             root
                 .classed(TornadoChart.ClassName, true)
-                .style('position', 'absolute');
+                .style("position", "absolute");
 
             fontSize = root.style("font-size");
 

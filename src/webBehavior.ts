@@ -44,11 +44,11 @@ module powerbi.extensibility.visual {
             this.clearCatcher = options.clearCatcher;
             this.interactivityService = options.interactivityService;
 
-            this.columns.on('click', (d: SelectableDataPoint, i: number) => {
+            this.columns.on("click", (d: SelectableDataPoint, i: number) => {
                 selectionHandler.handleSelection(d, (d3.event as MouseEvent).ctrlKey);
             });
 
-            this.clearCatcher.on('click', () => {
+            this.clearCatcher.on("click", () => {
                 selectionHandler.handleClearSelection();
             });
         }

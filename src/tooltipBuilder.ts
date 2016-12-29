@@ -29,7 +29,7 @@ module powerbi.extensibility.visual.tooltipBuilder {
     import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
 
     const DefaultDisplayName: string = "";
-    const DisplayNameDelimiter: string = '/';
+    const DisplayNameDelimiter: string = "/";
     const HighlightedValueDisplayName: string = "Highlighted";
     const DefaultSeriesIndex: number = 0;
 
