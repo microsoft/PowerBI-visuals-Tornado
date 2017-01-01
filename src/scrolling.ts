@@ -82,7 +82,7 @@ module powerbi.extensibility.visual {
                 && this.viewport.height > 0
                 && this.viewport.width > 0;
 
-            this.brushGraphicsContextY = this.createOrRemoveScrollbar(this.isYScrollBarVisible, this.brushGraphicsContextY, 'y brush');
+            this.brushGraphicsContextY = this.createOrRemoveScrollbar(this.isYScrollBarVisible, this.brushGraphicsContextY, "y brush");
 
             if (!this.isYScrollBarVisible) {
                 onScroll.call(this, jQuery.extend(true, {}, data), 0, 1);
@@ -114,7 +114,7 @@ module powerbi.extensibility.visual {
 
                     // Update the scroll bar accordingly and redraw
                     this.scrollYBrush.extent(position);
-                    this.brushGraphicsContextY.select('.extent').attr('y', position[0]);
+                    this.brushGraphicsContextY.select(".extent").attr("y", position[0]);
                 }
                 let scrollPosition: number[] = extentData.toScrollPosition(position, scrollSpaceLength);
                 onScroll.call(this, jQuery.extend(true, {}, data), scrollPosition[0], scrollPosition[1]);
@@ -144,10 +144,10 @@ module powerbi.extensibility.visual {
         private renderScrollbar(brush: d3.svg.Brush<any>,
             brushGraphicsContext: Selection<any>,
             brushX: number,
-            onRender: (number) => void): void {
+            onRender: (value: number) => void): void {
 
             brush.on("brush", () => window.requestAnimationFrame(() => onRender(0)));
-            this.root.on('wheel', () => {
+            this.root.on("wheel", () => {
                 if (!this.isYScrollBarVisible) return;
                 let wheelEvent: any = d3.event; // Casting to any to avoid compilation errors
                 onRender(wheelEvent.deltaY);
