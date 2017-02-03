@@ -31,14 +31,13 @@ module powerbi.extensibility.visual.test {
     import VisualBuilderBase = powerbi.extensibility.utils.test.VisualBuilderBase;
 
     // TornadoChart1452517688218
-    import VisualPlugin = powerbi.visuals.plugins.TornadoChart1452517688218;
     import VisualClass = powerbi.extensibility.visual.TornadoChart1452517688218.TornadoChart;
     import TornadoChartSeries = powerbi.extensibility.visual.TornadoChart1452517688218.TornadoChartSeries;
     import TornadoChartDataView = powerbi.extensibility.visual.TornadoChart1452517688218.TornadoChartDataView;
 
     export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
         constructor(width: number, height: number) {
-            super(width, height, VisualPlugin.name);
+            super(width, height, "TornadoChart1452517688218");
         }
 
         protected build(options: VisualConstructorOptions): VisualClass {
