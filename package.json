@@ -1,6 +1,6 @@
 {
   "name": "powerbi-visuals-tornadochart",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "author": {
     "name": "Microsoft",
     "email": "pbicvsupport@microsoft.com"
@@ -45,6 +45,7 @@
     "powerbi-visuals-utils-tooltiputils": "^0.3.0",
     "powerbi-visuals-utils-typeutils": "^0.2.1",
     "tslint": "^3.15.1",
-    "typings": "1.4.0"
+    "typings": "1.4.0",
+    "typescript": "2.1.4"
   }
 }

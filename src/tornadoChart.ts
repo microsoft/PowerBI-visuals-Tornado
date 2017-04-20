@@ -588,12 +588,13 @@ module powerbi.extensibility.visual {
 
             this.interactivityService = createInteractivityService(this.hostService);
 
+            this.legend = createLegend($(options.element), false, this.interactivityService, true);
+
             let root: Selection<any> = this.root = d3.select(options.element)
                 .append("svg");
 
             root
-                .classed(TornadoChart.ClassName, true)
-                .style("position", "absolute");
+                .classed(TornadoChart.ClassName, true);
 
             fontSize = root.style("font-size");
 
@@ -626,7 +627,6 @@ module powerbi.extensibility.visual {
                 .classed(TornadoChart.Categories.class, true);
 
             this.behavior = new TornadoWebBehavior();
-            this.legend = createLegend($(options.element), false, this.interactivityService, true);
         }
 
         public update(visualUpdateOptions: VisualUpdateOptions): void {
