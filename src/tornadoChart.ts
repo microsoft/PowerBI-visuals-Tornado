@@ -235,16 +235,6 @@ module powerbi.extensibility.visual {
         };
 
         public static converter(dataView: DataView, hostService: IVisualHost, textOptions: TornadoChartTextOptions, colors: IColorPalette): TornadoChartDataView {
-            if (!dataView ||
-                !dataView.categorical ||
-                !dataView.categorical.categories ||
-                !dataView.categorical.categories[0] ||
-                !dataView.categorical.categories[0].source ||
-                !dataView.categorical.values ||
-                !dataView.categorical.values[0]) {
-                return null;
-            }
-
             let categorical: DataViewCategorical = dataView.categorical;
             let categories: DataViewCategoryColumn[] = categorical.categories || [];
             let values: DataViewValueColumns = categorical.values;
@@ -580,19 +570,28 @@ module powerbi.extensibility.visual {
             this.behavior = new TornadoWebBehavior();
         }
 
-        public update(visualUpdateOptions: VisualUpdateOptions): void {
-            if (!visualUpdateOptions ||
-                !visualUpdateOptions.dataViews ||
-                !visualUpdateOptions.dataViews[0]) {
+        public update(options: VisualUpdateOptions): void {
+            if (!options ||
+                !options.dataViews ||
+                !options.dataViews[0] ||
+                !options.dataViews[0].categorical ||
+                !options.dataViews[0].categorical.categories ||
+                !options.dataViews[0].categorical.categories[0] ||
+                !options.dataViews[0].categorical.categories[0].source ||
+                !options.dataViews[0].categorical.values ||
+                !options.dataViews[0].categorical.values[0] ||
+                !options.dataViews[0].categorical.values[0].values ||
+                !options.dataViews[0].categorical.values[0].values.length) {
+                this.clearData();
                 return;
             }
 
             this.viewport = {
-                height: Math.max(0, visualUpdateOptions.viewport.height - this.margin.top - this.margin.bottom),
-                width: Math.max(0, visualUpdateOptions.viewport.width - this.margin.left - this.margin.right)
+                height: Math.max(0, options.viewport.height - this.margin.top - this.margin.bottom),
+                width: Math.max(0, options.viewport.width - this.margin.left - this.margin.right)
             };
 
-            this.dataView = TornadoChart.converter(this.validateDataView(visualUpdateOptions.dataViews[0]), this.hostService, this.textOptions, this.colors);
+            this.dataView = TornadoChart.converter(this.validateDataView(options.dataViews[0]), this.hostService, this.textOptions, this.colors);
             if (!this.dataView || this.scrolling.scrollViewport.height < TornadoChart.CategoryMinHeight) {
                 this.clearData();
                 return;
