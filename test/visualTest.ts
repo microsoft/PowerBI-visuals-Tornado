@@ -80,7 +80,6 @@ module powerbi.extensibility.visual.test {
             it("update with empty data", (done) => {
                 dataView.categorical.values[0].values = [];
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    debugger;
                     const renderedCategories: number = visualBuilder.categories.children().length;
                     expect(renderedCategories).toBe(0);
                     done();
