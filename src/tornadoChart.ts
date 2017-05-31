@@ -191,67 +191,18 @@ module powerbi.extensibility.visual {
 
     export class TornadoChart implements IVisual {
         private static ClassName: string = "tornado-chart";
-
-        private static Columns: ClassAndSelector = {
-            "class": "columns",
-            selector: ".columns"
-        };
-
-        private static Column: ClassAndSelector = {
-            "class": "column",
-            selector: ".column"
-        };
-
-        private static Axes: ClassAndSelector = {
-            "class": "axes",
-            selector: ".axes"
-        };
-
-        private static Axis: ClassAndSelector = {
-            "class": "axis",
-            selector: ".axis"
-        };
-
-        private static Labels: ClassAndSelector = {
-            "class": "labels",
-            selector: ".labels"
-        };
-
-        private static Label: ClassAndSelector = {
-            "class": "label",
-            selector: ".label"
-        };
-
-        private static LabelTitle: ClassAndSelector = {
-            "class": "label-title",
-            selector: ".label-title"
-        };
-
-        private static LabelText: ClassAndSelector = {
-            "class": "label-text",
-            selector: ".label-text"
-        };
-
-        private static Categories: ClassAndSelector = {
-            "class": "categories",
-            selector: ".categories"
-        };
-
-        private static Category: ClassAndSelector = {
-            "class": "category",
-            selector: ".category"
-        };
-
-        private static CategoryTitle: ClassAndSelector = {
-            "class": "category-title",
-            selector: ".category-title"
-        };
-
-        private static CategoryText: ClassAndSelector = {
-            "class": "category-text",
-            selector: ".category-text"
-        };
-
+        private static Columns: ClassAndSelector = createClassAndSelector("columns");
+        private static Column: ClassAndSelector = createClassAndSelector("column");
+        private static Axes: ClassAndSelector = createClassAndSelector("axes");
+        private static Axis: ClassAndSelector = createClassAndSelector("axis");
+        private static Labels: ClassAndSelector = createClassAndSelector("labels");
+        private static Label: ClassAndSelector = createClassAndSelector("label");
+        private static LabelTitle: ClassAndSelector = createClassAndSelector("label-title");
+        private static LabelText: ClassAndSelector = createClassAndSelector("label-text");
+        private static Categories: ClassAndSelector = createClassAndSelector("categories");
+        private static Category: ClassAndSelector = createClassAndSelector("category");
+        private static CategoryTitle: ClassAndSelector = createClassAndSelector("category-title");
+        private static CategoryText: ClassAndSelector = createClassAndSelector("category-text");
         private static MaxSeries: number = 2;
         private static MaxPrecision: number = 17; // max number of decimals in float
         private static LabelPadding: number = 2.5;
@@ -284,16 +235,6 @@ module powerbi.extensibility.visual {
         };
 
         public static converter(dataView: DataView, hostService: IVisualHost, textOptions: TornadoChartTextOptions, colors: IColorPalette): TornadoChartDataView {
-            if (!dataView ||
-                !dataView.categorical ||
-                !dataView.categorical.categories ||
-                !dataView.categorical.categories[0] ||
-                !dataView.categorical.categories[0].source ||
-                !dataView.categorical.values ||
-                !dataView.categorical.values[0]) {
-                return null;
-            }
-
             let categorical: DataViewCategorical = dataView.categorical;
             let categories: DataViewCategoryColumn[] = categorical.categories || [];
             let values: DataViewValueColumns = categorical.values;
@@ -612,36 +553,45 @@ module powerbi.extensibility.visual {
             this.clearCatcher = appendClearCatcher(main);
             this.columns = main
                 .append("g")
-                .classed(TornadoChart.Columns.class, true);
+                .classed(TornadoChart.Columns.className, true);
 
             this.axes = main
                 .append("g")
-                .classed(TornadoChart.Axes.class, true);
+                .classed(TornadoChart.Axes.className, true);
 
             this.labels = main
                 .append("g")
-                .classed(TornadoChart.Labels.class, true);
+                .classed(TornadoChart.Labels.className, true);
 
             this.categories = main
                 .append("g")
-                .classed(TornadoChart.Categories.class, true);
+                .classed(TornadoChart.Categories.className, true);
 
             this.behavior = new TornadoWebBehavior();
         }
 
-        public update(visualUpdateOptions: VisualUpdateOptions): void {
-            if (!visualUpdateOptions ||
-                !visualUpdateOptions.dataViews ||
-                !visualUpdateOptions.dataViews[0]) {
+        public update(options: VisualUpdateOptions): void {
+            if (!options ||
+                !options.dataViews ||
+                !options.dataViews[0] ||
+                !options.dataViews[0].categorical ||
+                !options.dataViews[0].categorical.categories ||
+                !options.dataViews[0].categorical.categories[0] ||
+                !options.dataViews[0].categorical.categories[0].source ||
+                !options.dataViews[0].categorical.values ||
+                !options.dataViews[0].categorical.values[0] ||
+                !options.dataViews[0].categorical.values[0].values ||
+                !options.dataViews[0].categorical.values[0].values.length) {
+                this.clearData();
                 return;
             }
 
             this.viewport = {
-                height: Math.max(0, visualUpdateOptions.viewport.height - this.margin.top - this.margin.bottom),
-                width: Math.max(0, visualUpdateOptions.viewport.width - this.margin.left - this.margin.right)
+                height: Math.max(0, options.viewport.height - this.margin.top - this.margin.bottom),
+                width: Math.max(0, options.viewport.width - this.margin.left - this.margin.right)
             };
 
-            this.dataView = TornadoChart.converter(this.validateDataView(visualUpdateOptions.dataViews[0]), this.hostService, this.textOptions, this.colors);
+            this.dataView = TornadoChart.converter(this.validateDataView(options.dataViews[0]), this.hostService, this.textOptions, this.colors);
             if (!this.dataView || this.scrolling.scrollViewport.height < TornadoChart.CategoryMinHeight) {
                 this.clearData();
                 return;
@@ -919,13 +869,13 @@ module powerbi.extensibility.visual {
             let hasSelection: boolean = this.interactivityService && this.interactivityService.hasSelection();
 
             let columnsSelection: UpdateSelection<any> = this.columns
-                .selectAll(TornadoChart.Column.selector)
+                .selectAll(TornadoChart.Column.selectorName)
                 .data(columnsData);
 
             columnsSelection
                 .enter()
                 .append("svg:rect")
-                .classed(TornadoChart.Column.class, true);
+                .classed(TornadoChart.Column.className, true);
 
             columnsSelection
                 .style("fill", (p: TornadoChartPoint) => p.color)
@@ -1029,8 +979,8 @@ module powerbi.extensibility.visual {
             let linesData: LineData[],
                 axesSelection: UpdateSelection<any>,
                 axesElements: Selection<any> = this.main
-                    .select(TornadoChart.Axes.selector)
-                    .selectAll(TornadoChart.Axis.selector);
+                    .select(TornadoChart.Axes.selectorName)
+                    .selectAll(TornadoChart.Axis.selectorName);
 
             if (this.dataView.series.length !== TornadoChart.MaxSeries) {
                 axesElements.remove();
@@ -1044,7 +994,7 @@ module powerbi.extensibility.visual {
             axesSelection
                 .enter()
                 .append("svg:line")
-                .classed(TornadoChart.Axis.class, true);
+                .classed(TornadoChart.Axis.className, true);
 
             axesSelection
                 .attr("x1", (data: LineData) => data.x1)
@@ -1077,8 +1027,8 @@ module powerbi.extensibility.visual {
         private renderLabels(dataPoints: TornadoChartPoint[], labelsSettings: VisualDataLabelsSettings): void {
             let labelEnterSelection: Selection<TornadoChartPoint>,
                 labelSelection: UpdateSelection<TornadoChartPoint> = this.main
-                    .select(TornadoChart.Labels.selector)
-                    .selectAll(TornadoChart.Label.selector)
+                    .select(TornadoChart.Labels.selectorName)
+                    .selectAll(TornadoChart.Label.selectorName)
                     .data(_.filter(dataPoints, (p: TornadoChartPoint) => p.label.dx >= 0));
 
             // Check if labels can be displayed
@@ -1097,19 +1047,19 @@ module powerbi.extensibility.visual {
 
             labelEnterSelection
                 .append("svg:title")
-                .classed(TornadoChart.LabelTitle.class, true);
+                .classed(TornadoChart.LabelTitle.className, true);
 
             labelEnterSelection
                 .append("svg:text")
                 .attr("dy", dataLabelUtils.DefaultDy)
-                .classed(TornadoChart.LabelText.class, true);
+                .classed(TornadoChart.LabelText.className, true);
 
             labelSelection
                 .attr("pointer-events", "none")
-                .classed(TornadoChart.Label.class, true);
+                .classed(TornadoChart.Label.className, true);
 
             labelSelection
-                .select(TornadoChart.LabelTitle.selector)
+                .select(TornadoChart.LabelTitle.selectorName)
                 .text((p: TornadoChartPoint) => p.label.source);
 
             labelSelection
@@ -1119,7 +1069,7 @@ module powerbi.extensibility.visual {
                 });
 
             labelSelection
-                .select(TornadoChart.LabelText.selector)
+                .select(TornadoChart.LabelText.selectorName)
                 .attr("fill", (p: TornadoChartPoint) => p.label.color)
                 .attr("font-size", fontSizeInPx)
                 .text((p: TornadoChartPoint) => p.label.value);
@@ -1135,8 +1085,8 @@ module powerbi.extensibility.visual {
                 categoriesEnterSelection: Selection<any>,
                 categoriesSelection: UpdateSelection<any>,
                 categoryElements: Selection<any> = this.main
-                    .select(TornadoChart.Categories.selector)
-                    .selectAll(TornadoChart.Category.selector);
+                    .select(TornadoChart.Categories.selectorName)
+                    .selectAll(TornadoChart.Category.selectorName);
 
             if (!settings.showCategories) {
                 categoryElements.remove();
@@ -1151,11 +1101,11 @@ module powerbi.extensibility.visual {
 
             categoriesEnterSelection
                 .append("svg:title")
-                .classed(TornadoChart.CategoryTitle.class, true);
+                .classed(TornadoChart.CategoryTitle.className, true);
 
             categoriesEnterSelection
                 .append("svg:text")
-                .classed(TornadoChart.CategoryText.class, true);
+                .classed(TornadoChart.CategoryText.className, true);
 
             categoriesSelection
                 .attr("transform", (text: string, index: number) => {
@@ -1166,14 +1116,14 @@ module powerbi.extensibility.visual {
 
                     return translate(0, shift);
                 })
-                .classed(TornadoChart.Category.class, true);
+                .classed(TornadoChart.Category.className, true);
 
             categoriesSelection
-                .select(TornadoChart.CategoryTitle.selector)
+                .select(TornadoChart.CategoryTitle.selectorName)
                 .text((text: TextData) => text.text);
 
             categoriesSelection
-                .select(TornadoChart.CategoryText.selector)
+                .select(TornadoChart.CategoryText.selectorName)
                 .attr("fill", color)
                 .text((data: TextData) => this.dataView.settings.showCategories
                     ? textMeasurementService.getTailoredTextOrDefault(
