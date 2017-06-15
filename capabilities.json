@@ -152,18 +152,17 @@
                 }
             }
         },
-        "legend": {
+         "legend": {
             "displayName": "Legend",
             "properties": {
                 "show": {
-                    "displayName": "Show",
+                    "displayName": "show",
                     "type": {
                         "bool": true
                     }
                 },
                 "position": {
                     "displayName": "Position",
-                    "description": "Legend position",
                     "type": {
                         "enumeration": [
                             {
@@ -196,24 +195,23 @@
                             },
                             {
                                 "value": "RightCenter",
-                                "displayName": "Right Center"
+                                "displayName": "Right center"
                             }
                         ]
                     }
                 },
                 "showTitle": {
                     "displayName": "Title",
-                    "description": "Legend show title",
                     "type": {
                         "bool": true
                     }
                 },
                 "titleText": {
                     "displayName": "Legend Name",
-                    "description": "Legend Name",
                     "type": {
                         "text": true
-                    }
+                    },
+                    "suppressFormatPainterCopy": true
                 },
                 "labelColor": {
                     "displayName": "Color",
@@ -226,7 +224,7 @@
                     }
                 },
                 "fontSize": {
-                    "displayName": "TextSize",
+                    "displayName": "Text Size",
                     "type": {
                         "formatting": {
                             "fontSize": true
