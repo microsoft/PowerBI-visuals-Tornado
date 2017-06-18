@@ -242,16 +242,38 @@
                         "bool": true
                     }
                 },
-                "fill": {
-                    "displayName": "Color",
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
+              "fill": {
+                "displayName": "Color",
+                "type": {
+                  "fill": {
+                    "solid": {
+                      "color": true
                     }
+                  }
                 }
+              },
+              "fontSize": {
+                "displayName": "Text Size",
+                "type": {
+                  "formatting": {
+                    "fontSize": true
+                  }
+                }
+              },
+              "position": {
+                "type": {
+                  "enumeration": [
+                    {
+                      "value": "Left",
+                      "displayName": "Left"
+                    },
+                    {
+                      "value": "Right",
+                      "displayName": "Right"
+                    }
+                  ]
+                }
+              }
             }
         }
     },

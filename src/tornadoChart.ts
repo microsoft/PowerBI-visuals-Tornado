@@ -124,6 +124,8 @@ module powerbi.extensibility.visual {
         labelSettings: VisualDataLabelsSettings;
         showLegend?: boolean;
         showCategories?: boolean;
+        categoriesFontSize?: number;
+        categoriesPosition?: any;
         legendFontSize?: number;
         legendColor?: string;
         getLabelValueFormatter?: (formatString: string) => IValueFormatter;
@@ -690,6 +692,14 @@ module powerbi.extensibility.visual {
                     TornadoChart.DefaultTornadoChartSettings.categoriesFillColor,
                     objects,
                     colors),
+                categoriesFontSize: DataViewObjectsModule.getValue<number>(
+                    objects,
+                    tornadoChartProperties.categories.fontSize,
+                    TornadoChart.DefaultTornadoChartSettings.legendFontSize),
+                categoriesPosition: DataViewObjectModule.getValue<string>(
+                    objects,
+                    "position",
+                    legendPosition.left),
                 getLabelValueFormatter: getLabelValueFormatter
             };
         }
@@ -1070,7 +1080,7 @@ module powerbi.extensibility.visual {
                     let dy: number = (this.heightColumn + this.columnPadding) * (index % categoriesLength);
                     return translate(p.label.dx, dy + labelYOffset);
                 });
-
+         
             labelSelection
                 .select(TornadoChart.LabelText.selectorName)
                 .attr("fill", (p: TornadoChartPoint) => p.label.color)
@@ -1085,6 +1095,8 @@ module powerbi.extensibility.visual {
         private renderCategories(): void {
             let settings: TornadoChartSettings = this.dataView.settings,
                 color: string = settings.categoriesFillColor,
+                fontSizeInPx: string = PixelConverter.fromPoint(settings.categoriesFontSize),
+                position: string = settings.categoriesPosition,
                 categoriesEnterSelection: Selection<any>,
                 categoriesSelection: UpdateSelection<any>,
                 categoryElements: Selection<any> = this.main
@@ -1095,7 +1107,7 @@ module powerbi.extensibility.visual {
                 categoryElements.remove();
                 return;
             }
-
+              
             categoriesSelection = categoryElements.data(this.dataView.categories);
 
             categoriesEnterSelection = categoriesSelection
@@ -1128,6 +1140,7 @@ module powerbi.extensibility.visual {
             categoriesSelection
                 .select(TornadoChart.CategoryText.selectorName)
                 .attr("fill", color)
+                .attr("font-size", fontSizeInPx)
                 .text((data: TextData) => this.dataView.settings.showCategories
                     ? textMeasurementService.getTailoredTextOrDefault(
                         TornadoChart.getTextData(data.text, this.textOptions).textProperties, this.allLabelsWidth)
@@ -1288,14 +1301,19 @@ module powerbi.extensibility.visual {
         }
 
         private enumerateCategories(settings: TornadoChartSettings): VisualObjectInstance[] {
-
+            let position: string = DataViewObjectModule.getValue<string>(
+                this.dataView.legendObjectProperties,
+                 "position",
+                legendPosition.top);
             let categories: VisualObjectInstance[] = [{
                 objectName: "categories",
                 displayName: "Categories",
                 selector: null,
                 properties: {
                     show: settings.showCategories,
-                    fill: settings.categoriesFillColor
+                    fill: settings.categoriesFillColor,
+                    fontSize: settings.categoriesFontSize,
+                    position: position
                 }
             }];
 

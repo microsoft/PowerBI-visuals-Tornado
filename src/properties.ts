@@ -34,7 +34,9 @@ module powerbi.extensibility.visual {
         },
         categories: {
             show: <DataViewObjectPropertyIdentifier>{ objectName: "categories", propertyName: "show" },
-            fill: <DataViewObjectPropertyIdentifier>{ objectName: "categories", propertyName: "fill" }
+            fill: <DataViewObjectPropertyIdentifier>{ objectName: "categories", propertyName: "fill" },
+            fontSize: <DataViewObjectPropertyIdentifier>{ objectName: "categories", propertyName: "fontSize" },
+            position: <DataViewObjectPropertyIdentifier>{ objectName: "categories", propertyName: "position" }
         },
         labels: {
             show: <DataViewObjectPropertyIdentifier>{ objectName: "labels", propertyName: "show" },
