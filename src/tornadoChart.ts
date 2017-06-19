@@ -143,6 +143,7 @@ module powerbi.extensibility.visual {
         labelHeight: number;
         maxLabelsWidth: number;
         legendObjectProperties: DataViewObject;
+        categoriesObjectProperties: DataViewObject;
     }
 
     export interface TornadoChartPoint extends SelectableDataPoint {
@@ -370,6 +371,7 @@ module powerbi.extensibility.visual {
                 hasHighlights: hasHighlights,
                 labelHeight: labelHeight,
                 legendObjectProperties: DataViewObjectsModule.getObject(dataView.metadata.objects, "legend", {}),
+                categoriesObjectProperties: DataViewObjectsModule.getObject(dataView.metadata.objects, "categories", {}),
             };
         }
 
@@ -393,7 +395,7 @@ module powerbi.extensibility.visual {
                 .createSelectionId();
 
             let sourceGroupName = null;
-            if (source.groupName != undefined && source.groupName != null) sourceGroupName = '' + source.groupName;
+            if (source.groupName !== undefined && source.groupName !== null) sourceGroupName = "" + source.groupName;
 
             let objects: DataViewObjects,
                 categoryAxisObject: DataViewObject | DataViewObjectWithId[],
@@ -613,7 +615,12 @@ module powerbi.extensibility.visual {
         }
 
         private updateElements(): void {
-            let elementsTranslate: string = translate(this.allLabelsWidth, 0);
+            let translateX: number = 0,
+                position: string = DataViewObjectModule.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left);
+            if (position === "Left") {
+                translateX = this.allLabelsWidth;
+            }
+            let elementsTranslate: string = translate(translateX, 0);
 
             this.root.attr({
                 "height": this.viewport.height + this.margin.top + this.margin.bottom,
@@ -1080,7 +1087,7 @@ module powerbi.extensibility.visual {
                     let dy: number = (this.heightColumn + this.columnPadding) * (index % categoriesLength);
                     return translate(p.label.dx, dy + labelYOffset);
                 });
-         
+
             labelSelection
                 .select(TornadoChart.LabelText.selectorName)
                 .attr("fill", (p: TornadoChartPoint) => p.label.color)
@@ -1096,7 +1103,7 @@ module powerbi.extensibility.visual {
             let settings: TornadoChartSettings = this.dataView.settings,
                 color: string = settings.categoriesFillColor,
                 fontSizeInPx: string = PixelConverter.fromPoint(settings.categoriesFontSize),
-                position: string = settings.categoriesPosition,
+                position: string = DataViewObjectModule.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left),
                 categoriesEnterSelection: Selection<any>,
                 categoriesSelection: UpdateSelection<any>,
                 categoryElements: Selection<any> = this.main
@@ -1107,13 +1114,11 @@ module powerbi.extensibility.visual {
                 categoryElements.remove();
                 return;
             }
-              
             categoriesSelection = categoryElements.data(this.dataView.categories);
 
             categoriesEnterSelection = categoriesSelection
                 .enter()
                 .append("g");
-
             categoriesEnterSelection
                 .append("svg:title")
                 .classed(TornadoChart.CategoryTitle.className, true);
@@ -1122,6 +1127,13 @@ module powerbi.extensibility.visual {
                 .append("svg:text")
                 .classed(TornadoChart.CategoryText.className, true);
 
+            let xShift: number = 0;
+
+            if (position === "Right") {
+                let width: number = this.viewport.width + this.margin.left + this.margin.right;
+                xShift = width - this.allLabelsWidth;
+            }
+
             categoriesSelection
                 .attr("transform", (text: string, index: number) => {
                     let shift: number = (this.heightColumn + this.columnPadding) * index + this.heightColumn / 2,
@@ -1129,7 +1141,7 @@ module powerbi.extensibility.visual {
 
                     shift = shift + textData.height / 2 - this.InnerTextHeightDelta;
 
-                    return translate(0, shift);
+                    return translate(xShift, shift);
                 })
                 .classed(TornadoChart.Category.className, true);
 
@@ -1190,8 +1202,8 @@ module powerbi.extensibility.visual {
                 if (legendData.dataPoints.length > 0 && settings.showLegend) {
                     this.updateViewport();
                 }
-            } else
-            {
+            }
+            else {
                 this.legend.reset();
                 this.legend.drawLegend({ dataPoints: [] }, this.viewport);
             }
@@ -1302,9 +1314,10 @@ module powerbi.extensibility.visual {
 
         private enumerateCategories(settings: TornadoChartSettings): VisualObjectInstance[] {
             let position: string = DataViewObjectModule.getValue<string>(
-                this.dataView.legendObjectProperties,
-                 "position",
-                legendPosition.top);
+                this.dataView.categoriesObjectProperties,
+                legendProps.position,
+                legendPosition.left);
+
             let categories: VisualObjectInstance[] = [{
                 objectName: "categories",
                 displayName: "Categories",
