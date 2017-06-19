@@ -395,8 +395,10 @@ module powerbi.extensibility.visual {
                 .withMeasure(queryName)
                 .createSelectionId();
 
-            let sourceGroupName = null;
-            if (source.groupName !== undefined && source.groupName !== null) sourceGroupName = "" + source.groupName;
+            let sourceGroupName: string = null;
+            if (source.groupName !== undefined && source.groupName !== null) {
+                sourceGroupName = "" + source.groupName;
+            }
 
             let objects: DataViewObjects,
                 categoryAxisObject: DataViewObject | DataViewObjectWithId[],
