@@ -60,6 +60,7 @@ module.exports = (config) => {
         files: [
             srcCssRecursivePath,
             srcRecursivePath,
+            'node_modules/jquery/dist/jquery.min.js',
             'node_modules/powerbi-visuals-utils-testutils/lib/index.js',
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
             recursivePathToTests,
@@ -71,7 +72,7 @@ module.exports = (config) => {
         ],
         preprocessors: {
             [recursivePathToTests]: ['typescript'],
-            [srcRecursivePath]: ['sourcemap', 'coverage']
+            [srcRecursivePath]: ['sourcemap']
         },
         typescriptPreprocessor: {
             options: {

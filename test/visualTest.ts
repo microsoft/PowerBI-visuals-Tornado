@@ -236,7 +236,6 @@ module powerbi.extensibility.visual.test {
                 columnGroup: DataViewValueColumnGroup): TornadoChartSeries {
 
                 let series: TornadoChartSeries;
-                debugger;
                 expect(() => {
                     series = visualBuilder.parseSeries(
                         dataView,
