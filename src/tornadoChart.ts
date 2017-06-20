@@ -383,8 +383,11 @@ module powerbi.extensibility.visual {
             isGrouped: boolean,
             columnGroup: DataViewValueColumnGroup,
             colors: IColorPalette): TornadoChartSeries {
-            if (dataView === undefined || dataView === null)
+
+            if (!dataView) {
                 return;
+            }
+
             let dataViewValueColumn: DataViewValueColumn = dataViewValueColumns ? dataViewValueColumns[index] : null,
                 source: DataViewMetadataColumn = dataViewValueColumn ? dataViewValueColumn.source : null,
                 identity: DataViewScopeIdentity = columnGroup ? columnGroup.identity : null,
