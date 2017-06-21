@@ -1186,7 +1186,6 @@ module powerbi.extensibility.visual {
 
                 if (this.dataView.legendObjectProperties) {
                     let position: string;
-                    this.dataView.legendObjectProperties["titleText"] = "";
                     LegendDataModule.update(legendData, this.dataView.legendObjectProperties);
 
                     position = <string>this.dataView.legendObjectProperties[legendProps.position];
