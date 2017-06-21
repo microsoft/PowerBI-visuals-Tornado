@@ -29,6 +29,7 @@
 module powerbi.extensibility.visual.test {
     // powerbi.visuals
     import ISelectionId = powerbi.visuals.ISelectionId;
+    import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 
     // powerbi.extensibility.visual.test
     import TornadoData = powerbi.extensibility.visual.test.TornadoData;
@@ -209,6 +210,12 @@ module powerbi.extensibility.visual.test {
                 callParseSeriesAndExpectExceptions(null, null, -5, null, null);
             });
 
+            it("enumerateObjectInstances arguments are null", () => {
+                let options: EnumerateVisualObjectInstancesOptions = { objectName: "object" };
+
+                expect(visualBuilder.enumerateObjectInstances(options)).toBeDefined();
+            });
+
             it("every argument is correct", () => {
                 const index: number = 0,
                     series: TornadoChartSeries = callParseSeriesAndExpectExceptions(
@@ -236,7 +243,6 @@ module powerbi.extensibility.visual.test {
                 columnGroup: DataViewValueColumnGroup): TornadoChartSeries {
 
                 let series: TornadoChartSeries;
-
                 expect(() => {
                     series = visualBuilder.parseSeries(
                         dataView,

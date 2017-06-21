@@ -124,6 +124,8 @@ module powerbi.extensibility.visual {
         labelSettings: VisualDataLabelsSettings;
         showLegend?: boolean;
         showCategories?: boolean;
+        categoriesFontSize?: number;
+        categoriesPosition?: any;
         legendFontSize?: number;
         legendColor?: string;
         getLabelValueFormatter?: (formatString: string) => IValueFormatter;
@@ -141,6 +143,7 @@ module powerbi.extensibility.visual {
         labelHeight: number;
         maxLabelsWidth: number;
         legendObjectProperties: DataViewObject;
+        categoriesObjectProperties: DataViewObject;
     }
 
     export interface TornadoChartPoint extends SelectableDataPoint {
@@ -203,6 +206,7 @@ module powerbi.extensibility.visual {
         private static Category: ClassAndSelector = createClassAndSelector("category");
         private static CategoryTitle: ClassAndSelector = createClassAndSelector("category-title");
         private static CategoryText: ClassAndSelector = createClassAndSelector("category-text");
+        private static Legend: ClassAndSelector = createClassAndSelector("legendGroup");
         private static MaxSeries: number = 2;
         private static MaxPrecision: number = 17; // max number of decimals in float
         private static LabelPadding: number = 2.5;
@@ -271,7 +275,6 @@ module powerbi.extensibility.visual {
                 minValue = d3.min([minValue, d3.min(<number[]>values[1].values)]);
                 maxValue = d3.max([maxValue, d3.max(<number[]>values[1].values)]);
             }
-
             for (let seriesIndex = 0; seriesIndex < values.length; seriesIndex++) {
                 let columnGroup: DataViewValueColumnGroup = groupedValues && groupedValues.length > seriesIndex
                     && groupedValues[seriesIndex].values ? groupedValues[seriesIndex] : null;
@@ -368,6 +371,7 @@ module powerbi.extensibility.visual {
                 hasHighlights: hasHighlights,
                 labelHeight: labelHeight,
                 legendObjectProperties: DataViewObjectsModule.getObject(dataView.metadata.objects, "legend", {}),
+                categoriesObjectProperties: DataViewObjectsModule.getObject(dataView.metadata.objects, "categories", {}),
             };
         }
 
@@ -380,6 +384,10 @@ module powerbi.extensibility.visual {
             columnGroup: DataViewValueColumnGroup,
             colors: IColorPalette): TornadoChartSeries {
 
+            if (!dataView) {
+                return;
+            }
+
             let dataViewValueColumn: DataViewValueColumn = dataViewValueColumns ? dataViewValueColumns[index] : null,
                 source: DataViewMetadataColumn = dataViewValueColumn ? dataViewValueColumn.source : null,
                 identity: DataViewScopeIdentity = columnGroup ? columnGroup.identity : null,
@@ -390,10 +398,15 @@ module powerbi.extensibility.visual {
                 .withMeasure(queryName)
                 .createSelectionId();
 
+            let sourceGroupName: string = null;
+            if (source.groupName !== undefined && source.groupName !== null) {
+                sourceGroupName = "" + source.groupName;
+            }
+
             let objects: DataViewObjects,
                 categoryAxisObject: DataViewObject | DataViewObjectWithId[],
-                displayName: PrimitiveValue = source ? source.groupName
-                    ? source.groupName : source.displayName
+                displayName: PrimitiveValue = source ? sourceGroupName
+                    ? sourceGroupName : source.displayName
                     : null;
 
             if (isGrouped && columnGroup && columnGroup.objects) {
@@ -529,7 +542,7 @@ module powerbi.extensibility.visual {
 
             this.interactivityService = createInteractivityService(this.hostService);
 
-            this.legend = createLegend($(options.element), false, this.interactivityService, true);
+            this.legend = createLegend(options.element, false, this.interactivityService, true);
 
             let root: Selection<any> = this.root = d3.select(options.element)
                 .append("svg");
@@ -608,7 +621,12 @@ module powerbi.extensibility.visual {
         }
 
         private updateElements(): void {
-            let elementsTranslate: string = translate(this.allLabelsWidth, 0);
+            let translateX: number = 0,
+                position: string = DataViewObjectModule.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left);
+            if (position === "Left") {
+                translateX = this.allLabelsWidth;
+            }
+            let elementsTranslate: string = translate(translateX, 0);
 
             this.root.attr({
                 "height": this.viewport.height + this.margin.top + this.margin.bottom,
@@ -687,6 +705,14 @@ module powerbi.extensibility.visual {
                     TornadoChart.DefaultTornadoChartSettings.categoriesFillColor,
                     objects,
                     colors),
+                categoriesFontSize: DataViewObjectsModule.getValue<number>(
+                    objects,
+                    tornadoChartProperties.categories.fontSize,
+                    TornadoChart.DefaultTornadoChartSettings.legendFontSize),
+                categoriesPosition: DataViewObjectModule.getValue<string>(
+                    objects,
+                    "position",
+                    legendPosition.left),
                 getLabelValueFormatter: getLabelValueFormatter
             };
         }
@@ -702,7 +728,6 @@ module powerbi.extensibility.visual {
 
         private static getLegendData(series: TornadoChartSeries[], hasDynamicSeries: boolean): LegendData {
             let legendDataPoints: LegendDataPoint[] = [];
-
             if (hasDynamicSeries)
                 legendDataPoints = series.map((series: TornadoChartSeries) => {
                     return <LegendDataPoint>{
@@ -730,6 +755,7 @@ module powerbi.extensibility.visual {
             this.axes.selectAll("*").remove();
             this.labels.selectAll("*").remove();
             this.categories.selectAll("*").remove();
+            this.legend.reset();
             this.legend.drawLegend({ dataPoints: [] }, this.viewport);
             this.scrolling.clearData();
         }
@@ -1082,6 +1108,8 @@ module powerbi.extensibility.visual {
         private renderCategories(): void {
             let settings: TornadoChartSettings = this.dataView.settings,
                 color: string = settings.categoriesFillColor,
+                fontSizeInPx: string = PixelConverter.fromPoint(settings.categoriesFontSize),
+                position: string = DataViewObjectModule.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left),
                 categoriesEnterSelection: Selection<any>,
                 categoriesSelection: UpdateSelection<any>,
                 categoryElements: Selection<any> = this.main
@@ -1092,13 +1120,11 @@ module powerbi.extensibility.visual {
                 categoryElements.remove();
                 return;
             }
-
             categoriesSelection = categoryElements.data(this.dataView.categories);
 
             categoriesEnterSelection = categoriesSelection
                 .enter()
                 .append("g");
-
             categoriesEnterSelection
                 .append("svg:title")
                 .classed(TornadoChart.CategoryTitle.className, true);
@@ -1107,6 +1133,13 @@ module powerbi.extensibility.visual {
                 .append("svg:text")
                 .classed(TornadoChart.CategoryText.className, true);
 
+            let xShift: number = 0;
+
+            if (position === "Right") {
+                let width: number = this.viewport.width + this.margin.left + this.margin.right;
+                xShift = width - this.allLabelsWidth;
+            }
+
             categoriesSelection
                 .attr("transform", (text: string, index: number) => {
                     let shift: number = (this.heightColumn + this.columnPadding) * index + this.heightColumn / 2,
@@ -1114,7 +1147,7 @@ module powerbi.extensibility.visual {
 
                     shift = shift + textData.height / 2 - this.InnerTextHeightDelta;
 
-                    return translate(0, shift);
+                    return translate(xShift, shift);
                 })
                 .classed(TornadoChart.Category.className, true);
 
@@ -1125,6 +1158,7 @@ module powerbi.extensibility.visual {
             categoriesSelection
                 .select(TornadoChart.CategoryText.selectorName)
                 .attr("fill", color)
+                .attr("font-size", fontSizeInPx)
                 .text((data: TextData) => this.dataView.settings.showCategories
                     ? textMeasurementService.getTailoredTextOrDefault(
                         TornadoChart.getTextData(data.text, this.textOptions).textProperties, this.allLabelsWidth)
@@ -1136,42 +1170,47 @@ module powerbi.extensibility.visual {
         }
 
         private renderLegend(): void {
-            let legend: LegendData = this.dataView.legend;
-            if (!legend) {
-                return;
-            }
             let settings: TornadoChartSettings = this.dataView.settings;
+            if (settings.showLegend) {
 
-            let legendData: LegendData = {
-                title: legend.title,
-                dataPoints: legend.dataPoints,
-                fontSize: settings.legendFontSize,
-                labelColor: settings.legendColor,
-            };
+                let legend: LegendData = this.dataView.legend;
+                if (!legend) {
+                    return;
+                }
+                let legendData: LegendData = {
+                    title: legend.title,
+                    dataPoints: legend.dataPoints,
+                    fontSize: settings.legendFontSize,
+                    labelColor: settings.legendColor,
+                };
 
-            if (this.dataView.legendObjectProperties) {
-                let position: string;
+                if (this.dataView.legendObjectProperties) {
+                    let position: string;
+                    LegendDataModule.update(legendData, this.dataView.legendObjectProperties);
 
-                LegendDataModule.update(legendData, this.dataView.legendObjectProperties);
+                    position = <string>this.dataView.legendObjectProperties[legendProps.position];
 
-                position = <string>this.dataView.legendObjectProperties[legendProps.position];
+                    if (position) {
+                        this.legend.changeOrientation(LegendPosition[position]);
+                    }
+                }
 
-                if (position) {
-                    this.legend.changeOrientation(LegendPosition[position]);
+                // Draw the legend on a viewport with the original height and width
+                let viewport: IViewport = {
+                    height: this.viewport.height + this.margin.top + this.margin.bottom,
+                    width: this.viewport.width + this.margin.left + this.margin.right,
+                };
+
+                this.legend.drawLegend(legendData, _.clone(this.viewport));
+                LegendModule.positionChartArea(this.root, this.legend);
+
+                if (legendData.dataPoints.length > 0 && settings.showLegend) {
+                    this.updateViewport();
                 }
             }
-
-            // Draw the legend on a viewport with the original height and width
-            let viewport: IViewport = {
-                height: this.viewport.height + this.margin.top + this.margin.bottom,
-                width: this.viewport.width + this.margin.left + this.margin.right,
-            };
-
-            this.legend.drawLegend(legendData, viewport);
-            LegendModule.positionChartArea(this.root, this.legend);
-
-            if (legendData.dataPoints.length > 0 && settings.showLegend) {
-                this.updateViewport();
+            else {
+                this.legend.reset();
+                this.legend.drawLegend({ dataPoints: [] }, this.viewport);
             }
         }
 
@@ -1279,6 +1318,10 @@ module powerbi.extensibility.visual {
         }
 
         private enumerateCategories(settings: TornadoChartSettings): VisualObjectInstance[] {
+            let position: string = DataViewObjectModule.getValue<string>(
+                this.dataView.categoriesObjectProperties,
+                legendProps.position,
+                legendPosition.left);
 
             let categories: VisualObjectInstance[] = [{
                 objectName: "categories",
@@ -1286,7 +1329,9 @@ module powerbi.extensibility.visual {
                 selector: null,
                 properties: {
                     show: settings.showCategories,
-                    fill: settings.categoriesFillColor
+                    fill: settings.categoriesFillColor,
+                    fontSize: settings.categoriesFontSize,
+                    position: position
                 }
             }];
 
