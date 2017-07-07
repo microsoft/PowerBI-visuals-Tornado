@@ -2,16 +2,19 @@
     "dataRoles": [
         {
             "displayName": "Group",
+            "displayNameKey": "Visual_Group",
             "name": "Category",
             "kind": "Grouping"
         },
         {
             "displayName": "Legend",
+            "displayNameKey": "Visual_Legend",
             "name": "Series",
             "kind": "Grouping"
         },
         {
             "displayName": "Values",
+            "displayNameKey": "Visual_Values",
             "name": "Values",
             "kind": "Measure"
         }

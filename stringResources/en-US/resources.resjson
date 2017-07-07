@@ -26,5 +26,6 @@
     "Visual_Group": "Group",
     "Visual_Color": "Color",
     "Visual_Group_Left": "Left",
-    "Visual_Group_Right": "Right"
+    "Visual_Group_Right": "Right",
+    "Visual_Values": "Values"
 }
