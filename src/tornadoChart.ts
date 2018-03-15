@@ -243,7 +243,7 @@ module powerbi.extensibility.visual {
             let categories: DataViewCategoryColumn[] = categorical.categories || [];
             let values: DataViewValueColumns = categorical.values;
 
-            let category: DataViewCategoricalColumn = categories[0];
+            let category: DataViewCategoryColumn = categories[0];
             let maxValue: number = d3.max(<number[]>values[0].values);
 
             let settings: TornadoChartSettings = TornadoChart.parseSettings(dataView.metadata.objects, maxValue, colors);
