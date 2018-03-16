@@ -49,7 +49,8 @@ module powerbi.extensibility.visual.test {
     describe("TornadoChart", () => {
         let visualBuilder: TornadoChartBuilder,
             dataViewBuilder: TornadoData,
-            dataView: DataView;
+            dataView: DataView,
+            MaxSeries: number = 2;
 
         beforeEach(() => {
             visualBuilder = new TornadoChartBuilder(1000, 500);
@@ -324,12 +325,16 @@ module powerbi.extensibility.visual.test {
                         .toArray()
                         .map($);
 
-                    colors.forEach((color: string) => {
+                    colors.forEach((color: string, index: number) => {
                         const doColumnContainColor: boolean = columns.some((element: JQuery) => {
                             return areColorsEqual(element.css("fill"), color);
                         });
 
-                        expect(doColumnContainColor).toBeTruthy();
+                        if (index < MaxSeries) {
+                            expect(doColumnContainColor).toBeTruthy();
+                        } else {
+                            expect(doColumnContainColor).toBe(false);
+                        }
                     });
                 });
             });
@@ -359,6 +364,7 @@ module powerbi.extensibility.visual.test {
 
                     dataViewBuilder.valuesValue1 = dataViewBuilder.valuesValue1.map(x => 0);
                     dataViewBuilder.valuesValue2 = dataViewBuilder.valuesValue2.map(x => 1);
+                    dataViewBuilder.valuesValue3 = dataViewBuilder.valuesValue3.map(x => 2);
                     dataView = dataViewBuilder.getDataView();
 
                     dataView.metadata.objects = {
@@ -386,6 +392,7 @@ module powerbi.extensibility.visual.test {
 
                     dataViewBuilder.valuesValue1 = dataViewBuilder.valuesValue1.map(() => 0);
                     dataViewBuilder.valuesValue2 = dataViewBuilder.valuesValue2.map(() => 1);
+                    dataViewBuilder.valuesValue3 = dataViewBuilder.valuesValue3.map(() => 2);
                     dataView = dataViewBuilder.getDataView();
 
                     dataView.metadata.objects = {

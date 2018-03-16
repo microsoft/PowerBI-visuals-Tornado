@@ -242,7 +242,6 @@ module powerbi.extensibility.visual {
             let categorical: DataViewCategorical = dataView.categorical;
             let categories: DataViewCategoryColumn[] = categorical.categories || [];
             let values: DataViewValueColumns = categorical.values;
-
             let category: DataViewCategoryColumn = categories[0];
             let maxValue: number = d3.max(<number[]>values[0].values);
 
@@ -271,11 +270,12 @@ module powerbi.extensibility.visual {
             let groupedValues: DataViewValueColumnGroup[] = values.grouped ? values.grouped() : null;
 
             let minValue: number = Math.min(d3.min(<number[]>values[0].values), 0);
-            if (values.length === TornadoChart.MaxSeries) {
+            if (values.length >= TornadoChart.MaxSeries) {
                 minValue = d3.min([minValue, d3.min(<number[]>values[1].values)]);
                 maxValue = d3.max([maxValue, d3.max(<number[]>values[1].values)]);
             }
-            for (let seriesIndex = 0; seriesIndex < values.length; seriesIndex++) {
+
+            for (let seriesIndex = 0; seriesIndex < Math.min(values.length, TornadoChart.MaxSeries); seriesIndex++) {
                 let columnGroup: DataViewValueColumnGroup = groupedValues && groupedValues.length > seriesIndex
                     && groupedValues[seriesIndex].values ? groupedValues[seriesIndex] : null;
 
