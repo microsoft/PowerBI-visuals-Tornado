@@ -4,7 +4,7 @@
     "displayName": "Tornado",
     "guid": "TornadoChart1452517688218",
     "visualClassName": "TornadoChart",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "A bar chart with category values listed vertically. Use for comparing the relative importance of a variable between two distinct groups.",
     "supportUrl": "http://community.powerbi.com",
     "gitHubUrl": "https://github.com/Microsoft/PowerBI-visuals-Tornado"
