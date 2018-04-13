@@ -77,6 +77,7 @@
             "displayName": "Data colors",
             "displayNameKey": "Visual_DataColors",
             "description": "Display data color options",
+            "descriptionKey": "Visual_Description_DataColors",
             "properties": {
                 "fill": {
                     "displayName": "Fill",
@@ -294,6 +295,8 @@
                 }
               },
               "position": {
+                "displayName": "Position",
+                "displayNameKey": "Visual_Position",
                 "type": {
                   "enumeration": [
                     {

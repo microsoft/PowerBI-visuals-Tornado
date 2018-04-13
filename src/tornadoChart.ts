@@ -238,7 +238,13 @@ module powerbi.extensibility.visual {
             categoriesFillColor: "#777"
         };
 
-        public static converter(dataView: DataView, hostService: IVisualHost, textOptions: TornadoChartTextOptions, colors: IColorPalette): TornadoChartDataView {
+        public static converter(
+            dataView: DataView,
+            hostService: IVisualHost,
+            textOptions: TornadoChartTextOptions,
+            colors: IColorPalette,
+            localizationManager: ILocalizationManager
+        ): TornadoChartDataView {
             let categorical: DataViewCategorical = dataView.categorical;
             let categories: DataViewCategoryColumn[] = categorical.categories || [];
             let values: DataViewValueColumns = categorical.values;
@@ -301,6 +307,7 @@ module powerbi.extensibility.visual {
                         tooltipInfo: VisualTooltipDataItem[] = tooltipBuilder.createTooltipInfo(
                             categorical,
                             formattedCategoryValue,
+                            localizationManager,
                             value,
                             seriesIndex,
                             i,
@@ -324,6 +331,7 @@ module powerbi.extensibility.visual {
                         tooltipInfo = tooltipBuilder.createTooltipInfo(
                             categorical,
                             formattedCategoryValue,
+                            localizationManager,
                             value,
                             seriesIndex,
                             i,
@@ -506,6 +514,7 @@ module powerbi.extensibility.visual {
         private behavior: IInteractiveBehavior;
         private interactivityService: IInteractivityService;
         private hostService: IVisualHost;
+        private localizationManager: ILocalizationManager;
         private scrolling: TornadoChartScrolling;
 
         private viewport: IViewport;
@@ -534,6 +543,7 @@ module powerbi.extensibility.visual {
         constructor(options: VisualConstructorOptions) {
             let fontSize: string;
             this.hostService = options.host;
+            this.localizationManager = this.hostService.createLocalizationManager();
             this.colors = options.host.colorPalette;
 
             this.tooltipServiceWrapper = createTooltipServiceWrapper(
@@ -604,7 +614,7 @@ module powerbi.extensibility.visual {
                 width: Math.max(0, options.viewport.width - this.margin.left - this.margin.right)
             };
 
-            this.dataView = TornadoChart.converter(this.validateDataView(options.dataViews[0]), this.hostService, this.textOptions, this.colors);
+            this.dataView = TornadoChart.converter(this.validateDataView(options.dataViews[0]), this.hostService, this.textOptions, this.colors, this.localizationManager);
             if (!this.dataView || this.scrolling.scrollViewport.height < TornadoChart.CategoryMinHeight) {
                 this.clearData();
                 return;
@@ -1302,7 +1312,7 @@ module powerbi.extensibility.visual {
             let labelSettings: VisualDataLabelsSettings = settings.labelSettings,
                 labels: VisualObjectInstance[] = [{
                     objectName: "labels",
-                    displayName: "Labels",
+                    displayName: this.localizationManager.getDisplayName("Visual_Labels"),
                     selector: null,
                     properties: {
                         show: labelSettings.show,
@@ -1325,7 +1335,7 @@ module powerbi.extensibility.visual {
 
             let categories: VisualObjectInstance[] = [{
                 objectName: "categories",
-                displayName: "Categories",
+                displayName: this.localizationManager.getDisplayName("Visual_Categories"),
                 selector: null,
                 properties: {
                     show: settings.showCategories,
@@ -1362,7 +1372,7 @@ module powerbi.extensibility.visual {
 
             legend = [{
                 objectName: "legend",
-                displayName: "Legend",
+                displayName: this.localizationManager.getDisplayName("Visual_Legend"),
                 selector: null,
                 properties: {
                     show: settings.showLegend,
