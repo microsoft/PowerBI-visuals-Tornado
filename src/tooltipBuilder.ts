@@ -30,7 +30,6 @@ module powerbi.extensibility.visual.tooltipBuilder {
 
     const DefaultDisplayName: string = "";
     const DisplayNameDelimiter: string = "/";
-    const HighlightedValueDisplayName: string = "Highlighted";
     const DefaultSeriesIndex: number = 0;
 
     export interface TooltipCategoryDataItem {
@@ -47,6 +46,7 @@ module powerbi.extensibility.visual.tooltipBuilder {
     export function createTooltipInfo(
         dataViewCat: DataViewCategorical,
         categoryValue: any,
+        localizationManager: ILocalizationManager,
         value?: any,
         seriesIndex?: number,
         categoryIndex?: number,
@@ -104,13 +104,16 @@ module powerbi.extensibility.visual.tooltipBuilder {
         return createTooltipData(
             categorySource,
             valuesSource,
-            seriesSource);
+            seriesSource,
+            localizationManager);
     }
 
     export function createTooltipData(
         categoryValue: TooltipCategoryDataItem,
         valuesSource: DataViewMetadataColumn,
-        seriesValues: TooltipSeriesDataItem[]): VisualTooltipDataItem[] {
+        seriesValues: TooltipSeriesDataItem[],
+        localizationManager: ILocalizationManager
+    ): VisualTooltipDataItem[] {
 
         let items: VisualTooltipDataItem[] = [];
 
@@ -190,7 +193,7 @@ module powerbi.extensibility.visual.tooltipBuilder {
                         highlightedValue);
 
                     items.push({
-                        displayName: HighlightedValueDisplayName,
+                        displayName: localizationManager.getDisplayName("Visual_HighlightedValueDisplayName"),
                         value: formattedHighlightedValue
                     });
                 }

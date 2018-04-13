@@ -27,5 +27,10 @@
     "Visual_Color": "Color",
     "Visual_Group_Left": "Left",
     "Visual_Group_Right": "Right",
-    "Visual_Values": "Values"
+    "Visual_Values": "Values",
+    "Visual_Description_DataColors": "Display data color options",
+    "Visual_HighlightedValueDisplayName": "Highlighted",
+    "Visual_Label": "Label",
+    "Visual_Labels": "Labels",
+    "Visual_Position": "Position"
 }
