@@ -27,5 +27,10 @@
 	"Visual_Color": "Culoare",
 	"Visual_Group_Left": "Partea stângă",
 	"Visual_Group_Right": "Partea dreaptă",
-	"Visual_Values": "Valori"
+	"Visual_Values": "Valori",
+	"Visual_Description_DataColors": "Afișați opțiunile pentru culoarea datelor",
+	"Visual_HighlightedValueDisplayName": "Evidenţiat",
+	"Visual_Label": "Etichetă",
+	"Visual_Labels": "Etichete",
+	"Visual_Position": "Poziţie"
 }

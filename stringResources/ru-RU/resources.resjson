@@ -27,5 +27,10 @@
 	"Visual_Color": "Цвет",
 	"Visual_Group_Left": "Слева",
 	"Visual_Group_Right": "Справа",
-	"Visual_Values": "Значения"
+	"Visual_Values": "Значения",
+	"Visual_Description_DataColors": "Показывать цветовые параметры данных",
+	"Visual_HighlightedValueDisplayName": "Выделено",
+	"Visual_Label": "Метка",
+	"Visual_Labels": "Метки",
+	"Visual_Position": "Позиция"
 }

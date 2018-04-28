@@ -27,5 +27,10 @@
 	"Visual_Color": "Kleur",
 	"Visual_Group_Left": "Links",
 	"Visual_Group_Right": "Rechts",
-	"Visual_Values": "Waarden"
+	"Visual_Values": "Waarden",
+	"Visual_Description_DataColors": "Opties voor gegevenskleuren weergeven",
+	"Visual_HighlightedValueDisplayName": "Gemarkeerd",
+	"Visual_Label": "Label",
+	"Visual_Labels": "Labels",
+	"Visual_Position": "Positie"
 }

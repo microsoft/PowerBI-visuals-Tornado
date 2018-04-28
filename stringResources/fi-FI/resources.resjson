@@ -27,5 +27,10 @@
 	"Visual_Color": "Väri",
 	"Visual_Group_Left": "Vasemmalle",
 	"Visual_Group_Right": "Oikealle",
-	"Visual_Values": "Arvot"
+	"Visual_Values": "Arvot",
+	"Visual_Description_DataColors": "Näytä tietojen värin vaihtoehdot",
+	"Visual_HighlightedValueDisplayName": "Korostettu",
+	"Visual_Label": "Otsikko",
+	"Visual_Labels": "Nimet",
+	"Visual_Position": "Sijainti"
 }

@@ -27,5 +27,10 @@
 	"Visual_Color": "Color",
 	"Visual_Group_Left": "Esquerra",
 	"Visual_Group_Right": "Dreta",
-	"Visual_Values": "Valors"
+	"Visual_Values": "Valors",
+	"Visual_Description_DataColors": "Mostra les opcions de color per a les dades",
+	"Visual_HighlightedValueDisplayName": "Ressaltat",
+	"Visual_Label": "Etiqueta",
+	"Visual_Labels": "Etiquetes",
+	"Visual_Position": "Posició"
 }

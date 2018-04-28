@@ -27,5 +27,10 @@
 	"Visual_Color": "สี",
 	"Visual_Group_Left": "ซ้าย",
 	"Visual_Group_Right": "ขวา",
-	"Visual_Values": "มูลค่า"
+	"Visual_Values": "มูลค่า",
+	"Visual_Description_DataColors": "แสดงตัวเลือกสีสำหรับข้อมูล",
+	"Visual_HighlightedValueDisplayName": "เน้น",
+	"Visual_Label": "ป้ายกำกับ",
+	"Visual_Labels": "ป้ายชื่อ",
+	"Visual_Position": "ตำแหน่ง"
 }

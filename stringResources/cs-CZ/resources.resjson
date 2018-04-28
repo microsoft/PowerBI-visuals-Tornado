@@ -27,5 +27,10 @@
 	"Visual_Color": "Barva",
 	"Visual_Group_Left": "Vlevo",
 	"Visual_Group_Right": "Vpravo",
-	"Visual_Values": "Hodnoty"
+	"Visual_Values": "Hodnoty",
+	"Visual_Description_DataColors": "Zobrazí možnosti pro barvy dat.",
+	"Visual_HighlightedValueDisplayName": "Zvýrazněný",
+	"Visual_Label": "Popisek",
+	"Visual_Labels": "Popisky",
+	"Visual_Position": "Pozice"
 }

@@ -27,5 +27,10 @@
 	"Visual_Color": "Spalva",
 	"Visual_Group_Left": "Kairėje",
 	"Visual_Group_Right": "Dešinėje",
-	"Visual_Values": "Reikšmės"
+	"Visual_Values": "Reikšmės",
+	"Visual_Description_DataColors": "Rodyti duomenų spalvų parinktis",
+	"Visual_HighlightedValueDisplayName": "Pažymėta",
+	"Visual_Label": "Žyma",
+	"Visual_Labels": "Žymos",
+	"Visual_Position": "Padėtis"
 }

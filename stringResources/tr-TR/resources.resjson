@@ -27,5 +27,10 @@
 	"Visual_Color": "Renk",
 	"Visual_Group_Left": "Sol",
 	"Visual_Group_Right": "Sağ",
-	"Visual_Values": "Değerler"
+	"Visual_Values": "Değerler",
+	"Visual_Description_DataColors": "Veri rengi seçeneklerini görüntüle",
+	"Visual_HighlightedValueDisplayName": "Vurgulanmış",
+	"Visual_Label": "Etiket",
+	"Visual_Labels": "Etiketler",
+	"Visual_Position": "Konum"
 }

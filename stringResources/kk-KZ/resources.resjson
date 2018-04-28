@@ -27,5 +27,10 @@
 	"Visual_Color": "Түс",
 	"Visual_Group_Left": "Сол",
 	"Visual_Group_Right": "Оң",
-	"Visual_Values": "Мәндер"
+	"Visual_Values": "Мәндер",
+	"Visual_Description_DataColors": "Деректер түсі параметрлерін көрсету",
+	"Visual_HighlightedValueDisplayName": "Бөлектелген",
+	"Visual_Label": "Белгі",
+	"Visual_Labels": "Белгілер",
+	"Visual_Position": "Орын"
 }

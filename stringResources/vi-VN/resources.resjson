@@ -27,5 +27,10 @@
 	"Visual_Color": "Màu",
 	"Visual_Group_Left": "Trái",
 	"Visual_Group_Right": "Phải",
-	"Visual_Values": "Giá trị"
+	"Visual_Values": "Giá trị",
+	"Visual_Description_DataColors": "HIển thị tùy chọn màu dữ liệu",
+	"Visual_HighlightedValueDisplayName": "Được tô sáng",
+	"Visual_Label": "Nhãn",
+	"Visual_Labels": "Nhãn",
+	"Visual_Position": "Vị trí"
 }

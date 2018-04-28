@@ -27,5 +27,10 @@
 	"Visual_Color": "Warna",
 	"Visual_Group_Left": "Kiri",
 	"Visual_Group_Right": "Kanan",
-	"Visual_Values": "Nilai"
+	"Visual_Values": "Nilai",
+	"Visual_Description_DataColors": "Paparkan opsyen warna data",
+	"Visual_HighlightedValueDisplayName": "Diserlahkan",
+	"Visual_Label": "Label",
+	"Visual_Labels": "Label",
+	"Visual_Position": "Kedudukan"
 }

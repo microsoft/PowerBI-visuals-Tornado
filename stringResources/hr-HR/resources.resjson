@@ -27,5 +27,10 @@
 	"Visual_Color": "Boja",
 	"Visual_Group_Left": "Lijevo",
 	"Visual_Group_Right": "Desno",
-	"Visual_Values": "Vrijednosti"
+	"Visual_Values": "Vrijednosti",
+	"Visual_Description_DataColors": "Prikaži mogućnosti boje podataka",
+	"Visual_HighlightedValueDisplayName": "Istaknuto",
+	"Visual_Label": "Oznaka",
+	"Visual_Labels": "Oznake",
+	"Visual_Position": "Položaj"
 }

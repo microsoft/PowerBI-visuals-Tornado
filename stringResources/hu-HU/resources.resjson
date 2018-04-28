@@ -27,5 +27,10 @@
 	"Visual_Color": "Szín",
 	"Visual_Group_Left": "Balra",
 	"Visual_Group_Right": "Jobbra",
-	"Visual_Values": "Értékek"
+	"Visual_Values": "Értékek",
+	"Visual_Description_DataColors": "Adatszínek beállításainak megjelentése",
+	"Visual_HighlightedValueDisplayName": "Kiemelt",
+	"Visual_Label": "Felirat",
+	"Visual_Labels": "Címkék",
+	"Visual_Position": "Pozíció"
 }

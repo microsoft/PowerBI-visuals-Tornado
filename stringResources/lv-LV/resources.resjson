@@ -27,5 +27,10 @@
 	"Visual_Color": "Krāsa",
 	"Visual_Group_Left": "Pa kreisi",
 	"Visual_Group_Right": "Pa labi",
-	"Visual_Values": "Vērtības"
+	"Visual_Values": "Vērtības",
+	"Visual_Description_DataColors": "Rādīt datu krāsu opcijas",
+	"Visual_HighlightedValueDisplayName": "Iezīmēts",
+	"Visual_Label": "Etiķete",
+	"Visual_Labels": "Etiķetes",
+	"Visual_Position": "Pozīcija"
 }

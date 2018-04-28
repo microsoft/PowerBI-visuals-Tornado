@@ -27,5 +27,10 @@
 	"Visual_Color": "색",
 	"Visual_Group_Left": "왼쪽",
 	"Visual_Group_Right": "오른쪽",
-	"Visual_Values": "값"
+	"Visual_Values": "값",
+	"Visual_Description_DataColors": "데이터 색 표시 옵션",
+	"Visual_HighlightedValueDisplayName": "강조됨",
+	"Visual_Label": "레이블",
+	"Visual_Labels": "레이블",
+	"Visual_Position": "위치"
 }

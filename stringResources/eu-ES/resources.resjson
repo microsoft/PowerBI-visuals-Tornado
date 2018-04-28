@@ -27,5 +27,10 @@
 	"Visual_Color": "Kolorea",
 	"Visual_Group_Left": "Ezkerrean",
 	"Visual_Group_Right": "Eskuinean",
-	"Visual_Values": "Balioak"
+	"Visual_Values": "Balioak",
+	"Visual_Description_DataColors": "Bistaratu datuen koloreen aukerak",
+	"Visual_HighlightedValueDisplayName": "Nabarmendua",
+	"Visual_Label": "Etiketa",
+	"Visual_Labels": "Etiketak",
+	"Visual_Position": "Posizioa"
 }

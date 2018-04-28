@@ -27,5 +27,10 @@
 	"Visual_Color": "Farbe",
 	"Visual_Group_Left": "Links",
 	"Visual_Group_Right": "Rechts",
-	"Visual_Values": "Werte"
+	"Visual_Values": "Werte",
+	"Visual_Description_DataColors": "Farboptionen für Daten anzeigen",
+	"Visual_HighlightedValueDisplayName": "Hervorgehoben",
+	"Visual_Label": "Bezeichnung",
+	"Visual_Labels": "Bezeichnungen",
+	"Visual_Position": "Position"
 }

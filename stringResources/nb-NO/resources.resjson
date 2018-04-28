@@ -27,5 +27,10 @@
 	"Visual_Color": "Farge",
 	"Visual_Group_Left": "Venstre",
 	"Visual_Group_Right": "Høyre",
-	"Visual_Values": "Verdier"
+	"Visual_Values": "Verdier",
+	"Visual_Description_DataColors": "Vis alternativer for datafarge",
+	"Visual_HighlightedValueDisplayName": "Uthevet",
+	"Visual_Label": "Etikett",
+	"Visual_Labels": "Etiketter",
+	"Visual_Position": "Plassering"
 }

@@ -27,5 +27,10 @@
 	"Visual_Color": "色",
 	"Visual_Group_Left": "左",
 	"Visual_Group_Right": "右",
-	"Visual_Values": "値"
+	"Visual_Values": "値",
+	"Visual_Description_DataColors": "データの色のオプションを表示する",
+	"Visual_HighlightedValueDisplayName": "強調表示",
+	"Visual_Label": "ラベル",
+	"Visual_Labels": "ラベル",
+	"Visual_Position": "位置"
 }

@@ -27,5 +27,10 @@
 	"Visual_Color": "Χρώμα",
 	"Visual_Group_Left": "Αριστερά",
 	"Visual_Group_Right": "Δεξιά",
-	"Visual_Values": "Τιμές"
+	"Visual_Values": "Τιμές",
+	"Visual_Description_DataColors": "Εμφάνιση επιλογών χρωμάτων δεδομένων",
+	"Visual_HighlightedValueDisplayName": "Με επισήμανση",
+	"Visual_Label": "Ετικέτα",
+	"Visual_Labels": "Ετικέτες",
+	"Visual_Position": "Θέση"
 }

@@ -27,5 +27,10 @@
 	"Visual_Color": "اللون",
 	"Visual_Group_Left": "يمين",
 	"Visual_Group_Right": "يسار",
-	"Visual_Values": "القيم"
+	"Visual_Values": "القيم",
+	"Visual_Description_DataColors": "عرض خيارات لون البيانات",
+	"Visual_HighlightedValueDisplayName": "تمييز",
+	"Visual_Label": "التسمية",
+	"Visual_Labels": "تسميات",
+	"Visual_Position": "‏‏الموضع"
 }

@@ -27,5 +27,10 @@
 	"Visual_Color": "Värv",
 	"Visual_Group_Left": "Vasakule",
 	"Visual_Group_Right": "Parem",
-	"Visual_Values": "Väärtused"
+	"Visual_Values": "Väärtused",
+	"Visual_Description_DataColors": "Kuva andmete värvide suvandid",
+	"Visual_HighlightedValueDisplayName": "Esiletõstetud",
+	"Visual_Label": "Silt",
+	"Visual_Labels": "Sildid",
+	"Visual_Position": "Paigutus"
 }

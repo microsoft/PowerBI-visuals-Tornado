@@ -27,5 +27,10 @@
 	"Visual_Color": "Боја",
 	"Visual_Group_Left": "Лево",
 	"Visual_Group_Right": "Десно",
-	"Visual_Values": "Вредности"
+	"Visual_Values": "Вредности",
+	"Visual_Description_DataColors": "Прикажи опције боје података",
+	"Visual_HighlightedValueDisplayName": "Истакнуто",
+	"Visual_Label": "Ознака",
+	"Visual_Labels": "Ознаке",
+	"Visual_Position": "Позиција"
 }

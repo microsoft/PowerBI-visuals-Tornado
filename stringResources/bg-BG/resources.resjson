@@ -27,5 +27,10 @@
 	"Visual_Color": "Цвят",
 	"Visual_Group_Left": "Ляво",
 	"Visual_Group_Right": "Дясно",
-	"Visual_Values": "Стойности"
+	"Visual_Values": "Стойности",
+	"Visual_Description_DataColors": "Показване на опциите за цветове на данните",
+	"Visual_HighlightedValueDisplayName": "Осветляване",
+	"Visual_Label": "Етикет",
+	"Visual_Labels": "Етикети",
+	"Visual_Position": "Позиция"
 }

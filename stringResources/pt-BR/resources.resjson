@@ -27,5 +27,10 @@
 	"Visual_Color": "Cor",
 	"Visual_Group_Left": "Esquerda",
 	"Visual_Group_Right": "Direita",
-	"Visual_Values": "Valores"
+	"Visual_Values": "Valores",
+	"Visual_Description_DataColors": "Exibir opções de cor de dados",
+	"Visual_HighlightedValueDisplayName": "Realçado",
+	"Visual_Label": "Rótulo",
+	"Visual_Labels": "Rótulos",
+	"Visual_Position": "Posição"
 }

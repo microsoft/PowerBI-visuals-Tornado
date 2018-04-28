@@ -27,5 +27,10 @@
 	"Visual_Color": "Колір",
 	"Visual_Group_Left": "Ліворуч",
 	"Visual_Group_Right": "Праворуч",
-	"Visual_Values": "Значення"
+	"Visual_Values": "Значення",
+	"Visual_Description_DataColors": "Показати варіанти кольорів даних",
+	"Visual_HighlightedValueDisplayName": "Виділено",
+	"Visual_Label": "Мітка",
+	"Visual_Labels": "Підписи",
+	"Visual_Position": "Положення"
 }

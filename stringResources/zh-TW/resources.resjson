@@ -27,5 +27,10 @@
 	"Visual_Color": "色彩",
 	"Visual_Group_Left": "左",
 	"Visual_Group_Right": "右",
-	"Visual_Values": "值"
+	"Visual_Values": "值",
+	"Visual_Description_DataColors": "顯示資料色彩選項",
+	"Visual_HighlightedValueDisplayName": "反白顯示",
+	"Visual_Label": "標籤",
+	"Visual_Labels": "標籤",
+	"Visual_Position": "位置"
 }

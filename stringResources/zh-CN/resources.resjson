@@ -27,5 +27,10 @@
 	"Visual_Color": "颜色",
 	"Visual_Group_Left": "左",
 	"Visual_Group_Right": "右",
-	"Visual_Values": "值"
+	"Visual_Values": "值",
+	"Visual_Description_DataColors": "显示数据颜色选项",
+	"Visual_HighlightedValueDisplayName": "已突出显示",
+	"Visual_Label": "标签",
+	"Visual_Labels": "标签",
+	"Visual_Position": "位置"
 }

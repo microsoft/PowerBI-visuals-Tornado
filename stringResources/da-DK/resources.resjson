@@ -27,5 +27,10 @@
 	"Visual_Color": "Farve",
 	"Visual_Group_Left": "Venstre",
 	"Visual_Group_Right": "Højre",
-	"Visual_Values": "Værdier"
+	"Visual_Values": "Værdier",
+	"Visual_Description_DataColors": "Vis datafarveindstillinger",
+	"Visual_HighlightedValueDisplayName": "Fremhævet",
+	"Visual_Label": "Etiket",
+	"Visual_Labels": "Etiketter",
+	"Visual_Position": "Placering"
 }

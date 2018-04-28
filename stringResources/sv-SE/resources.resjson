@@ -27,5 +27,10 @@
 	"Visual_Color": "Färg",
 	"Visual_Group_Left": "Vänster",
 	"Visual_Group_Right": "Höger",
-	"Visual_Values": "Värden"
+	"Visual_Values": "Värden",
+	"Visual_Description_DataColors": "Visa datafärgsalternativ",
+	"Visual_HighlightedValueDisplayName": "Markerad",
+	"Visual_Label": "Etikett",
+	"Visual_Labels": "Etiketter",
+	"Visual_Position": "Position"
 }
