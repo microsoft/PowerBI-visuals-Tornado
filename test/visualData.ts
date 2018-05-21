@@ -42,6 +42,7 @@ module powerbi.extensibility.visual.test {
         public static ColumnCategory: string = "Name";
         public static ColumnValues1: string = "Sales Amount (2014)";
         public static ColumnValues2: string = "Sales Amount (2015)";
+        public static ColumnValues3: string = "Sales Amount (2016)";
 
         public valuesCategory: string[] = [
             "Australia",
@@ -58,6 +59,11 @@ module powerbi.extensibility.visual.test {
             TornadoData.MaxValue);
 
         public valuesValue2: number[] = getRandomNumbers(
+            this.valuesCategory.length,
+            TornadoData.MinValue,
+            TornadoData.MaxValue);
+
+        public valuesValue3: number[] = getRandomNumbers(
             this.valuesCategory.length,
             TornadoData.MinValue,
             TornadoData.MaxValue);
@@ -90,6 +96,15 @@ module powerbi.extensibility.visual.test {
                             type: ValueType.fromDescriptor({ numeric: true })
                         },
                         values: this.valuesValue2
+                    },
+                    {
+                        source: {
+                            displayName: TornadoData.ColumnValues3,
+                            isMeasure: true,
+                            format: "$0,000.00",
+                            type: ValueType.fromDescriptor({ numeric: true })
+                        },
+                        values: this.valuesValue3
                     }
                 ], columnNames).build();
         }
