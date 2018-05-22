@@ -1,3 +1,6 @@
+## 1.2.0
+* Added localization
+
 ## 1.1.1
 * FIX: the visual doesn't work well if Legend data-field contains more items than 2
 
