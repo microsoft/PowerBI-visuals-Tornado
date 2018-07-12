@@ -106,7 +106,11 @@ module powerbi.extensibility.visual {
 
     import IVisualSelectionId = powerbi.visuals.ISelectionId;
 
-    const Legend = "VisualLegend";
+    const VisualizationText = {
+        Legend: "VisualLegend",
+        Labels: "Visual_Labels",
+        Categories: "Visual_Categories"
+    };
 
     export class TornadoChart implements IVisual {
         private static ClassName: string = "tornado-chart";
@@ -837,17 +841,7 @@ module powerbi.extensibility.visual {
 
             columnsSelection
                 .style("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
-                .style("fill-opacity", (p: TornadoChartPoint) => tornadoChartUtils.getFillOpacity(
-                    p.selected,
-                    p.highlight,
-                    hasSelection,
-                    this.dataView.hasHighlights))
                 .style("stroke", (p: TornadoChartPoint) => p.color)
-                .style("stroke-opacity", (p: TornadoChartPoint) => tornadoChartUtils.getFillOpacity(
-                    p.selected,
-                    p.highlight,
-                    hasSelection,
-                    this.dataView.hasHighlights))
                 .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
                 .attr("height", (p: TornadoChartPoint) => p.height)
                 .attr("width", (p: TornadoChartPoint) => p.width);
@@ -864,7 +858,7 @@ module powerbi.extensibility.visual {
                 let behaviorOptions: TornadoBehaviorOptions = {
                     columns: columnsSelection,
                     clearCatcher: this.clearCatcher,
-                    interactivityService: this.interactivityService,
+                    interactivityService: this.interactivityService
                 };
                 interactivityService.bind(columnsData, this.behavior, behaviorOptions);
             }
@@ -958,7 +952,8 @@ module powerbi.extensibility.visual {
             axesSelection
                 .enter()
                 .append("svg:line")
-                .classed(TornadoChart.Axis.className, true);
+                .classed(TornadoChart.Axis.className, true)
+                .style("stroke", this.colorHelper.getHighContrastColor());
 
             axesSelection
                 .attr("x1", (data: LineData) => data.x1)
@@ -988,7 +983,6 @@ module powerbi.extensibility.visual {
             }];
         }
 
-        //labels in columns
         private renderLabels(dataPoints: TornadoChartPoint[], labelsSettings: VisualDataLabelsSettings): void {
             let labelEnterSelection: Selection<TornadoChartPoint>,
                 labelSelection: UpdateSelection<TornadoChartPoint> = this.main
@@ -1044,7 +1038,6 @@ module powerbi.extensibility.visual {
                 .remove();
         }
 
-        //16-25
         private renderCategories(): void {
             let settings: TornadoChartSettings = this.dataView.settings,
                 color: string = settings.categoriesFillColor,
@@ -1242,7 +1235,7 @@ module powerbi.extensibility.visual {
             let labelSettings: VisualDataLabelsSettings = settings.labelSettings,
                 labels: VisualObjectInstance[] = [{
                     objectName: "labels",
-                    displayName: this.localizationManager.getDisplayName("Visual_Labels"),
+                    displayName: this.localizationManager.getDisplayName(VisualizationText.Labels),
                     selector: null,
                     properties: {
                         show: labelSettings.show,
@@ -1265,7 +1258,7 @@ module powerbi.extensibility.visual {
 
             let categories: VisualObjectInstance[] = [{
                 objectName: "categories",
-                displayName: this.localizationManager.getDisplayName("Visual_Categories"),
+                displayName: this.localizationManager.getDisplayName(VisualizationText.Categories),
                 selector: null,
                 properties: {
                     show: settings.showCategories,
@@ -1302,7 +1295,7 @@ module powerbi.extensibility.visual {
 
             legend = [{
                 objectName: "legend",
-                displayName: this.localizationManager.getDisplayName(Legend),
+                displayName: this.localizationManager.getDisplayName(VisualizationText.Legend),
                 selector: null,
                 properties: {
                     show: settings.showLegend,

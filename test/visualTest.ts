@@ -34,6 +34,7 @@ module powerbi.extensibility.visual.test {
     // powerbi.extensibility.visual.test
     import TornadoData = powerbi.extensibility.visual.test.TornadoData;
     import areColorsEqual = powerbi.extensibility.visual.test.helpers.areColorsEqual;
+    import isColorAppliedToElements = powerbi.extensibility.visual.test.helpers.isColorAppliedToElements
     import TornadoChartBuilder = powerbi.extensibility.visual.test.TornadoChartBuilder;
     import getRandomUniqueHexColors = powerbi.extensibility.visual.test.helpers.getRandomUniqueHexColors;
     import getSolidColorStructuralObject = powerbi.extensibility.visual.test.helpers.getSolidColorStructuralObject;
@@ -461,6 +462,37 @@ module powerbi.extensibility.visual.test {
                         .forEach((element: Element) => {
                             assertColorsMatch($(element).css("fill"), color);
                         });
+                });
+            });
+        });
+
+        describe("high contrast mode test", () => {
+            const backgroundColor: string = "#000000";
+            const foregroundColor: string = "#ff00ff";
+
+            let columns: JQuery[],
+                linkElements: JQuery[];
+
+            beforeEach(() => {
+                visualBuilder.visualHost.colorPalette.isHighContrast = true;
+
+                visualBuilder.visualHost.colorPalette.background = { value: backgroundColor };
+                visualBuilder.visualHost.colorPalette.foreground = { value: foregroundColor };
+
+                columns = visualBuilder.columns.toArray().map($);
+            });
+
+            it("should not use fill style", (done) => {
+                visualBuilder.updateRenderTimeout(dataView, () => {
+                    expect(isColorAppliedToElements(columns, null, "fill"));
+                    done();
+                });
+            });
+
+            it("should use stroke style", (done) => {
+                visualBuilder.updateRenderTimeout(dataView, () => {
+                    expect(isColorAppliedToElements(columns, foregroundColor, "stroke"));
+                    done();
                 });
             });
         });

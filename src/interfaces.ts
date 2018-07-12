@@ -38,11 +38,7 @@ module powerbi.extensibility.visual {
 
     // powerbi.extensibility.utils.chart
     import LegendData = powerbi.extensibility.utils.chart.legend.LegendData;
-
-    // powerbi.extensibility.utils.chart
     import VisualDataLabelsSettings = powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings;
-
-
 
     export interface TornadoChartTextOptions {
         fontFamily?: string;
