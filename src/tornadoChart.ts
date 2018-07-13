@@ -1115,6 +1115,7 @@ module powerbi.extensibility.visual {
                     dataPoints: legend.dataPoints,
                     fontSize: settings.legendFontSize,
                     labelColor: settings.legendColor,
+                    opacityOnNotSelected: this.colorHelper.isHighContrast
                 };
 
                 if (this.dataView.legendObjectProperties) {
