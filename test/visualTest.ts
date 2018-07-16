@@ -34,7 +34,7 @@ module powerbi.extensibility.visual.test {
     // powerbi.extensibility.visual.test
     import TornadoData = powerbi.extensibility.visual.test.TornadoData;
     import areColorsEqual = powerbi.extensibility.visual.test.helpers.areColorsEqual;
-    import isColorAppliedToElements = powerbi.extensibility.visual.test.helpers.isColorAppliedToElements
+    import isColorAppliedToElements = powerbi.extensibility.visual.test.helpers.isColorAppliedToElements;
     import TornadoChartBuilder = powerbi.extensibility.visual.test.TornadoChartBuilder;
     import getRandomUniqueHexColors = powerbi.extensibility.visual.test.helpers.getRandomUniqueHexColors;
     import getSolidColorStructuralObject = powerbi.extensibility.visual.test.helpers.getSolidColorStructuralObject;

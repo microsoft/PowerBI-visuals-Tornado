@@ -23,7 +23,8 @@
     "src/properties.ts",
     "src/tooltipBuilder.ts",
     "src/scrolling.ts",
-    "src/webBehavior.ts",
+    "src/behavior/webBehavior.ts",
+    "src/behavior/opacityLegendBehavior.ts",
     "src/utils.ts",
     "src/tornadoChart.ts"
   ]

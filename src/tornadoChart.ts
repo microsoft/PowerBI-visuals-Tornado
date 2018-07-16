@@ -478,7 +478,8 @@ module powerbi.extensibility.visual {
 
             this.interactivityService = createInteractivityService(this.hostService);
 
-            this.legend = createLegend(options.element, false, this.interactivityService, true);
+            let interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? new OpacityLegendBehavior() : null;
+            this.legend = createLegend(options.element, false, this.interactivityService, interactiveBehavior, true);
 
             let root: Selection<any> = this.root = d3.select(options.element)
                 .append("svg");
