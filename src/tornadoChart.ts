@@ -479,7 +479,7 @@ module powerbi.extensibility.visual {
             this.interactivityService = createInteractivityService(this.hostService);
 
             let interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? new OpacityLegendBehavior() : null;
-            this.legend = createLegend(options.element, false, this.interactivityService, interactiveBehavior, true);
+            this.legend = createLegend(options.element, false, this.interactivityService, true, null, interactiveBehavior);
 
             let root: Selection<any> = this.root = d3.select(options.element)
                 .append("svg");
@@ -1115,8 +1115,7 @@ module powerbi.extensibility.visual {
                     title: legend.title,
                     dataPoints: legend.dataPoints,
                     fontSize: settings.legendFontSize,
-                    labelColor: settings.legendColor,
-                    opacityOnNotSelected: this.colorHelper.isHighContrast
+                    labelColor: settings.legendColor
                 };
 
                 if (this.dataView.legendObjectProperties) {
