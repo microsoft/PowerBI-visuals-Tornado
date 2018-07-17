@@ -76,6 +76,7 @@ module powerbi.extensibility.visual {
     import LegendPosition = powerbi.extensibility.utils.chart.legend.LegendPosition;
     import LegendDataPoint = powerbi.extensibility.utils.chart.legend.LegendDataPoint;
     import VisualDataLabelsSettings = powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings;
+    import OpacityLegendBehavior = powerbi.extensibility.utils.chart.legend.OpacityLegendBehavior;
 
     // powerbi.extensibility.utils.formatting
     import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
@@ -106,91 +107,11 @@ module powerbi.extensibility.visual {
 
     import IVisualSelectionId = powerbi.visuals.ISelectionId;
 
-    export interface TornadoChartTextOptions {
-        fontFamily?: string;
-        fontSize?: number;
-    }
-
-    export interface TornadoChartSeries {
-        fill: string;
-        name: string;
-        selectionId: ISelectionId;
-        categoryAxisEnd: number;
-    }
-
-    export interface TornadoChartSettings {
-        labelOutsideFillColor: string;
-        categoriesFillColor: string;
-        labelSettings: VisualDataLabelsSettings;
-        showLegend?: boolean;
-        showCategories?: boolean;
-        categoriesFontSize?: number;
-        categoriesPosition?: any;
-        legendFontSize?: number;
-        legendColor?: string;
-        getLabelValueFormatter?: (formatString: string) => IValueFormatter;
-    }
-
-    export interface TornadoChartDataView {
-        categories: TextData[];
-        series: TornadoChartSeries[];
-        settings: TornadoChartSettings;
-        legend: LegendData;
-        dataPoints: TornadoChartPoint[];
-        highlightedDataPoints?: TornadoChartPoint[];
-        hasDynamicSeries: boolean;
-        hasHighlights: boolean;
-        labelHeight: number;
-        maxLabelsWidth: number;
-        legendObjectProperties: DataViewObject;
-        categoriesObjectProperties: DataViewObject;
-    }
-
-    export interface TornadoChartPoint extends SelectableDataPoint {
-        dx?: number;
-        dy?: number;
-        px?: number;
-        py?: number;
-        angle?: number;
-        width?: number;
-        height?: number;
-        label?: LabelData;
-        color: string;
-        tooltipData: VisualTooltipDataItem[];
-        categoryIndex: number;
-        highlight?: boolean;
-        value: number;
-        minValue: number;
-        maxValue: number;
-        formatString: string;
-    }
-
-    export interface LabelData {
-        dx: number;
-        value: number | string;
-        source: number | string;
-        color: string;
-    }
-
-    export interface LineData {
-        x1: number;
-        y1: number;
-        x2: number;
-        y2: number;
-    }
-
-    export interface TextData {
-        text: string;
-        height: number;
-        width: number;
-        textProperties: TextProperties;
-    }
-
-    export interface TornadoBehaviorOptions {
-        columns: Selection<any>;
-        clearCatcher: Selection<any>;
-        interactivityService: IInteractivityService;
-    }
+    const VisualizationText = {
+        Legend: "VisualLegend",
+        Labels: "Visual_Labels",
+        Categories: "Visual_Categories"
+    };
 
     export class TornadoChart implements IVisual {
         private static ClassName: string = "tornado-chart";
@@ -427,7 +348,7 @@ module powerbi.extensibility.visual {
                 objects = dataView.metadata.objects;
             }
 
-            let color: string = TornadoChart.getColor(
+            let fillColor: string = TornadoChart.getColor(
                 tornadoChartProperties.dataPoint.fill,
                 ["purple", "teal"][index],
                 objects, colors);
@@ -435,15 +356,19 @@ module powerbi.extensibility.visual {
             let categoryAxisEnd: number = categoryAxisObject ? categoryAxisObject["end"] : null;
 
             return <TornadoChartSeries>{
-                fill: color,
+                fill: fillColor,
                 name: displayName,
                 selectionId: selectionId,
                 categoryAxisEnd: categoryAxisEnd,
             };
         }
 
-        private static getColor(properties: any, defaultColor: string, objects: DataViewObjects, colors: IColorPalette): string {
+        private static getColor(properties: any, defaultColor: string, objects: DataViewObjects, colors: IColorPalette, convertToHighContrastMode: boolean = true): string {
             let colorHelper: ColorHelper = new ColorHelper(colors, properties, defaultColor);
+
+            if (colorHelper.isHighContrast && convertToHighContrastMode)
+                return colorHelper.getColorForMeasure(objects, "", "foreground");
+
             return colorHelper.getColorForMeasure(objects, "");
         }
 
@@ -488,6 +413,7 @@ module powerbi.extensibility.visual {
         }
 
         public colors: IColorPalette;
+        public colorHelper: ColorHelper;
         public textOptions: TornadoChartTextOptions = {};
 
         private columnPadding: number = 5;
@@ -545,6 +471,7 @@ module powerbi.extensibility.visual {
             this.hostService = options.host;
             this.localizationManager = this.hostService.createLocalizationManager();
             this.colors = options.host.colorPalette;
+            this.colorHelper = new ColorHelper(this.colors);
 
             this.tooltipServiceWrapper = createTooltipServiceWrapper(
                 options.host.tooltipService,
@@ -552,7 +479,8 @@ module powerbi.extensibility.visual {
 
             this.interactivityService = createInteractivityService(this.hostService);
 
-            this.legend = createLegend(options.element, false, this.interactivityService, true);
+            let interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? new OpacityLegendBehavior() : null;
+            this.legend = createLegend(options.element, false, this.interactivityService, true, null, interactiveBehavior);
 
             let root: Selection<any> = this.root = d3.select(options.element)
                 .append("svg");
@@ -914,12 +842,8 @@ module powerbi.extensibility.visual {
                 .classed(TornadoChart.Column.className, true);
 
             columnsSelection
-                .style("fill", (p: TornadoChartPoint) => p.color)
-                .style("fill-opacity", (p: TornadoChartPoint) => tornadoChartUtils.getFillOpacity(
-                    p.selected,
-                    p.highlight,
-                    hasSelection,
-                    this.dataView.hasHighlights))
+                .style("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
+                .style("stroke", (p: TornadoChartPoint) => p.color)
                 .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
                 .attr("height", (p: TornadoChartPoint) => p.height)
                 .attr("width", (p: TornadoChartPoint) => p.width);
@@ -936,7 +860,7 @@ module powerbi.extensibility.visual {
                 let behaviorOptions: TornadoBehaviorOptions = {
                     columns: columnsSelection,
                     clearCatcher: this.clearCatcher,
-                    interactivityService: this.interactivityService,
+                    interactivityService: this.interactivityService
                 };
                 interactivityService.bind(columnsData, this.behavior, behaviorOptions);
             }
@@ -1030,7 +954,8 @@ module powerbi.extensibility.visual {
             axesSelection
                 .enter()
                 .append("svg:line")
-                .classed(TornadoChart.Axis.className, true);
+                .classed(TornadoChart.Axis.className, true)
+                .style("stroke", this.colorHelper.getHighContrastColor());
 
             axesSelection
                 .attr("x1", (data: LineData) => data.x1)
@@ -1191,7 +1116,7 @@ module powerbi.extensibility.visual {
                     title: legend.title,
                     dataPoints: legend.dataPoints,
                     fontSize: settings.legendFontSize,
-                    labelColor: settings.legendColor,
+                    labelColor: settings.legendColor
                 };
 
                 if (this.dataView.legendObjectProperties) {
@@ -1312,7 +1237,7 @@ module powerbi.extensibility.visual {
             let labelSettings: VisualDataLabelsSettings = settings.labelSettings,
                 labels: VisualObjectInstance[] = [{
                     objectName: "labels",
-                    displayName: this.localizationManager.getDisplayName("Visual_Labels"),
+                    displayName: this.localizationManager.getDisplayName(VisualizationText.Labels),
                     selector: null,
                     properties: {
                         show: labelSettings.show,
@@ -1335,7 +1260,7 @@ module powerbi.extensibility.visual {
 
             let categories: VisualObjectInstance[] = [{
                 objectName: "categories",
-                displayName: this.localizationManager.getDisplayName("Visual_Categories"),
+                displayName: this.localizationManager.getDisplayName(VisualizationText.Categories),
                 selector: null,
                 properties: {
                     show: settings.showCategories,
@@ -1372,7 +1297,7 @@ module powerbi.extensibility.visual {
 
             legend = [{
                 objectName: "legend",
-                displayName: this.localizationManager.getDisplayName("Visual_Legend"),
+                displayName: this.localizationManager.getDisplayName(VisualizationText.Legend),
                 selector: null,
                 properties: {
                     show: settings.showLegend,
@@ -1389,18 +1314,6 @@ module powerbi.extensibility.visual {
 
         public destroy(): void {
             this.root = null;
-        }
-    }
-
-    export module tornadoChartUtils {
-        export const DimmedOpacity: number = 0.4;
-        export const DefaultOpacity: number = 1.0;
-
-        export function getFillOpacity(selected: boolean, highlight: boolean, hasSelection: boolean, hasPartialHighlights: boolean): number {
-            if ((hasPartialHighlights && !highlight) || (hasSelection && !selected)) {
-                return DimmedOpacity;
-            }
-            return DefaultOpacity;
         }
     }
 }

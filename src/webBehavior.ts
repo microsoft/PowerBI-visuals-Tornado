@@ -28,7 +28,7 @@ module powerbi.extensibility.visual {
     // d3
     import Selection = d3.Selection;
 
-    // powerbi.visuals
+    // powerbi.extensibility.utils.interactivity
     import IInteractiveBehavior = powerbi.extensibility.utils.interactivity.IInteractiveBehavior;
     import SelectableDataPoint = powerbi.extensibility.utils.interactivity.SelectableDataPoint;
     import IInteractivityService = powerbi.extensibility.utils.interactivity.IInteractivityService;
@@ -55,8 +55,13 @@ module powerbi.extensibility.visual {
 
         public renderSelection(hasSelection: boolean) {
             let hasHighlights: boolean = this.interactivityService.hasSelection();
-            this.columns.style("fill-opacity", (d: TornadoChartPoint) => {
-                return tornadoChartUtils.getFillOpacity(
+            this.changeOpacityAttribute("fill-opacity", hasSelection, hasHighlights);
+            this.changeOpacityAttribute("stroke-opacity", hasSelection, hasHighlights);
+        }
+
+        private changeOpacityAttribute(attributeName: string, hasSelection: boolean, hasHighlights: boolean) {
+            this.columns.style(attributeName, (d: TornadoChartPoint) => {
+                return tornadoChartUtils.getOpacity(
                     d.selected,
                     d.highlight,
                     !d.highlight && hasSelection,
