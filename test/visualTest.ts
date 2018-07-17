@@ -466,7 +466,7 @@ module powerbi.extensibility.visual.test {
             });
         });
 
-        describe("high contrast mode test", () => {
+        describe("High contrast mode", () => {
             const backgroundColor: string = "#000000";
             const foregroundColor: string = "#ff00ff";
 

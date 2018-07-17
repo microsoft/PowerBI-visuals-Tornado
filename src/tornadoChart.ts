@@ -76,6 +76,7 @@ module powerbi.extensibility.visual {
     import LegendPosition = powerbi.extensibility.utils.chart.legend.LegendPosition;
     import LegendDataPoint = powerbi.extensibility.utils.chart.legend.LegendDataPoint;
     import VisualDataLabelsSettings = powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings;
+    import OpacityLegendBehavior = powerbi.extensibility.utils.chart.legend.OpacityLegendBehavior;
 
     // powerbi.extensibility.utils.formatting
     import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
