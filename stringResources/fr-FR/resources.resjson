@@ -32,5 +32,7 @@
 	"Visual_HighlightedValueDisplayName": "Mise en surbrillance",
 	"Visual_Label": "Étiquette",
 	"Visual_Labels": "Étiquettes",
-	"Visual_Position": "Position"
+	"Visual_Position": "Position",
+	"Tornado_Short_Description": "Comparaison de l'importance relative des variables entre deux groupes",
+	"Tornado_Long_Description": "Les graphiques en entonnoir sont un type particulier de graphique à barres dans lequel les catégories de données sont répertoriées verticalement, et non horizontalement comme c'est normalement le cas. Les catégories sont triées de telle sorte que la barre la plus grande s'affiche en haut du graphique, la deuxième juste en dessous, et ainsi de suite. Ce visuel est appelé ainsi car le graphique final ressemble à la moitié d'un entonnoir ou à un entonnoir entier.\nUn graphique en entonnoir est un outil couramment utilisé pour représenter la sensibilité d'un résultat aux changements apportés à certaines variables. Il montre l'effet sur la sortie du changement d'une seule variable d'entrée (toutes les autres variables d'entrée conservant leurs valeurs initiales). En général, vous choisissez une valeur faible et une valeur élevée pour chaque entrée.\nCe visuel est open source. Obtenez le code sur GitHub ici : https://github.com/Microsoft/PowerBI-visuals-tornado"
 }

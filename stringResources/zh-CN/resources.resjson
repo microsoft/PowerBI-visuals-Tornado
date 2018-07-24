@@ -32,5 +32,7 @@
 	"Visual_HighlightedValueDisplayName": "已突出显示",
 	"Visual_Label": "标签",
 	"Visual_Labels": "标签",
-	"Visual_Position": "位置"
+	"Visual_Position": "位置",
+	"Tornado_Short_Description": "比较两个组之间变量的相对重要性",
+	"Tornado_Long_Description": "龙卷风图是一种特殊类型的条形图，其中数据类别垂直列出而不是以标准水平形式呈现，并且对类别进行排序，以便最大的条形图显示在图表的顶部，第二大条形图显示在顶部的第二位，依次类推。这些图表的命名由来源于最终图表在视觉上类似于半个龙卷风或一个完整的龙卷风。\n龙卷风图是一种常用工具，用于描述结果对于所选变量更改的敏感度。它显示一次改变每个输入变量对输出的影响，使所有其他输入变量保留为其初始(标称)值。通常，为每个输入选择一个“低”值和一个“高”值。\n这是一个开放源代码视觉对象。从 GitHub 获取代码: https://github.com/Microsoft/PowerBI-visuals-tornado"
 }

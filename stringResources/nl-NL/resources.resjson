@@ -32,5 +32,7 @@
 	"Visual_HighlightedValueDisplayName": "Gemarkeerd",
 	"Visual_Label": "Label",
 	"Visual_Labels": "Labels",
-	"Visual_Position": "Positie"
+	"Visual_Position": "Positie",
+	"Tornado_Short_Description": "Het relatieve belang van variabelen voor twee groepen vergelijken",
+	"Tornado_Long_Description": "Tornadodiagrammen zijn een speciaal type staafdiagram waarin de gegevenscategorieën verticaal worden weergegeven in plaats van de gebruikelijke horizontale weergave. Daarnaast zijn de categorieën zo gerangschikt dat de grootste staaf boven in het diagram wordt weergegeven, de een na grootste als tweede van boven, enzovoort. Deze diagrammen worden zo genoemd omdat het uiteindelijke diagram lijkt op een halve of volledige tornado.\nEen tornadodiagram is een hulpmiddel dat vaak wordt gebruikt om de gevoeligheid van een resultaat voor wijzigingen in bepaalde variabelen weer te geven. Het geeft het effect weer op de uitvoer wanneer er steeds een invoervariabele wordt gewijzigd terwijl alle andere invoervariabelen de beginwaarden (nominaal) behouden. Normaal gesproken kiest u een 'lage' en 'hoge' waarde voor elke invoer.\nDit is een open source visual. U kunt de code op GitHub ophalen: https://github.com/Microsoft/PowerBI-visuals-tornado"
 }

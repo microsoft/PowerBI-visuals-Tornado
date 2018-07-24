@@ -32,5 +32,7 @@
 	"Visual_HighlightedValueDisplayName": "Realçado",
 	"Visual_Label": "Rótulo",
 	"Visual_Labels": "Rótulos",
-	"Visual_Position": "Posição"
+	"Visual_Position": "Posição",
+	"Tornado_Short_Description": "Como comparar a importância relativa de variáveis entre dois grupos",
+	"Tornado_Long_Description": "Gráficos de tornado são um tipo especial de gráfico de barras, no qual as categorias de dados são listadas verticalmente em vez da apresentação horizontal padrão e as categorias são ordenadas para que a maior barra apareça na parte superior do gráfico, a segunda maior apareça em segundo partindo do topo e assim por diante. Eles são chamados assim porque o gráfico final é visualmente semelhante a um (ou meio) tornado.\nUm gráfico de tornado é uma ferramenta comum usada para descrever a sensibilidade de um resultado às alterações nas variáveis selecionadas. Ele mostra o efeito da variação de cada variável de entrada por vez sobre a saída, mantendo todas as outras variáveis de entrada em seus valores iniciais (nominais). Em geral, você seleciona um valor \"baixo\" e um \"alto\" para cada entrada.\nEsse é um visual de software livre. Obtenha o código do GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
 }

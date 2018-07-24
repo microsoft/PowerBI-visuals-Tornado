@@ -32,5 +32,7 @@
 	"Visual_HighlightedValueDisplayName": "Fremhævet",
 	"Visual_Label": "Etiket",
 	"Visual_Labels": "Etiketter",
-	"Visual_Position": "Placering"
+	"Visual_Position": "Placering",
+	"Tornado_Short_Description": "Sammenligning af den relative vigtighed af variabler mellem to grupper",
+	"Tornado_Long_Description": "Tornado diagrammer, er en speciel type liggende søjlediagram, hvor datakategorierne, vises lodret i stedet for i standard vandret præsentation, og kategorierne er sorteret, så de største søjler vises øverst i diagrammet, den anden største vises som den næste fra toppen osv. De kaldes sådan, fordi det endelige diagram visuelt enten ligner halvdelen eller en hel tornado.\nEt tornadodiagram er et udbredt værktøj, der bruges til at afbilde et følsomheden på et resultat af ændringer i valgte variabler. Den viser påvirkningen på outputtet ved ændring af hver inputvariabel ad gangen og bevarer alle de andre inputvariabler på deres oprindelige (nominelle) værdier. Normalt skal vælge du en \"lav\" og en \"høj\" værdi for hver input.\nDette er en open source illustration. Koden kan hentes fra GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
 }

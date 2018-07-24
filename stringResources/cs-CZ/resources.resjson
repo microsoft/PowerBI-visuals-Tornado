@@ -32,5 +32,7 @@
 	"Visual_HighlightedValueDisplayName": "Zvýrazněný",
 	"Visual_Label": "Popisek",
 	"Visual_Labels": "Popisky",
-	"Visual_Position": "Pozice"
+	"Visual_Position": "Pozice",
+	"Tornado_Short_Description": "Porovnání relativního významu proměnných mezi dvěma skupinami",
+	"Tornado_Long_Description": "Tornádové grafy jsou speciálním typem pruhového grafu, ve kterém jsou kategorie dat uvedeny místo standardní vodorovné prezentace svisle a kategorie jsou uspořádány tak, aby se největší pruh v grafu zobrazil jako první, druhý největší jako druhý a tak dále. Tento název získaly proto, že se konečný graf vizuálně podobá polovině nebo úplnému tornádu.\nTornádový graf je běžný nástroj sloužící k znázornění citlivosti výsledku na změny ve vybraných proměnných. Zobrazuje vliv měnících se proměnných na výstup. Vždy se mění jedna proměnná a všechny ostatní vstupní proměnné si zachovávají své počáteční hodnoty (nominální). Obvykle pro každý vstup zvolíte nízkou nebo vysokou hodnotu.\nTento vizuál je typu open source. Kód můžete získat z Githubu: https://github.com/Microsoft/PowerBI-visuals-tornado"
 }
