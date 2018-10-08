@@ -24,190 +24,195 @@
  *  THE SOFTWARE.
  */
 
-module powerbi.extensibility.visual {
-    // d3
-    import Selection = d3.Selection;
-    import UpdateSelection = d3.selection.Update;
+import powerbi from "powerbi-visuals-api";
+import * as d3 from "d3";
 
-    // powerbi.extensibility.utils.svg
-    import IMargin = powerbi.extensibility.utils.svg.IMargin;
-    import translate = powerbi.extensibility.utils.svg.translate;
+import IViewport = powerbi.IViewport;
+// d3
+import Selection = d3.Selection;
+import UpdateSelection = d3.selection.Update;
 
-    export class TornadoChartScrolling {
-        public isScrollable: boolean;
-        public get scrollViewport(): IViewport {
-            return {
-                height: this.viewport.height,
-                width: this.viewport.width
+// powerbi.extensibility.utils.svg
+import { axisInterfaces } from "powerbi-visuals-utils-chartutils";
+import IMargin = axisInterfaces.IMargin;
+import translate = powerbi.extensibility.utils.svg.translate;
+
+import { TornadoChartDataView } from "./interfaces";
+
+export class TornadoChartScrolling {
+    public isScrollable: boolean;
+    public get scrollViewport(): IViewport {
+        return {
+            height: this.viewport.height,
+            width: this.viewport.width
                 - ((this.isYScrollBarVisible && this.isScrollable) ? TornadoChart.ScrollBarWidth : 0)
-            };
+        };
+    }
+
+    private static ScrollBarMinLength: number = 15;
+    private static ExtentFillOpacity: number = 0.125;
+    private static DefaultScaleMultipler: number = 1;
+
+    private isYScrollBarVisible: boolean;
+    private brushGraphicsContextY: Selection<any>;
+    private scrollYBrush: any = d3.svg.brush();
+
+    private getRoot: () => Selection<any>;
+    private getViewport: () => IViewport;
+    private getPrefferedHeight: () => number;
+
+    private get root(): Selection<any> {
+        return this.getRoot();
+    }
+
+    private get viewport(): IViewport {
+        return this.getViewport();
+    }
+
+    constructor(
+        getRoot: () => Selection<any>,
+        getViewport: () => IViewport,
+        getMargin: () => IMargin,
+        getPrefferedHeight: () => number,
+        isScrollable: boolean) {
+
+        this.getRoot = getRoot;
+        this.getViewport = getViewport;
+        this.isScrollable = isScrollable;
+        this.getPrefferedHeight = getPrefferedHeight;
+    }
+
+    public renderY(data: TornadoChartDataView, onScroll: () => {}): void {
+        this.isYScrollBarVisible = this.isScrollable
+            && this.getPrefferedHeight() > this.viewport.height
+            && this.viewport.height > 0
+            && this.viewport.width > 0;
+
+        this.brushGraphicsContextY = this.createOrRemoveScrollbar(this.isYScrollBarVisible, this.brushGraphicsContextY, "y brush");
+
+        if (!this.isYScrollBarVisible) {
+            onScroll.call(this, jQuery.extend(true, {}, data), 0, 1);
+            return;
         }
 
-        private static ScrollBarMinLength: number = 15;
-        private static ExtentFillOpacity: number = 0.125;
-        private static DefaultScaleMultipler: number = 1;
+        let scrollSpaceLength: number = this.viewport.height;
+        let extentData: any = this.getExtentData(this.getPrefferedHeight(), scrollSpaceLength);
 
-        private isYScrollBarVisible: boolean;
-        private brushGraphicsContextY: Selection<any>;
-        private scrollYBrush: any = d3.svg.brush();
+        let onRender = (wheelDelta: number = 0) => {
+            let position: number[] = this.scrollYBrush.extent();
+            if (wheelDelta !== 0) {
 
-        private getRoot: () => Selection<any>;
-        private getViewport: () => IViewport;
-        private getPrefferedHeight: () => number;
+                // Handle mouse wheel manually by moving the scrollbar half of its size
+                let halfScrollsize: number = (position[1] - position[0]) / 2;
+                position[0] += (wheelDelta > 0) ? halfScrollsize : -halfScrollsize;
+                position[1] += (wheelDelta > 0) ? halfScrollsize : -halfScrollsize;
 
-        private get root(): Selection<any> {
-            return this.getRoot();
-        }
-
-        private get viewport(): IViewport {
-            return this.getViewport();
-        }
-
-        constructor(
-            getRoot: () => Selection<any>,
-            getViewport: () => IViewport,
-            getMargin: () => IMargin,
-            getPrefferedHeight: () => number,
-            isScrollable: boolean) {
-
-            this.getRoot = getRoot;
-            this.getViewport = getViewport;
-            this.isScrollable = isScrollable;
-            this.getPrefferedHeight = getPrefferedHeight;
-        }
-
-        public renderY(data: TornadoChartDataView, onScroll: () => {}): void {
-            this.isYScrollBarVisible = this.isScrollable
-                && this.getPrefferedHeight() > this.viewport.height
-                && this.viewport.height > 0
-                && this.viewport.width > 0;
-
-            this.brushGraphicsContextY = this.createOrRemoveScrollbar(this.isYScrollBarVisible, this.brushGraphicsContextY, "y brush");
-
-            if (!this.isYScrollBarVisible) {
-                onScroll.call(this, jQuery.extend(true, {}, data), 0, 1);
-                return;
-            }
-
-            let scrollSpaceLength: number = this.viewport.height;
-            let extentData: any = this.getExtentData(this.getPrefferedHeight(), scrollSpaceLength);
-
-            let onRender = (wheelDelta: number = 0) => {
-                let position: number[] = this.scrollYBrush.extent();
-                if (wheelDelta !== 0) {
-
-                    // Handle mouse wheel manually by moving the scrollbar half of its size
-                    let halfScrollsize: number = (position[1] - position[0]) / 2;
-                    position[0] += (wheelDelta > 0) ? halfScrollsize : -halfScrollsize;
-                    position[1] += (wheelDelta > 0) ? halfScrollsize : -halfScrollsize;
-
-                    if (position[0] < 0) {
-                        let offset: number = -position[0];
-                        position[0] += offset;
-                        position[1] += offset;
-                    }
-                    if (position[1] > scrollSpaceLength) {
-                        let offset: number = position[1] - scrollSpaceLength;
-                        position[0] -= offset;
-                        position[1] -= offset;
-                    }
-
-                    // Update the scroll bar accordingly and redraw
-                    this.scrollYBrush.extent(position);
-                    this.brushGraphicsContextY.select(".extent").attr("y", position[0]);
+                if (position[0] < 0) {
+                    let offset: number = -position[0];
+                    position[0] += offset;
+                    position[1] += offset;
                 }
-                let scrollPosition: number[] = extentData.toScrollPosition(position, scrollSpaceLength);
-                onScroll.call(this, jQuery.extend(true, {}, data), scrollPosition[0], scrollPosition[1]);
-                this.setScrollBarSize(this.brushGraphicsContextY, extentData.value[1], true);
-            };
+                if (position[1] > scrollSpaceLength) {
+                    let offset: number = position[1] - scrollSpaceLength;
+                    position[0] -= offset;
+                    position[1] -= offset;
+                }
 
-            let scrollYScale: d3.scale.Ordinal<any, any> = d3.scale.ordinal().rangeBands([0, scrollSpaceLength]);
-            this.scrollYBrush.y(scrollYScale).extent(extentData.value);
-
-            this.renderScrollbar(
-                this.scrollYBrush,
-                this.brushGraphicsContextY,
-                this.viewport.width,
-                onRender);
-
-            onRender();
-        }
-
-        private createOrRemoveScrollbar(isVisible, brushGraphicsContext, brushClass) {
-            if (isVisible && this.isScrollable) {
-                return brushGraphicsContext || this.root.append("g").classed(brushClass, true);
+                // Update the scroll bar accordingly and redraw
+                this.scrollYBrush.extent(position);
+                this.brushGraphicsContextY.select(".extent").attr("y", position[0]);
             }
+            let scrollPosition: number[] = extentData.toScrollPosition(position, scrollSpaceLength);
+            onScroll.call(this, jQuery.extend(true, {}, data), scrollPosition[0], scrollPosition[1]);
+            this.setScrollBarSize(this.brushGraphicsContextY, extentData.value[1], true);
+        };
 
-            return brushGraphicsContext ? void brushGraphicsContext.remove() : undefined;
+        let scrollYScale: d3.scale.Ordinal<any, any> = d3.scale.ordinal().rangeBands([0, scrollSpaceLength]);
+        this.scrollYBrush.y(scrollYScale).extent(extentData.value);
+
+        this.renderScrollbar(
+            this.scrollYBrush,
+            this.brushGraphicsContextY,
+            this.viewport.width,
+            onRender);
+
+        onRender();
+    }
+
+    private createOrRemoveScrollbar(isVisible, brushGraphicsContext, brushClass) {
+        if (isVisible && this.isScrollable) {
+            return brushGraphicsContext || this.root.append("g").classed(brushClass, true);
         }
 
-        private renderScrollbar(brush: d3.svg.Brush<any>,
-            brushGraphicsContext: Selection<any>,
-            brushX: number,
-            onRender: (value: number) => void): void {
+        return brushGraphicsContext ? void brushGraphicsContext.remove() : undefined;
+    }
 
-            brush.on("brush", () => window.requestAnimationFrame(() => onRender(0)));
-            this.root.on("wheel", () => {
-                if (!this.isYScrollBarVisible) return;
-                let wheelEvent: any = d3.event; // Casting to any to avoid compilation errors
-                onRender(wheelEvent.deltaY);
-            });
+    private renderScrollbar(brush: d3.svg.Brush<any>,
+        brushGraphicsContext: Selection<any>,
+        brushX: number,
+        onRender: (value: number) => void): void {
 
-            brushGraphicsContext.attr({
-                "transform": translate(brushX, 0),
-                "drag-resize-disabled": "true" /*disables resizing of the visual when dragging the scrollbar in edit mode*/
-            });
+        brush.on("brush", () => window.requestAnimationFrame(() => onRender(0)));
+        this.root.on("wheel", () => {
+            if (!this.isYScrollBarVisible) return;
+            let wheelEvent: any = d3.event; // Casting to any to avoid compilation errors
+            onRender(wheelEvent.deltaY);
+        });
 
-            brushGraphicsContext.call(brush); /*call the brush function, causing it to create the rectangles   */
-            /* Disabling the zooming feature */
-            brushGraphicsContext.selectAll(".resize").remove();
-            brushGraphicsContext.select(".background").remove();
-            brushGraphicsContext.selectAll(".extent").style({
-                "fill-opacity": TornadoChartScrolling.ExtentFillOpacity,
-                "cursor": "default",
-            });
-        }
+        brushGraphicsContext.attr({
+            "transform": translate(brushX, 0),
+            "drag-resize-disabled": "true" /*disables resizing of the visual when dragging the scrollbar in edit mode*/
+        });
 
-        private setScrollBarSize(brushGraphicsContext: Selection<any>, minExtent: number, isVertical: boolean): void {
-            brushGraphicsContext
-                .selectAll("rect")
-                .attr(isVertical ? "width" : "height", TornadoChart.ScrollBarWidth);
+        brushGraphicsContext.call(brush); /*call the brush function, causing it to create the rectangles   */
+        /* Disabling the zooming feature */
+        brushGraphicsContext.selectAll(".resize").remove();
+        brushGraphicsContext.select(".background").remove();
+        brushGraphicsContext.selectAll(".extent").style({
+            "fill-opacity": TornadoChartScrolling.ExtentFillOpacity,
+            "cursor": "default",
+        });
+    }
 
-            brushGraphicsContext
-                .selectAll("rect")
-                .attr(isVertical ? "height" : "width", minExtent);
-        }
+    private setScrollBarSize(brushGraphicsContext: Selection<any>, minExtent: number, isVertical: boolean): void {
+        brushGraphicsContext
+            .selectAll("rect")
+            .attr(isVertical ? "width" : "height", TornadoChart.ScrollBarWidth);
 
-        private getExtentData(svgLength: number, scrollSpaceLength: number): any {
-            let value: number = scrollSpaceLength * scrollSpaceLength / svgLength;
+        brushGraphicsContext
+            .selectAll("rect")
+            .attr(isVertical ? "height" : "width", minExtent);
+    }
 
-            let scaleMultipler: number = TornadoChartScrolling.ScrollBarMinLength <= value
-                ? TornadoChartScrolling.DefaultScaleMultipler
-                : value / TornadoChartScrolling.ScrollBarMinLength;
+    private getExtentData(svgLength: number, scrollSpaceLength: number): any {
+        let value: number = scrollSpaceLength * scrollSpaceLength / svgLength;
 
-            value = Math.max(value, TornadoChartScrolling.ScrollBarMinLength);
+        let scaleMultipler: number = TornadoChartScrolling.ScrollBarMinLength <= value
+            ? TornadoChartScrolling.DefaultScaleMultipler
+            : value / TornadoChartScrolling.ScrollBarMinLength;
 
-            let toScrollPosition = (extent: number[], scrollSpaceLength: number): number[] => {
-                let scrollSize: number = extent[1] - extent[0];
-                let scrollPosition: number = extent[0] / (scrollSpaceLength - scrollSize);
+        value = Math.max(value, TornadoChartScrolling.ScrollBarMinLength);
 
-                scrollSize *= scaleMultipler;
+        let toScrollPosition = (extent: number[], scrollSpaceLength: number): number[] => {
+            let scrollSize: number = extent[1] - extent[0];
+            let scrollPosition: number = extent[0] / (scrollSpaceLength - scrollSize);
 
-                let start: number = (scrollPosition * (scrollSpaceLength - scrollSize));
-                let end: number = (start + scrollSize);
+            scrollSize *= scaleMultipler;
 
-                return [start / scrollSpaceLength, end / scrollSpaceLength];
-            };
+            let start: number = (scrollPosition * (scrollSpaceLength - scrollSize));
+            let end: number = (start + scrollSize);
 
-            return { value: [0, value], toScrollPosition: toScrollPosition };
-        }
+            return [start / scrollSpaceLength, end / scrollSpaceLength];
+        };
 
-        public clearData(): void {
-            if (this.brushGraphicsContextY) {
-                this.brushGraphicsContextY
-                    .selectAll("*")
-                    .remove();
-            }
+        return { value: [0, value], toScrollPosition: toScrollPosition };
+    }
+
+    public clearData(): void {
+        if (this.brushGraphicsContextY) {
+            this.brushGraphicsContextY
+                .selectAll("*")
+                .remove();
         }
     }
 }

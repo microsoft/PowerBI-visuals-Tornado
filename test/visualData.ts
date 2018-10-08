@@ -24,89 +24,88 @@
  *  THE SOFTWARE.
  */
 
-/// <reference path="_references.ts"/>
+import powerbi from "powerbi-visuals-api";
 
-module powerbi.extensibility.visual.test {
-    // powerbi.extensibility.utils.type
-    import ValueType = powerbi.extensibility.utils.type.ValueType;
+import DataView = powerbi.DataView;
 
-    // powerbi.extensibility.utils.test
-    import getRandomNumbers = powerbi.extensibility.utils.test.helpers.getRandomNumbers;
-    import TestDataViewBuilder = powerbi.extensibility.utils.test.dataViewBuilder.TestDataViewBuilder;
+import { valueType as vt } from "powerbi-visuals-utils-typeutils";
+import ValueType = vt.ValueType;
 
-    export class TornadoData extends TestDataViewBuilder {
-        private static MinValue: number = 100;
-        private static MaxValue: number = 1000;
+import { getRandomNumbers, testDataViewBuilder } from "powerbi-visuals-utils-testutils";
+import TestDataViewBuilder = testDataViewBuilder.TestDataViewBuilder;
 
-        // public static ColumnCategory: string = "Country";
-        public static ColumnCategory: string = "Name";
-        public static ColumnValues1: string = "Sales Amount (2014)";
-        public static ColumnValues2: string = "Sales Amount (2015)";
-        public static ColumnValues3: string = "Sales Amount (2016)";
+export class TornadoData extends TestDataViewBuilder {
+    private static MinValue: number = 100;
+    private static MaxValue: number = 1000;
 
-        public valuesCategory: string[] = [
-            "Australia",
-            "Canada",
-            "France",
-            "Germany",
-            "United Kingdom",
-            "United States"
-        ];
+    // public static ColumnCategory: string = "Country";
+    public static ColumnCategory: string = "Name";
+    public static ColumnValues1: string = "Sales Amount (2014)";
+    public static ColumnValues2: string = "Sales Amount (2015)";
+    public static ColumnValues3: string = "Sales Amount (2016)";
 
-        public valuesValue1: number[] = getRandomNumbers(
-            this.valuesCategory.length,
-            TornadoData.MinValue,
-            TornadoData.MaxValue);
+    public valuesCategory: string[] = [
+        "Australia",
+        "Canada",
+        "France",
+        "Germany",
+        "United Kingdom",
+        "United States"
+    ];
 
-        public valuesValue2: number[] = getRandomNumbers(
-            this.valuesCategory.length,
-            TornadoData.MinValue,
-            TornadoData.MaxValue);
+    public valuesValue1: number[] = getRandomNumbers(
+        this.valuesCategory.length,
+        TornadoData.MinValue,
+        TornadoData.MaxValue);
 
-        public valuesValue3: number[] = getRandomNumbers(
-            this.valuesCategory.length,
-            TornadoData.MinValue,
-            TornadoData.MaxValue);
+    public valuesValue2: number[] = getRandomNumbers(
+        this.valuesCategory.length,
+        TornadoData.MinValue,
+        TornadoData.MaxValue);
 
-        public getDataView(columnNames?: string[]): DataView {
-            return this.createCategoricalDataViewBuilder([
+    public valuesValue3: number[] = getRandomNumbers(
+        this.valuesCategory.length,
+        TornadoData.MinValue,
+        TornadoData.MaxValue);
+
+    public getDataView(columnNames?: string[]): DataView {
+        return this.createCategoricalDataViewBuilder([
+            {
+                source: {
+                    displayName: TornadoData.ColumnCategory,
+                    type: ValueType.fromDescriptor({ text: true })
+                },
+                values: this.valuesCategory
+            }
+        ], [
                 {
                     source: {
-                        displayName: TornadoData.ColumnCategory,
-                        type: ValueType.fromDescriptor({ text: true })
+                        displayName: TornadoData.ColumnValues1,
+                        isMeasure: true,
+                        format: "$0,000.00",
+                        type: ValueType.fromDescriptor({ numeric: true }),
+                        objects: { dataPoint: { fill: { solid: { color: "purple" } } } }
                     },
-                    values: this.valuesCategory
+                    values: this.valuesValue1
+                },
+                {
+                    source: {
+                        displayName: TornadoData.ColumnValues2,
+                        isMeasure: true,
+                        format: "$0,000.00",
+                        type: ValueType.fromDescriptor({ numeric: true })
+                    },
+                    values: this.valuesValue2
+                },
+                {
+                    source: {
+                        displayName: TornadoData.ColumnValues3,
+                        isMeasure: true,
+                        format: "$0,000.00",
+                        type: ValueType.fromDescriptor({ numeric: true })
+                    },
+                    values: this.valuesValue3
                 }
-            ], [
-                    {
-                        source: {
-                            displayName: TornadoData.ColumnValues1,
-                            isMeasure: true,
-                            format: "$0,000.00",
-                            type: ValueType.fromDescriptor({ numeric: true }),
-                            objects: { dataPoint: { fill: { solid: { color: "purple" } } } }
-                        },
-                        values: this.valuesValue1
-                    },
-                    {
-                        source: {
-                            displayName: TornadoData.ColumnValues2,
-                            isMeasure: true,
-                            format: "$0,000.00",
-                            type: ValueType.fromDescriptor({ numeric: true })
-                        },
-                        values: this.valuesValue2
-                    },
-                    {
-                        source: {
-                            displayName: TornadoData.ColumnValues3,
-                            isMeasure: true,
-                            format: "$0,000.00",
-                            type: ValueType.fromDescriptor({ numeric: true })
-                        },
-                        values: this.valuesValue3
-                    }
-                ], columnNames).build();
-        }
+            ], columnNames).build();
     }
 }

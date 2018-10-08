@@ -24,49 +24,50 @@
  *  THE SOFTWARE.
  */
 
-module powerbi.extensibility.visual {
-    // d3
-    import Selection = d3.Selection;
+import * as d3 from "d3";
+import Selection = d3.Selection;
 
-    // powerbi.extensibility.utils.interactivity
-    import IInteractiveBehavior = powerbi.extensibility.utils.interactivity.IInteractiveBehavior;
-    import SelectableDataPoint = powerbi.extensibility.utils.interactivity.SelectableDataPoint;
-    import IInteractivityService = powerbi.extensibility.utils.interactivity.IInteractivityService;
-    import ISelectionHandler = powerbi.extensibility.utils.interactivity.ISelectionHandler;
+import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
+import ISelectionHandler = interactivityService.ISelectionHandler;
+import SelectableDataPoint = interactivityService.SelectableDataPoint;
+import IInteractiveBehavior = interactivityService.IInteractiveBehavior;
+import IInteractivityService = interactivityService.IInteractivityService;
 
-    export class TornadoWebBehavior implements IInteractiveBehavior {
-        private columns: Selection<any>;
-        private clearCatcher: Selection<any>;
-        private interactivityService: IInteractivityService;
+import { TornadoBehaviorOptions, TornadoChartPoint } from "./interfaces";
+import { tornadoChartUtils } from "./utils";
 
-        public bindEvents(options: TornadoBehaviorOptions, selectionHandler: ISelectionHandler) {
-            this.columns = options.columns;
-            this.clearCatcher = options.clearCatcher;
-            this.interactivityService = options.interactivityService;
+export class TornadoWebBehavior implements IInteractiveBehavior {
+    private columns: Selection<any>;
+    private clearCatcher: Selection<any>;
+    private interactivityService: IInteractivityService;
 
-            this.columns.on("click", (d: SelectableDataPoint, i: number) => {
-                selectionHandler.handleSelection(d, (d3.event as MouseEvent).ctrlKey);
-            });
+    public bindEvents(options: TornadoBehaviorOptions, selectionHandler: ISelectionHandler) {
+        this.columns = options.columns;
+        this.clearCatcher = options.clearCatcher;
+        this.interactivityService = options.interactivityService;
 
-            this.clearCatcher.on("click", () => {
-                selectionHandler.handleClearSelection();
-            });
-        }
+        this.columns.on("click", (d: SelectableDataPoint, i: number) => {
+            selectionHandler.handleSelection(d, (d3.event as MouseEvent).ctrlKey);
+        });
 
-        public renderSelection(hasSelection: boolean) {
-            let hasHighlights: boolean = this.interactivityService.hasSelection();
-            this.changeOpacityAttribute("fill-opacity", hasSelection, hasHighlights);
-            this.changeOpacityAttribute("stroke-opacity", hasSelection, hasHighlights);
-        }
+        this.clearCatcher.on("click", () => {
+            selectionHandler.handleClearSelection();
+        });
+    }
 
-        private changeOpacityAttribute(attributeName: string, hasSelection: boolean, hasHighlights: boolean) {
-            this.columns.style(attributeName, (d: TornadoChartPoint) => {
-                return tornadoChartUtils.getOpacity(
-                    d.selected,
-                    d.highlight,
-                    !d.highlight && hasSelection,
-                    !d.selected && hasHighlights);
-            });
-        }
+    public renderSelection(hasSelection: boolean) {
+        let hasHighlights: boolean = this.interactivityService.hasSelection();
+        this.changeOpacityAttribute("fill-opacity", hasSelection, hasHighlights);
+        this.changeOpacityAttribute("stroke-opacity", hasSelection, hasHighlights);
+    }
+
+    private changeOpacityAttribute(attributeName: string, hasSelection: boolean, hasHighlights: boolean) {
+        this.columns.style(attributeName, (d: TornadoChartPoint) => {
+            return tornadoChartUtils.getOpacity(
+                d.selected,
+                d.highlight,
+                !d.highlight && hasSelection,
+                !d.selected && hasHighlights);
+        });
     }
 }
