@@ -24,6 +24,8 @@
  *  THE SOFTWARE.
  */
 
+import * as _ from "lodash";
+
 import { RgbColor, parseColorString } from "powerbi-visuals-utils-colorutils";
 import { getRandomNumber } from "powerbi-visuals-utils-testutils";
 

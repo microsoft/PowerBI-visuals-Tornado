@@ -37,6 +37,8 @@ import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
 import { valueFormatter as vf } from "powerbi-visuals-utils-formattingutils";
 import valueFormatter = vf.valueFormatter;
 
+import { TooltipCategoryDataItem, TooltipSeriesDataItem } from "./interfaces";
+
 const DefaultDisplayName: string = "";
 const DisplayNameDelimiter: string = "/";
 const DefaultSeriesIndex: number = 0;

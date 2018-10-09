@@ -24,13 +24,16 @@
  *  THE SOFTWARE.
  */
 
-// powerbi.extensibility.utils.test
-import VisualBuilderBase = powerbi.extensibility.utils.test.VisualBuilderBase;
+import powerbi from "powerbi-visuals-api";
 
-// TornadoChart1452517688218
-import VisualClass = powerbi.extensibility.visual.TornadoChart1452517688218.TornadoChart;
-import TornadoChartSeries = powerbi.extensibility.visual.TornadoChart1452517688218.TornadoChartSeries;
-import TornadoChartDataView = powerbi.extensibility.visual.TornadoChart1452517688218.TornadoChartDataView;
+import DataView = powerbi.DataView;
+import DataViewValueColumns = powerbi.DataViewValueColumns;
+import DataViewValueColumnGroup = powerbi.DataViewValueColumnGroup;
+
+import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
+import { TornadoChart as VisualClass } from "./../src/tornadoChart";
+import { TornadoChartSeries, TornadoChartDataView } from "./../src/interfaces";
+import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 
 export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
     constructor(width: number, height: number) {
@@ -113,6 +116,8 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
             dataView,
             this.visualHost,
             this.visual.textOptions,
-            this.visual.colors);
+            this.visual.colors,
+            this.visualHost.createLocalizationManager()
+        );
     }
 }

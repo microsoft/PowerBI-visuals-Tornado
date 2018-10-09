@@ -24,87 +24,105 @@
  *  THE SOFTWARE.
  */
 
+import "./../style/tornadoChart.less";
+
+import * as d3 from "d3";
+import * as _ from "lodash";
+import powerbi from "powerbi-visuals-api";
+import { powerbi as powerbiTools } from "powerbi-visuals-tools";
+
 // d3
 import Selection = d3.Selection;
 import UpdateSelection = d3.selection.Update;
 
-// powerbi
 import DataView = powerbi.DataView;
 import IViewport = powerbi.IViewport;
 import DataViewObject = powerbi.DataViewObject;
 import DataViewObjects = powerbi.DataViewObjects;
-import VisualDataRoleKind = powerbi.VisualDataRoleKind;
 import DataViewValueColumn = powerbi.DataViewValueColumn;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewValueColumns = powerbi.DataViewValueColumns;
 import DataViewObjectWithId = powerbi.DataViewObjectWithId;
-import DataViewScopeIdentity = powerbi.DataViewScopeIdentity;
+import DataViewScopeIdentity = powerbiTools.extensibility.DataViewScopeIdentity;
 import DataViewMetadataColumn = powerbi.DataViewMetadataColumn;
 import DataViewCategoryColumn = powerbi.DataViewCategoryColumn;
 import DataViewValueColumnGroup = powerbi.DataViewValueColumnGroup;
-import DataViewCategoricalColumn = powerbi.DataViewCategoricalColumn;
-import DataViewObjectPropertyIdentifier = powerbi.DataViewObjectPropertyIdentifier;
+import PrimitiveValue = powerbi.PrimitiveValue;
 
-// powerbi.extensibility
 import IColorPalette = powerbi.extensibility.IColorPalette;
+import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
+import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
+import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
+import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 
-// powerbi.extensibility.utils.dataview
-import DataViewObjectModule = powerbi.extensibility.utils.dataview.DataViewObject;
-import DataViewObjectsModule = powerbi.extensibility.utils.dataview.DataViewObjects;
+import IVisual = powerbi.extensibility.visual.IVisual;
+import IVisualHost = powerbi.extensibility.visual.IVisualHost;
+import ISelectionId = powerbi.visuals.ISelectionId;
+import ISelectionIdBuilder = powerbi.visuals.ISelectionIdBuilder;
 
-// powerbi.extensibility.utils.svg
-import IMargin = powerbi.extensibility.utils.svg.IMargin;
-import translate = powerbi.extensibility.utils.svg.translate;
-import translateAndRotate = powerbi.extensibility.utils.svg.translateAndRotate;
-import ClassAndSelector = powerbi.extensibility.utils.svg.CssConstants.ClassAndSelector;
-import createClassAndSelector = powerbi.extensibility.utils.svg.CssConstants.createClassAndSelector;
+import { dataViewObject, dataViewObjects } from "powerbi-visuals-utils-dataviewutils";
+import DataViewObjectModule = dataViewObject.DataViewObject;
+import DataViewObjectsModule = dataViewObjects.DataViewObjects;
 
-// powerbi.extensibility.utils.type
-import PixelConverter = powerbi.extensibility.utils.type.PixelConverter;
+import * as SVGUtil from "powerbi-visuals-utils-svgutils";
+import SVGManipulations = SVGUtil.manipulation;
+import ClassAndSelector = SVGUtil.CssConstants.ClassAndSelector;
+import createClassAndSelector = SVGUtil.CssConstants.createClassAndSelector;
+import IMargin = SVGUtil.IMargin;
+import translate = SVGManipulations.translate;
+import translateAndRotate = SVGManipulations.translateAndRotate;
 
-// powerbi.extensibility.utils.chart
-import LegendModule = powerbi.extensibility.utils.chart.legend;
-import ILegend = powerbi.extensibility.utils.chart.legend.ILegend;
-import LegendIcon = powerbi.extensibility.utils.chart.legend.LegendIcon;
-import LegendData = powerbi.extensibility.utils.chart.legend.LegendData;
-import LegendDataModule = powerbi.extensibility.utils.chart.legend.data;
-import legendProps = powerbi.extensibility.utils.chart.legend.legendProps;
-import legendPosition = powerbi.extensibility.utils.chart.legend.position;
-import dataLabelUtils = powerbi.extensibility.utils.chart.dataLabel.utils;
-import createLegend = powerbi.extensibility.utils.chart.legend.createLegend;
-import LegendPosition = powerbi.extensibility.utils.chart.legend.LegendPosition;
-import LegendDataPoint = powerbi.extensibility.utils.chart.legend.LegendDataPoint;
-import VisualDataLabelsSettings = powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings;
-import OpacityLegendBehavior = powerbi.extensibility.utils.chart.legend.OpacityLegendBehavior;
+import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
 
-// powerbi.extensibility.utils.formatting
-import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
-import TextProperties = powerbi.extensibility.utils.formatting.TextProperties;
-import IValueFormatter = powerbi.extensibility.utils.formatting.IValueFormatter;
-import textMeasurementService = powerbi.extensibility.utils.formatting.textMeasurementService;
+import { legend as LegendModule, legendInterfaces, legendData, legendPosition, dataLabelUtils, OpacityLegendBehavior, dataLabelInterfaces } from "powerbi-visuals-utils-chartutils";
+import ILegend = legendInterfaces.ILegend;
+import LegendIcon = legendInterfaces.LegendIcon;
+import LegendPosition = legendInterfaces.LegendPosition;
+import LegendData = legendInterfaces.LegendData;
+import legendProps = legendInterfaces.legendProps;
+import createLegend = LegendModule.createLegend;
+import LegendDataPoint = legendInterfaces.LegendDataPoint;
+import LegendDataModule = legendData;
+import VisualDataLabelsSettings = dataLabelInterfaces.VisualDataLabelsSettings;
 
+import { textMeasurementService as tms, valueFormatter as vf } from "powerbi-visuals-utils-formattingutils";
+import valueFormatter = vf.valueFormatter;
+import TextProperties = tms.TextProperties;
+import IValueFormatter = vf.IValueFormatter;
+import textMeasurementService = tms.textMeasurementService;
 
-// powerbi.extensibility.utils.interactivity
-import ISelectionHandler = powerbi.extensibility.utils.interactivity.ISelectionHandler;
-import appendClearCatcher = powerbi.extensibility.utils.interactivity.appendClearCatcher;
-import SelectableDataPoint = powerbi.extensibility.utils.interactivity.SelectableDataPoint;
-import IInteractiveBehavior = powerbi.extensibility.utils.interactivity.IInteractiveBehavior;
-import IInteractivityService = powerbi.extensibility.utils.interactivity.IInteractivityService;
-import createInteractivityService = powerbi.extensibility.utils.interactivity.createInteractivityService;
+import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
+import ISelectionHandler = interactivityService.ISelectionHandler;
+import appendClearCatcher = interactivityService.appendClearCatcher;
+import SelectableDataPoint = interactivityService.SelectableDataPoint;
+import IInteractiveBehavior = interactivityService.IInteractiveBehavior;
+import IInteractivityService = interactivityService.IInteractivityService;
+import createInteractivityService = interactivityService.createInteractivityService;
 
-// powerbi.extensibility.utils.color
-import ColorHelper = powerbi.extensibility.utils.color.ColorHelper;
-
-// powerbi.extensibility.utils.tooltip
-import ITooltipServiceWrapper = powerbi.extensibility.utils.tooltip.ITooltipServiceWrapper;
-import TooltipEventArgs = powerbi.extensibility.utils.tooltip.TooltipEventArgs;
-import createTooltipServiceWrapper = powerbi.extensibility.utils.tooltip.createTooltipServiceWrapper;
+import { ColorHelper } from "powerbi-visuals-utils-colorutils";
+import { createTooltipServiceWrapper, TooltipEventArgs, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
 
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 
 import IVisualSelectionId = powerbi.visuals.ISelectionId;
+
+import {
+    TornadoChartSettings,
+    TornadoChartSeries,
+    TornadoBehaviorOptions,
+    TornadoChartDataView,
+    TornadoChartPoint,
+    TornadoChartTextOptions,
+    LineData,
+    LabelData,
+    TextData
+} from "./interfaces";
+import { TornadoChartScrolling } from "./scrolling";
+import { tornadoChartProperties } from "./properties";
+import { TornadoWebBehavior } from "./webBehavior";
+import * as tooltipBuilder from "./tooltipBuilder";
 
 const VisualizationText = {
     Legend: "VisualLegend",

@@ -23,25 +23,24 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
  */
-// powerbi.visuals
+
+import powerbi from "powerbi-visuals-api";
+import * as _ from "lodash";
+
+import DataView = powerbi.DataView;
+import DataViewValueColumn = powerbi.DataViewValueColumn;
+import DataViewValueColumns = powerbi.DataViewValueColumns;
+import DataViewValueColumnGroup = powerbi.DataViewValueColumnGroup;
+
 import ISelectionId = powerbi.visuals.ISelectionId;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 
-// powerbi.extensibility.visual.test
-import TornadoData = powerbi.extensibility.visual.test.TornadoData;
-import areColorsEqual = powerbi.extensibility.visual.test.helpers.areColorsEqual;
-import isColorAppliedToElements = powerbi.extensibility.visual.test.helpers.isColorAppliedToElements;
-import TornadoChartBuilder = powerbi.extensibility.visual.test.TornadoChartBuilder;
-import getRandomUniqueHexColors = powerbi.extensibility.visual.test.helpers.getRandomUniqueHexColors;
-import getSolidColorStructuralObject = powerbi.extensibility.visual.test.helpers.getSolidColorStructuralObject;
+import { assertColorsMatch } from "powerbi-visuals-utils-testutils";
 
-// powerbi.extensibility.utils.test
-import assertColorsMatch = powerbi.extensibility.utils.test.helpers.color.assertColorsMatch;
-
-// TornadoChart1452517688218
-import TornadoChartPoint = powerbi.extensibility.visual.TornadoChart1452517688218.TornadoChartPoint;
-import TornadoChartSeries = powerbi.extensibility.visual.TornadoChart1452517688218.TornadoChartSeries;
-import TornadoChartDataView = powerbi.extensibility.visual.TornadoChart1452517688218.TornadoChartDataView;
+import { TornadoData } from "./visualData";
+import { TornadoChartBuilder } from "./visualBuilder";
+import { areColorsEqual, isColorAppliedToElements, getRandomUniqueHexColors, getSolidColorStructuralObject } from "./helpers/helpers";
+import { TornadoChartPoint, TornadoChartSeries, TornadoChartDataView } from "./../src/interfaces";
 
 describe("TornadoChart", () => {
     let visualBuilder: TornadoChartBuilder,

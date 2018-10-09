@@ -30,14 +30,13 @@ import * as d3 from "d3";
 import IViewport = powerbi.IViewport;
 // d3
 import Selection = d3.Selection;
-import UpdateSelection = d3.selection.Update;
 
-// powerbi.extensibility.utils.svg
-import { axisInterfaces } from "powerbi-visuals-utils-chartutils";
-import IMargin = axisInterfaces.IMargin;
-import translate = powerbi.extensibility.utils.svg.translate;
+import * as SVGUtil from "powerbi-visuals-utils-svgutils";
+import IMargin = SVGUtil.IMargin;
+import translate = SVGUtil.manipulation.translate;
 
 import { TornadoChartDataView } from "./interfaces";
+import { TornadoChart } from "./tornadoChart";
 
 export class TornadoChartScrolling {
     public isScrollable: boolean;
