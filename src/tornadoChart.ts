@@ -29,11 +29,8 @@ import "./../style/tornadoChart.less";
 import * as d3 from "d3";
 import * as _ from "lodash";
 import powerbi from "powerbi-visuals-api";
-import { powerbi as powerbiTools } from "powerbi-visuals-tools";
 
-// d3
-import Selection = d3.Selection;
-import UpdateSelection = d3.selection.Update;
+type Selection<T> = d3.Selection<any, T, any, any>;
 
 import DataView = powerbi.DataView;
 import IViewport = powerbi.IViewport;
@@ -43,11 +40,13 @@ import DataViewValueColumn = powerbi.DataViewValueColumn;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewValueColumns = powerbi.DataViewValueColumns;
 import DataViewObjectWithId = powerbi.DataViewObjectWithId;
-import DataViewScopeIdentity = powerbiTools.extensibility.DataViewScopeIdentity;
 import DataViewMetadataColumn = powerbi.DataViewMetadataColumn;
 import DataViewCategoryColumn = powerbi.DataViewCategoryColumn;
 import DataViewValueColumnGroup = powerbi.DataViewValueColumnGroup;
 import PrimitiveValue = powerbi.PrimitiveValue;
+import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
+import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
+import VisualObjectInstance = powerbi.VisualObjectInstance;
 
 import IColorPalette = powerbi.extensibility.IColorPalette;
 import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
@@ -58,7 +57,7 @@ import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructor
 import IVisual = powerbi.extensibility.visual.IVisual;
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import ISelectionId = powerbi.visuals.ISelectionId;
-import ISelectionIdBuilder = powerbi.visuals.ISelectionIdBuilder;
+import IVisualSelectionId = powerbi.visuals.ISelectionId;
 
 import { dataViewObject, dataViewObjects } from "powerbi-visuals-utils-dataviewutils";
 import DataViewObjectModule = dataViewObject.DataViewObject;
@@ -92,21 +91,13 @@ import IValueFormatter = vf.IValueFormatter;
 import textMeasurementService = tms.textMeasurementService;
 
 import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
-import ISelectionHandler = interactivityService.ISelectionHandler;
 import appendClearCatcher = interactivityService.appendClearCatcher;
-import SelectableDataPoint = interactivityService.SelectableDataPoint;
 import IInteractiveBehavior = interactivityService.IInteractiveBehavior;
 import IInteractivityService = interactivityService.IInteractivityService;
 import createInteractivityService = interactivityService.createInteractivityService;
 
 import { ColorHelper } from "powerbi-visuals-utils-colorutils";
 import { createTooltipServiceWrapper, TooltipEventArgs, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
-
-import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
-import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
-import VisualObjectInstance = powerbi.VisualObjectInstance;
-
-import IVisualSelectionId = powerbi.visuals.ISelectionId;
 
 import {
     TornadoChartSettings,
@@ -336,7 +327,7 @@ export class TornadoChart implements IVisual {
 
         let dataViewValueColumn: DataViewValueColumn = dataViewValueColumns ? dataViewValueColumns[index] : null,
             source: DataViewMetadataColumn = dataViewValueColumn ? dataViewValueColumn.source : null,
-            identity: DataViewScopeIdentity = columnGroup ? columnGroup.identity : null,
+            identity: any = columnGroup ? columnGroup.identity : null,
             queryName: string = source ? source.queryName : null;
 
         let selectionId: ISelectionId = hostService.createSelectionIdBuilder()
@@ -445,7 +436,6 @@ export class TornadoChart implements IVisual {
     };
 
     private root: Selection<any>;
-    private svg: Selection<any>;
     private main: Selection<any>;
     private columns: Selection<any>;
     private axes: Selection<any>;
@@ -463,7 +453,6 @@ export class TornadoChart implements IVisual {
     private viewport: IViewport;
     private dataView: TornadoChartDataView;
     private heightColumn: number = 0;
-    private selectionIdBuilder: ISelectionIdBuilder;
     private tooltipServiceWrapper: ITooltipServiceWrapper;
 
     private get allLabelsWidth(): number {
@@ -583,10 +572,9 @@ export class TornadoChart implements IVisual {
         }
         let elementsTranslate: string = translate(translateX, 0);
 
-        this.root.attr({
-            "height": this.viewport.height + this.margin.top + this.margin.bottom,
-            "width": this.viewport.width + this.margin.left + this.margin.right
-        });
+        this.root
+            .attr("height", this.viewport.height + this.margin.top + this.margin.bottom)
+            .attr("width", this.viewport.width + this.margin.left + this.margin.right);
 
         this.columns
             .attr("transform", elementsTranslate);
@@ -849,16 +837,18 @@ export class TornadoChart implements IVisual {
     private renderColumns(columnsData: TornadoChartPoint[], selectSecondSeries: boolean = false): void {
         let hasSelection: boolean = this.interactivityService && this.interactivityService.hasSelection();
 
-        let columnsSelection: UpdateSelection<any> = this.columns
+        let columnsSelection: Selection<any> = this.columns
             .selectAll(TornadoChart.Column.selectorName)
             .data(columnsData);
 
-        columnsSelection
+        let columnsSelectionMerged = columnsSelection
             .enter()
             .append("svg:rect")
-            .classed(TornadoChart.Column.className, true);
+            .merge(columnsSelection);
 
-        columnsSelection
+        columnsSelectionMerged.classed(TornadoChart.Column.className, true);
+
+        columnsSelectionMerged
             .style("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
             .style("stroke", (p: TornadoChartPoint) => p.color)
             .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
@@ -875,17 +865,17 @@ export class TornadoChart implements IVisual {
             interactivityService.applySelectionStateToData(columnsData);
 
             let behaviorOptions: TornadoBehaviorOptions = {
-                columns: columnsSelection,
+                columns: columnsSelectionMerged,
                 clearCatcher: this.clearCatcher,
                 interactivityService: this.interactivityService
             };
             interactivityService.bind(columnsData, this.behavior, behaviorOptions);
         }
 
-        this.renderTooltip(columnsSelection);
+        this.renderTooltip(columnsSelectionMerged);
     }
 
-    private renderTooltip(selection: UpdateSelection<any>): void {
+    private renderTooltip(selection: Selection<any>): void {
         this.tooltipServiceWrapper.addTooltip(
             selection,
             (tooltipEvent: TooltipEventArgs<TornadoChartPoint>) => {
@@ -954,7 +944,7 @@ export class TornadoChart implements IVisual {
 
     private renderAxes(): void {
         let linesData: LineData[],
-            axesSelection: UpdateSelection<any>,
+            axesSelection: Selection<any>,
             axesElements: Selection<any> = this.main
                 .select(TornadoChart.Axes.selectorName)
                 .selectAll(TornadoChart.Axis.selectorName);
@@ -968,13 +958,16 @@ export class TornadoChart implements IVisual {
 
         axesSelection = axesElements.data(linesData);
 
-        axesSelection
+        let axesSelectionMerged = axesSelection
             .enter()
             .append("svg:line")
+            .merge(axesSelection);
+
+        axesSelectionMerged
             .classed(TornadoChart.Axis.className, true)
             .style("stroke", this.colorHelper.getHighContrastColor());
 
-        axesSelection
+        axesSelectionMerged
             .attr("x1", (data: LineData) => data.x1)
             .attr("y1", (data: LineData) => data.y1)
             .attr("x2", (data: LineData) => data.x2)
@@ -1004,7 +997,7 @@ export class TornadoChart implements IVisual {
 
     private renderLabels(dataPoints: TornadoChartPoint[], labelsSettings: VisualDataLabelsSettings): void {
         let labelEnterSelection: Selection<TornadoChartPoint>,
-            labelSelection: UpdateSelection<TornadoChartPoint> = this.main
+            labelSelection: Selection<TornadoChartPoint> = this.main
                 .select(TornadoChart.Labels.selectorName)
                 .selectAll(TornadoChart.Label.selectorName)
                 .data(_.filter(dataPoints, (p: TornadoChartPoint) => p.label.dx >= 0));
@@ -1021,7 +1014,8 @@ export class TornadoChart implements IVisual {
 
         labelEnterSelection = labelSelection
             .enter()
-            .append("g");
+            .append("g")
+            .merge(labelSelection);
 
         labelEnterSelection
             .append("svg:title")
@@ -1063,7 +1057,7 @@ export class TornadoChart implements IVisual {
             fontSizeInPx: string = PixelConverter.fromPoint(settings.categoriesFontSize),
             position: string = DataViewObjectModule.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left),
             categoriesEnterSelection: Selection<any>,
-            categoriesSelection: UpdateSelection<any>,
+            categoriesSelection: Selection<any>,
             categoryElements: Selection<any> = this.main
                 .select(TornadoChart.Categories.selectorName)
                 .selectAll(TornadoChart.Category.selectorName);
@@ -1076,7 +1070,8 @@ export class TornadoChart implements IVisual {
 
         categoriesEnterSelection = categoriesSelection
             .enter()
-            .append("g");
+            .append("g")
+            .merge(categoriesSelection);
         categoriesEnterSelection
             .append("svg:title")
             .classed(TornadoChart.CategoryTitle.className, true);

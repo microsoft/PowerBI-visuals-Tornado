@@ -20,7 +20,7 @@
     "url": "git+https://github.com/Microsoft/PowerBI-visuals-Tornado.git"
   },
   "devDependencies": {
-    "@types/d3": "3.5.36",
+    "@types/d3": "^5.0.0",
     "@types/jasmine": "2.5.47",
     "@types/jasmine-jquery": "1.5.30",
     "@types/jquery": "2.0.46",
@@ -65,7 +65,7 @@
     "webpack": "4.14.0"
   },
   "dependencies": {
-    "d3": "3.5.5",
+    "d3": "^5.4.0",
     "jquery": "3.2.1",
     "powerbi-models": "^1.0.2"
   }

@@ -27,9 +27,9 @@
 import powerbi from "powerbi-visuals-api";
 import * as d3 from "d3";
 
+type Selection<T> = d3.Selection<any, T, any, any>;
+
 import IViewport = powerbi.IViewport;
-// d3
-import Selection = d3.Selection;
 
 import * as SVGUtil from "powerbi-visuals-utils-svgutils";
 import IMargin = SVGUtil.IMargin;
@@ -54,7 +54,7 @@ export class TornadoChartScrolling {
 
     private isYScrollBarVisible: boolean;
     private brushGraphicsContextY: Selection<any>;
-    private scrollYBrush: any = d3.svg.brush();
+    private scrollYBrush: any = d3.brush();
 
     private getRoot: () => Selection<any>;
     private getViewport: () => IViewport;
@@ -126,7 +126,7 @@ export class TornadoChartScrolling {
             this.setScrollBarSize(this.brushGraphicsContextY, extentData.value[1], true);
         };
 
-        let scrollYScale: d3.scale.Ordinal<any, any> = d3.scale.ordinal().rangeBands([0, scrollSpaceLength]);
+        let scrollYScale: d3.ScaleBand<any> = d3.scaleBand().range([0, scrollSpaceLength]);//!!! scaleOrdinal().RangeBands()
         this.scrollYBrush.y(scrollYScale).extent(extentData.value);
 
         this.renderScrollbar(
@@ -146,7 +146,7 @@ export class TornadoChartScrolling {
         return brushGraphicsContext ? void brushGraphicsContext.remove() : undefined;
     }
 
-    private renderScrollbar(brush: d3.svg.Brush<any>,
+    private renderScrollbar(brush: d3.BrushBehavior<any>,
         brushGraphicsContext: Selection<any>,
         brushX: number,
         onRender: (value: number) => void): void {
@@ -158,19 +158,18 @@ export class TornadoChartScrolling {
             onRender(wheelEvent.deltaY);
         });
 
-        brushGraphicsContext.attr({
-            "transform": translate(brushX, 0),
-            "drag-resize-disabled": "true" /*disables resizing of the visual when dragging the scrollbar in edit mode*/
-        });
+        brushGraphicsContext
+            .attr("transform", translate(brushX, 0))
+            .attr("drag-resize-disabled", "true" /*disables resizing of the visual when dragging the scrollbar in edit mode*/
+            );
 
         brushGraphicsContext.call(brush); /*call the brush function, causing it to create the rectangles   */
         /* Disabling the zooming feature */
         brushGraphicsContext.selectAll(".resize").remove();
         brushGraphicsContext.select(".background").remove();
-        brushGraphicsContext.selectAll(".extent").style({
-            "fill-opacity": TornadoChartScrolling.ExtentFillOpacity,
-            "cursor": "default",
-        });
+        brushGraphicsContext.selectAll(".extent")
+            .style("fill-opacity", TornadoChartScrolling.ExtentFillOpacity)
+            .style("cursor", "default");
     }
 
     private setScrollBarSize(brushGraphicsContext: Selection<any>, minExtent: number, isVertical: boolean): void {

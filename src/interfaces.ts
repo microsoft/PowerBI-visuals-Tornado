@@ -25,7 +25,7 @@
  */
 
 import powerbi from "powerbi-visuals-api";
-import Selection = d3.Selection;
+type Selection<T> = d3.Selection<d3.BaseType, T, d3.BaseType, any>;
 
 import DataViewObject = powerbi.DataViewObject;
 import DataViewMetadataColumn = powerbi.DataViewMetadataColumn;
