@@ -26,6 +26,7 @@
 
 import powerbi from "powerbi-visuals-api";
 import * as d3 from "d3";
+import * as jQuery from "jquery";
 
 type Selection<T> = d3.Selection<any, T, any, any>;
 
@@ -127,6 +128,7 @@ export class TornadoChartScrolling {
         };
 
         let scrollYScale: d3.ScaleBand<any> = d3.scaleBand().range([0, scrollSpaceLength]);//!!! scaleOrdinal().RangeBands()
+        debugger;
         this.scrollYBrush.y(scrollYScale).extent(extentData.value);
 
         this.renderScrollbar(

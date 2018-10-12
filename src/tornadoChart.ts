@@ -996,7 +996,7 @@ export class TornadoChart implements IVisual {
     }
 
     private renderLabels(dataPoints: TornadoChartPoint[], labelsSettings: VisualDataLabelsSettings): void {
-        let labelEnterSelection: Selection<TornadoChartPoint>,
+        let labelSelectionMerged: Selection<TornadoChartPoint>,
             labelSelection: Selection<TornadoChartPoint> = this.main
                 .select(TornadoChart.Labels.selectorName)
                 .selectAll(TornadoChart.Label.selectorName)
@@ -1012,35 +1012,35 @@ export class TornadoChart implements IVisual {
         let labelYOffset: number = this.heightColumn / 2 + this.dataView.labelHeight / 2 - this.InnerTextHeightDelta;
         let categoriesLength: number = this.dataView.categories.length;
 
-        labelEnterSelection = labelSelection
+        labelSelectionMerged = labelSelection
             .enter()
             .append("g")
             .merge(labelSelection);
 
-        labelEnterSelection
+        labelSelectionMerged
             .append("svg:title")
             .classed(TornadoChart.LabelTitle.className, true);
 
-        labelEnterSelection
+        labelSelectionMerged
             .append("svg:text")
             .attr("dy", dataLabelUtils.DefaultDy)
             .classed(TornadoChart.LabelText.className, true);
 
-        labelSelection
+        labelSelectionMerged
             .attr("pointer-events", "none")
             .classed(TornadoChart.Label.className, true);
 
-        labelSelection
+        labelSelectionMerged
             .select(TornadoChart.LabelTitle.selectorName)
             .text((p: TornadoChartPoint) => p.label.source);
 
-        labelSelection
+        labelSelectionMerged
             .attr("transform", (p: TornadoChartPoint, index: number) => {
                 let dy: number = (this.heightColumn + this.columnPadding) * (index % categoriesLength);
                 return translate(p.label.dx, dy + labelYOffset);
             });
 
-        labelSelection
+        labelSelectionMerged
             .select(TornadoChart.LabelText.selectorName)
             .attr("fill", (p: TornadoChartPoint) => p.label.color)
             .attr("font-size", fontSizeInPx)
@@ -1056,7 +1056,7 @@ export class TornadoChart implements IVisual {
             color: string = settings.categoriesFillColor,
             fontSizeInPx: string = PixelConverter.fromPoint(settings.categoriesFontSize),
             position: string = DataViewObjectModule.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left),
-            categoriesEnterSelection: Selection<any>,
+            categoriesSelectionMerged: Selection<any>,
             categoriesSelection: Selection<any>,
             categoryElements: Selection<any> = this.main
                 .select(TornadoChart.Categories.selectorName)
@@ -1068,15 +1068,16 @@ export class TornadoChart implements IVisual {
         }
         categoriesSelection = categoryElements.data(this.dataView.categories);
 
-        categoriesEnterSelection = categoriesSelection
+        categoriesSelectionMerged = categoriesSelection
             .enter()
             .append("g")
             .merge(categoriesSelection);
-        categoriesEnterSelection
+
+        categoriesSelectionMerged
             .append("svg:title")
             .classed(TornadoChart.CategoryTitle.className, true);
 
-        categoriesEnterSelection
+        categoriesSelectionMerged
             .append("svg:text")
             .classed(TornadoChart.CategoryText.className, true);
 
@@ -1087,7 +1088,7 @@ export class TornadoChart implements IVisual {
             xShift = width - this.allLabelsWidth;
         }
 
-        categoriesSelection
+        categoriesSelectionMerged
             .attr("transform", (text: string, index: number) => {
                 let shift: number = (this.heightColumn + this.columnPadding) * index + this.heightColumn / 2,
                     textData: TextData = TornadoChart.getTextData(text, this.textOptions, false, true);
@@ -1098,11 +1099,11 @@ export class TornadoChart implements IVisual {
             })
             .classed(TornadoChart.Category.className, true);
 
-        categoriesSelection
+        categoriesSelectionMerged
             .select(TornadoChart.CategoryTitle.selectorName)
             .text((text: TextData) => text.text);
 
-        categoriesSelection
+        categoriesSelectionMerged
             .select(TornadoChart.CategoryText.selectorName)
             .attr("fill", color)
             .attr("font-size", fontSizeInPx)
