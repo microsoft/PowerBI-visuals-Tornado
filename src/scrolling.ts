@@ -55,7 +55,7 @@ export class TornadoChartScrolling {
 
     private isYScrollBarVisible: boolean;
     private brushGraphicsContextY: Selection<any>;
-    private scrollYBrush: d3.BrushBehavior<any> = d3.brush();
+    private scrollYBrush: d3.BrushBehavior<any> = d3.brushY();
 
     private getRoot: () => Selection<any>;
     private getViewport: () => IViewport;
@@ -97,9 +97,12 @@ export class TornadoChartScrolling {
 
         let scrollSpaceLength: number = this.viewport.height;
         let extentData: any = this.getExtentData(this.getPrefferedHeight(), scrollSpaceLength);
+        let d3Event = () => require("d3-selection").event;
 
-        let onRender = (wheelDelta: number = 0) => {
-            let position: any = this.scrollYBrush.extent();
+
+        let onRender = (d3Selection: Selection<any> = d3Event() && d3Event().selection, wheelDelta: number = 0) => {
+            let extendValueFn: Function = this.scrollYBrush.extent()
+            let position: any = extendValueFn();
             if (wheelDelta !== 0) {
 
                 // Handle mouse wheel manually by moving the scrollbar half of its size
@@ -125,11 +128,14 @@ export class TornadoChartScrolling {
             let scrollPosition: number[] = extentData.toScrollPosition(position, scrollSpaceLength);
             onScroll.call(this, jQuery.extend(true, {}, data), scrollPosition[0], scrollPosition[1]);
             this.setScrollBarSize(this.brushGraphicsContextY, extentData.value[1], true);
+            // let brushSel = this.brushGraphicsContextY.append('g').call(this.scrollYBrush);
+            // this.scrollYBrush.move(brushSel, [sliderScale(0), sliderScale(10)])
         };
 
-        let scrollYScale: d3.ScaleBand<any> = d3.scaleBand().range([0, scrollSpaceLength]);//!!! scaleOrdinal().RangeBands()
+        let scrollYScale: d3.ScaleOrdinal<any, any> = d3.scaleOrdinal().range([0, scrollSpaceLength]);//!!! scaleOrdinal().RangeBands()
         //this.scrollYBrush.y(scrollYScale).extent(extentData.value);
-        this.scrollYBrush.extent([[0, scrollYScale.range()[0]], [0, scrollYScale.range()[0]]]).extent(extentData.value);
+        this.scrollYBrush.extent([[0, extentData.value[0]], [scrollSpaceLength, extentData.value[1]]]);
+
 
         this.renderScrollbar(
             this.scrollYBrush,
@@ -137,7 +143,7 @@ export class TornadoChartScrolling {
             this.viewport.width,
             onRender);
 
-        onRender();
+        onRender(d3Event() && d3Event().selection);
     }
 
     private createOrRemoveScrollbar(isVisible, brushGraphicsContext, brushClass) {
@@ -151,13 +157,19 @@ export class TornadoChartScrolling {
     private renderScrollbar(brush: d3.BrushBehavior<any>,
         brushGraphicsContext: Selection<any>,
         brushX: number,
-        onRender: (value: number) => void): void {
+        onRender: (d3Selection: Selection<any>, value: number) => void): void {
 
-        brush.on("brush", () => window.requestAnimationFrame(() => onRender(0)));
+        let d3Event = () => require("d3-selection").event;
+        brush.on("brush", () => {
+            let d3Selection: Selection<any> = d3Event().selection;
+            window.requestAnimationFrame(() => onRender(d3Selection, 0))
+        });
         this.root.on("wheel", () => {
+            let d3Selection: Selection<any> = d3Event().selection;
+
             if (!this.isYScrollBarVisible) return;
             let wheelEvent: any = d3.event; // Casting to any to avoid compilation errors
-            onRender(wheelEvent.deltaY);
+            onRender(d3Selection, wheelEvent.deltaY);
         });
 
         brushGraphicsContext
