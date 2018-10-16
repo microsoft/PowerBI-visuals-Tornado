@@ -89,7 +89,6 @@ export class TornadoChartScrolling {
             && this.viewport.width > 0;
 
         this.brushGraphicsContextY = this.createOrRemoveScrollbar(this.isYScrollBarVisible, this.brushGraphicsContextY, "y brush");
-
         if (!this.isYScrollBarVisible) {
             onScroll.call(this, jQuery.extend(true, {}, data), 0, 1);
             return;
@@ -97,12 +96,11 @@ export class TornadoChartScrolling {
 
         let scrollSpaceLength: number = this.viewport.height;
         let extentData: any = this.getExtentData(this.getPrefferedHeight(), scrollSpaceLength);
-        let d3Event = () => require("d3-selection").event;
+        let getEvent = () => require("d3-selection").event;
 
+        let onRender = (selection: any = getEvent() && getEvent().selection, wheelDelta: number = 0) => {
+            let position = selection || extentData.value;
 
-        let onRender = (d3Selection: Selection<any> = d3Event() && d3Event().selection, wheelDelta: number = 0) => {
-            let extendValueFn: Function = this.scrollYBrush.extent()
-            let position: any = extendValueFn();
             if (wheelDelta !== 0) {
 
                 // Handle mouse wheel manually by moving the scrollbar half of its size
@@ -123,7 +121,7 @@ export class TornadoChartScrolling {
 
                 // Update the scroll bar accordingly and redraw
                 this.scrollYBrush.extent(position);
-                this.brushGraphicsContextY.select(".extent").attr("y", position[0]);
+                this.brushGraphicsContextY.select(".selection").attr("y", position[0]);
             }
             let scrollPosition: number[] = extentData.toScrollPosition(position, scrollSpaceLength);
             onScroll.call(this, jQuery.extend(true, {}, data), scrollPosition[0], scrollPosition[1]);
@@ -132,10 +130,8 @@ export class TornadoChartScrolling {
             // this.scrollYBrush.move(brushSel, [sliderScale(0), sliderScale(10)])
         };
 
-        let scrollYScale: d3.ScaleOrdinal<any, any> = d3.scaleOrdinal().range([0, scrollSpaceLength]);//!!! scaleOrdinal().RangeBands()
         //this.scrollYBrush.y(scrollYScale).extent(extentData.value);
         this.scrollYBrush.extent([[0, extentData.value[0]], [scrollSpaceLength, extentData.value[1]]]);
-
 
         this.renderScrollbar(
             this.scrollYBrush,
@@ -143,12 +139,13 @@ export class TornadoChartScrolling {
             this.viewport.width,
             onRender);
 
-        onRender(d3Event() && d3Event().selection);
+        onRender();
     }
 
-    private createOrRemoveScrollbar(isVisible, brushGraphicsContext, brushClass) {
+    private createOrRemoveScrollbar(isVisible: boolean, brushGraphicsContext: Selection<any>, brushClass: string) {
         if (isVisible && this.isScrollable) {
-            return brushGraphicsContext || this.root.append("g").classed(brushClass, true);
+
+            return brushGraphicsContext || this.root.append("g").merge(this.root).classed(brushClass, true);
         }
 
         return brushGraphicsContext ? void brushGraphicsContext.remove() : undefined;
@@ -157,7 +154,7 @@ export class TornadoChartScrolling {
     private renderScrollbar(brush: d3.BrushBehavior<any>,
         brushGraphicsContext: Selection<any>,
         brushX: number,
-        onRender: (d3Selection: Selection<any>, value: number) => void): void {
+        onRender: (d3Selection: any, value: number) => void): void {
 
         let d3Event = () => require("d3-selection").event;
         brush.on("brush", () => {
@@ -179,9 +176,9 @@ export class TornadoChartScrolling {
 
         brushGraphicsContext.call(brush); /*call the brush function, causing it to create the rectangles   */
         /* Disabling the zooming feature */
-        brushGraphicsContext.selectAll(".resize").remove();
+        brushGraphicsContext.selectAll(".handle").remove();
         brushGraphicsContext.select(".background").remove();
-        brushGraphicsContext.selectAll(".extent")
+        brushGraphicsContext.selectAll(".selection")
             .style("fill-opacity", TornadoChartScrolling.ExtentFillOpacity)
             .style("cursor", "default");
     }
