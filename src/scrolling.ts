@@ -137,7 +137,7 @@ export class TornadoChartScrolling {
             this.brushGraphicsContextY,
             this.viewport.width,
             onRender
-            );
+        );
 
         onRender();
     }
@@ -178,9 +178,20 @@ export class TornadoChartScrolling {
             .call(brush.move, [10, TornadoChart.ScrollBarWidth]);
 
         /* Disabling the zooming feature */
-        brushGraphicsContext.selectAll(".handle").remove();
-        brushGraphicsContext.select(".background").remove();
-        brushGraphicsContext.selectAll(".selection")
+        brushGraphicsContext
+            .selectAll(".handle")
+            .remove();
+
+        brushGraphicsContext
+            .select(".background")
+            .remove();
+
+        brushGraphicsContext
+            .select(".overlay")
+            .remove();
+
+        brushGraphicsContext
+            .selectAll(".selection")
             .style("fill-opacity", TornadoChartScrolling.ExtentFillOpacity)
             .style("cursor", "default")
             .style("display", null);
