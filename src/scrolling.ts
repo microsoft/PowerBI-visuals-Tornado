@@ -123,19 +123,18 @@ export class TornadoChartScrolling {
                 this.scrollYBrush.move(this.brushGraphicsContextY, position);
                 this.brushGraphicsContextY.select(".selection").attr("y", position[0]);
             }
+
             let scrollPosition: number[] = extentData.toScrollPosition(position, scrollSpaceLength);
             onScroll.call(this, jQuery.extend(true, {}, data), scrollPosition[0], scrollPosition[1]);
-            this.setScrollBarSize(this.brushGraphicsContextY, extentData.value[1], true);
-            // let brushSel = this.brushGraphicsContextY.append('g').call(this.scrollYBrush);
-            // this.scrollYBrush.move(brushSel, [sliderScale(0), sliderScale(10)])
         };
 
-        this.scrollYBrush.extent([[0, 0], [this.viewport.width, this.viewport.height]]);
+        this.scrollYBrush.extent([[0, 0], [TornadoChart.ScrollBarWidth, this.viewport.height]]);
 
         this.renderScrollbar(
             this.scrollYBrush,
             this.brushGraphicsContextY,
             this.viewport.width,
+            extentData.value[1],
             onRender
         );
 
@@ -151,10 +150,13 @@ export class TornadoChartScrolling {
         return brushGraphicsContext ? void brushGraphicsContext.remove() : undefined;
     }
 
-    private renderScrollbar(brush: d3.BrushBehavior<any>,
+    private renderScrollbar(
+        brush: d3.BrushBehavior<any>,
         brushGraphicsContext: Selection<any>,
         brushX: number,
-        onRender: (d3Selection: any, value: number) => void): void {
+        scrollbarHight: number,
+        onRender: (d3Selection: any, value: number) => void
+    ): void {
 
         let d3Event = () => require("d3-selection").event;
         brush.on("brush", () => {
@@ -175,7 +177,7 @@ export class TornadoChartScrolling {
 
         brushGraphicsContext
             .call(brush)
-            .call(brush.move, [10, TornadoChart.ScrollBarWidth]);
+            .call(brush.move, [0, scrollbarHight]);
 
         /* Disabling the zooming feature */
         brushGraphicsContext
@@ -197,15 +199,6 @@ export class TornadoChartScrolling {
             .style("display", null);
     }
 
-    private setScrollBarSize(brushGraphicsContext: Selection<any>, minExtent: number, isVertical: boolean): void {
-        // brushGraphicsContext
-        //     .selectAll("rect")
-        //     .attr(isVertical ? "width" : "height", TornadoChart.ScrollBarWidth);
-
-        // brushGraphicsContext
-        //     .selectAll("rect")
-        //     .attr(isVertical ? "height" : "width", minExtent);
-    }
 
     private getExtentData(svgLength: number, scrollSpaceLength: number): any {
         let value: number = scrollSpaceLength * scrollSpaceLength / svgLength;
