@@ -120,7 +120,7 @@ export class TornadoChartScrolling {
                 }
 
                 // Update the scroll bar accordingly and redraw
-                this.scrollYBrush.extent(position);
+                this.scrollYBrush.move(this.brushGraphicsContextY, position);
                 this.brushGraphicsContextY.select(".selection").attr("y", position[0]);
             }
             let scrollPosition: number[] = extentData.toScrollPosition(position, scrollSpaceLength);
@@ -130,14 +130,14 @@ export class TornadoChartScrolling {
             // this.scrollYBrush.move(brushSel, [sliderScale(0), sliderScale(10)])
         };
 
-        //this.scrollYBrush.y(scrollYScale).extent(extentData.value);
-        this.scrollYBrush.extent([[0, extentData.value[0]], [scrollSpaceLength, extentData.value[1]]]);
+        this.scrollYBrush.extent([[0, 0], [this.viewport.width, this.viewport.height]]);
 
         this.renderScrollbar(
             this.scrollYBrush,
             this.brushGraphicsContextY,
             this.viewport.width,
-            onRender);
+            onRender
+            );
 
         onRender();
     }
@@ -159,7 +159,7 @@ export class TornadoChartScrolling {
         let d3Event = () => require("d3-selection").event;
         brush.on("brush", () => {
             let d3Selection: Selection<any> = d3Event().selection;
-            window.requestAnimationFrame(() => onRender(d3Selection, 0))
+            window.requestAnimationFrame(() => onRender(d3Selection, 0));
         });
         this.root.on("wheel", () => {
             let d3Selection: Selection<any> = d3Event().selection;
@@ -171,26 +171,29 @@ export class TornadoChartScrolling {
 
         brushGraphicsContext
             .attr("transform", translate(brushX, 0))
-            .attr("drag-resize-disabled", "true" /*disables resizing of the visual when dragging the scrollbar in edit mode*/
-            );
+            .attr("drag-resize-disabled", "true");
 
-        brushGraphicsContext.call(brush); /*call the brush function, causing it to create the rectangles   */
+        brushGraphicsContext
+            .call(brush)
+            .call(brush.move, [10, TornadoChart.ScrollBarWidth]);
+
         /* Disabling the zooming feature */
         brushGraphicsContext.selectAll(".handle").remove();
         brushGraphicsContext.select(".background").remove();
         brushGraphicsContext.selectAll(".selection")
             .style("fill-opacity", TornadoChartScrolling.ExtentFillOpacity)
-            .style("cursor", "default");
+            .style("cursor", "default")
+            .style("display", null);
     }
 
     private setScrollBarSize(brushGraphicsContext: Selection<any>, minExtent: number, isVertical: boolean): void {
-        brushGraphicsContext
-            .selectAll("rect")
-            .attr(isVertical ? "width" : "height", TornadoChart.ScrollBarWidth);
+        // brushGraphicsContext
+        //     .selectAll("rect")
+        //     .attr(isVertical ? "width" : "height", TornadoChart.ScrollBarWidth);
 
-        brushGraphicsContext
-            .selectAll("rect")
-            .attr(isVertical ? "height" : "width", minExtent);
+        // brushGraphicsContext
+        //     .selectAll("rect")
+        //     .attr(isVertical ? "height" : "width", minExtent);
     }
 
     private getExtentData(svgLength: number, scrollSpaceLength: number): any {
