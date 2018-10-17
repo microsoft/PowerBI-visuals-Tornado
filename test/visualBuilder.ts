@@ -59,7 +59,7 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
     }
 
     public get scrollbarRect(): JQuery {
-        return this.scrollbar.children("rect.extent");
+        return this.scrollbar.children("rect.selection");
     }
 
     public get categories(): JQuery {
