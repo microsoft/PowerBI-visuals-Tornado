@@ -41,6 +41,7 @@ import { TornadoData } from "./visualData";
 import { TornadoChartBuilder } from "./visualBuilder";
 import { areColorsEqual, isColorAppliedToElements, getRandomUniqueHexColors, getSolidColorStructuralObject } from "./helpers/helpers";
 import { TornadoChartPoint, TornadoChartSeries, TornadoChartDataView } from "./../src/interfaces";
+import { tornadoChartUtils } from "./../src/utils";
 
 describe("TornadoChart", () => {
     let visualBuilder: TornadoChartBuilder,
@@ -457,6 +458,42 @@ describe("TornadoChart", () => {
                     .forEach((element: Element) => {
                         assertColorsMatch($(element).css("fill"), color);
                     });
+            });
+        });
+    });
+
+    describe("Highligh test", () => {
+        const expectedHighligtedCount: number = 1;
+        let columns: JQuery[];
+        let dataViewWithHighLighted: DataView;
+
+        beforeEach(() => {
+            dataViewWithHighLighted = dataViewBuilder.getDataView(undefined, true);
+            visualBuilder.update(dataViewWithHighLighted);
+
+            columns = visualBuilder.columns.toArray().map($);
+        });
+
+        it("should highligted elements change their opacity", (done) => {
+            visualBuilder.updateRenderTimeout(dataViewWithHighLighted, () => {
+                let highligtedCount: number = 0;
+                let nonHighlightedCount: number = 0;
+                const defaultOpacity: string = tornadoChartUtils.DefaultOpacity.toString();
+                const dimmedOpacity: string = tornadoChartUtils.DimmedOpacity.toString();
+
+                columns.forEach((element: JQuery) => {
+                    const fillOpacity: string = element.css("fill-opacity");
+                    const strokeOpacity: string = element.css("stroke-opacity");
+                    if (fillOpacity === defaultOpacity && strokeOpacity === defaultOpacity)
+                        highligtedCount++;
+                    if (fillOpacity === dimmedOpacity && strokeOpacity === dimmedOpacity)
+                        nonHighlightedCount++;
+                });
+                const expectedNonHighligtedCount: number = columns.length - expectedHighligtedCount;
+                expect(highligtedCount).toBe(expectedHighligtedCount);
+                expect(nonHighlightedCount).toBe(expectedNonHighligtedCount);
+
+                done();
             });
         });
     });

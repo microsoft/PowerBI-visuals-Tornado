@@ -31,8 +31,9 @@ import DataView = powerbi.DataView;
 import { valueType as vt } from "powerbi-visuals-utils-typeutils";
 import ValueType = vt.ValueType;
 
-import { getRandomNumbers, testDataViewBuilder } from "powerbi-visuals-utils-testutils";
+import { getRandomNumbers, testDataViewBuilder, getRandomNumber } from "powerbi-visuals-utils-testutils";
 import TestDataViewBuilder = testDataViewBuilder.TestDataViewBuilder;
+import { DataViewBuilderValuesColumnOptions } from "powerbi-visuals-utils-testutils/lib/dataViewBuilder/dataViewBuilder";
 
 export class TornadoData extends TestDataViewBuilder {
     private static MinValue: number = 100;
@@ -68,7 +69,63 @@ export class TornadoData extends TestDataViewBuilder {
         TornadoData.MinValue,
         TornadoData.MaxValue);
 
-    public getDataView(columnNames?: string[]): DataView {
+    public hightlightedElementNumber: number = getRandomNumber(0, this.valuesCategory.length - 1);
+
+    public generateHightLightedValues(lenght: number, hightlightedElementNumber?: number): number[] {
+        let array: number[] = [];
+        for (let i: number = 0; i < lenght; i++) {
+            array[i] = null;
+        }
+        if (!hightlightedElementNumber)
+            return array;
+
+        if (hightlightedElementNumber >= length || hightlightedElementNumber < 0) {
+            array[0] = this.valuesValue1[0];
+        } else {
+            array[hightlightedElementNumber] = this.valuesValue1[hightlightedElementNumber];
+        }
+
+        return array;
+    }
+
+    public getDataView(columnNames?: string[], withHighlights: boolean = false): DataView {
+        let column1: DataViewBuilderValuesColumnOptions = {
+            source: {
+                displayName: TornadoData.ColumnValues1,
+                isMeasure: true,
+                format: "$0,000.00",
+                type: ValueType.fromDescriptor({ numeric: true }),
+                objects: { dataPoint: { fill: { solid: { color: "purple" } } } }
+            },
+            values: this.valuesValue1
+        };
+        let column2: DataViewBuilderValuesColumnOptions = {
+            source: {
+                displayName: TornadoData.ColumnValues2,
+                isMeasure: true,
+                format: "$0,000.00",
+                type: ValueType.fromDescriptor({ numeric: true })
+            },
+            values: this.valuesValue2
+        };
+        let column3: DataViewBuilderValuesColumnOptions = {
+            source: {
+                displayName: TornadoData.ColumnValues3,
+                isMeasure: true,
+                format: "$0,000.00",
+                type: ValueType.fromDescriptor({ numeric: true })
+            },
+            values: this.valuesValue3
+        };
+
+        if (withHighlights) {
+            const highlightedValuesCount: number = this.valuesCategory.length;
+
+            column1.highlights = this.generateHightLightedValues(highlightedValuesCount, this.hightlightedElementNumber);
+            column2.highlights = this.generateHightLightedValues(highlightedValuesCount);
+            column3.highlights = this.generateHightLightedValues(highlightedValuesCount);
+        }
+
         return this.createCategoricalDataViewBuilder([
             {
                 source: {
@@ -78,34 +135,9 @@ export class TornadoData extends TestDataViewBuilder {
                 values: this.valuesCategory
             }
         ], [
-                {
-                    source: {
-                        displayName: TornadoData.ColumnValues1,
-                        isMeasure: true,
-                        format: "$0,000.00",
-                        type: ValueType.fromDescriptor({ numeric: true }),
-                        objects: { dataPoint: { fill: { solid: { color: "purple" } } } }
-                    },
-                    values: this.valuesValue1
-                },
-                {
-                    source: {
-                        displayName: TornadoData.ColumnValues2,
-                        isMeasure: true,
-                        format: "$0,000.00",
-                        type: ValueType.fromDescriptor({ numeric: true })
-                    },
-                    values: this.valuesValue2
-                },
-                {
-                    source: {
-                        displayName: TornadoData.ColumnValues3,
-                        isMeasure: true,
-                        format: "$0,000.00",
-                        type: ValueType.fromDescriptor({ numeric: true })
-                    },
-                    values: this.valuesValue3
-                }
+                column1,
+                column2,
+                column3
             ], columnNames).build();
     }
 }

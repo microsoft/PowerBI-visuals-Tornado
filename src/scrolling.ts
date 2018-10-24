@@ -102,7 +102,6 @@ export class TornadoChartScrolling {
             let position = selection || extentData.value;
 
             if (wheelDelta !== 0) {
-
                 // Handle mouse wheel manually by moving the scrollbar half of its size
                 let halfScrollsize: number = (position[1] - position[0]) / 2;
                 position[0] += (wheelDelta > 0) ? halfScrollsize : -halfScrollsize;
@@ -118,7 +117,6 @@ export class TornadoChartScrolling {
                     position[0] -= offset;
                     position[1] -= offset;
                 }
-
                 // Update the scroll bar accordingly and redraw
                 this.scrollYBrush.move(this.brushGraphicsContextY, position);
                 this.brushGraphicsContextY.select(".selection").attr("y", position[0]);
@@ -143,7 +141,6 @@ export class TornadoChartScrolling {
 
     private createOrRemoveScrollbar(isVisible: boolean, brushGraphicsContext: Selection<any>, brushClass: string) {
         if (isVisible && this.isScrollable) {
-
             return brushGraphicsContext || this.root.append("g").merge(this.root).classed(brushClass, true);
         }
 
@@ -198,7 +195,6 @@ export class TornadoChartScrolling {
             .style("cursor", "default")
             .style("display", null);
     }
-
 
     private getExtentData(svgLength: number, scrollSpaceLength: number): any {
         let value: number = scrollSpaceLength * scrollSpaceLength / svgLength;
