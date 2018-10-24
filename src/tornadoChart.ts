@@ -114,6 +114,7 @@ import { TornadoChartScrolling } from "./scrolling";
 import { tornadoChartProperties } from "./properties";
 import { TornadoWebBehavior } from "./webBehavior";
 import * as tooltipBuilder from "./tooltipBuilder";
+import { tornadoChartUtils } from "./utils";
 
 const VisualizationText = {
     Legend: "VisualLegend",
@@ -851,6 +852,16 @@ export class TornadoChart implements IVisual {
         columnsSelectionMerged
             .style("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
             .style("stroke", (p: TornadoChartPoint) => p.color)
+            .style("fill-opacity", (p: TornadoChartPoint) => tornadoChartUtils.getOpacity(
+                p.selected,
+                p.highlight,
+                hasSelection,
+                this.dataView.hasHighlights))
+            .style("stroke-opacity", (p: TornadoChartPoint) => tornadoChartUtils.getOpacity(
+                p.selected,
+                p.highlight,
+                hasSelection,
+                this.dataView.hasHighlights))
             .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
             .attr("height", (p: TornadoChartPoint) => p.height)
             .attr("width", (p: TornadoChartPoint) => p.width);
