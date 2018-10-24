@@ -489,9 +489,9 @@ describe("TornadoChart", () => {
                     if (fillOpacity == dimmedOpacity && strokeOpacity == dimmedOpacity)
                         nonHighlightedCount++;
                 });
-                const expectedNonHighligtedCount: number = columns.length / 2 - expectedHighligtedCount;
-                expect(highligtedCount / 2).toBe(expectedHighligtedCount);
-                expect(nonHighlightedCount / 2).toBe(expectedNonHighligtedCount);
+                const expectedNonHighligtedCount: number = columns.length - expectedHighligtedCount;
+                expect(highligtedCount).toBe(expectedHighligtedCount);
+                expect(nonHighlightedCount).toBe(expectedNonHighligtedCount);
 
                 done();
             });

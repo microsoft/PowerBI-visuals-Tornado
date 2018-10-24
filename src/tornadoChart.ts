@@ -787,8 +787,7 @@ export class TornadoChart implements IVisual {
         let tornadoChartDataView: TornadoChartDataView = this.dataView;
         this.calculateDataPoints(tornadoChartDataView.dataPoints);
         this.calculateDataPoints(tornadoChartDataView.highlightedDataPoints);
-        let dataPointsWithHighlights: TornadoChartPoint[] = tornadoChartDataView.dataPoints.concat(tornadoChartDataView.highlightedDataPoints);
-        this.renderColumns(dataPointsWithHighlights, tornadoChartDataView.series.length === 2);
+        this.renderColumns(tornadoChartDataView.dataPoints, tornadoChartDataView.series.length === 2);
         this.renderLabels(this.dataView.hasHighlights ? tornadoChartDataView.highlightedDataPoints : tornadoChartDataView.dataPoints, tornadoChartDataView.settings.labelSettings);
     }
 
