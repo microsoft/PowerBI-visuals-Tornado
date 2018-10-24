@@ -484,9 +484,9 @@ describe("TornadoChart", () => {
                 columns.forEach((element: JQuery) => {
                     const fillOpacity: string = element.css("fill-opacity");
                     const strokeOpacity: string = element.css("stroke-opacity");
-                    if (fillOpacity == defaultOpacity && strokeOpacity == defaultOpacity)
+                    if (fillOpacity === defaultOpacity && strokeOpacity === defaultOpacity)
                         highligtedCount++;
-                    if (fillOpacity == dimmedOpacity && strokeOpacity == dimmedOpacity)
+                    if (fillOpacity === dimmedOpacity && strokeOpacity === dimmedOpacity)
                         nonHighlightedCount++;
                 });
                 const expectedNonHighligtedCount: number = columns.length - expectedHighligtedCount;
