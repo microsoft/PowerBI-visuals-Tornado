@@ -1,6 +1,7 @@
 ## 2.0.0
 * Webpack integration
 * API 2.1.0
+* Azure Pipelines integration
 
 ## 1.3.0
 * High contrast mode

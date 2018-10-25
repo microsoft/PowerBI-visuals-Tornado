@@ -32,9 +32,7 @@ const path = require("path");
 
 const testRecursivePath = "test/visualTest.ts";
 const srcOriginalRecursivePath = "src/**/*.ts";
-const srcRecursivePath = ".tmp/drop/**/*.js";
 const coverageFolder = "coverage";
-const globals = "./test/globals.ts";
 
 process.env.CHROME_BIN = require("puppeteer").executablePath();
 
@@ -48,8 +46,14 @@ module.exports = (config: Config) => {
         frameworks: ["jasmine"],
         reporters: [
             "progress",
+            "junit",
             "coverage-istanbul"
         ],
+        junitReporter: {
+            outputDir: path.join(__dirname, coverageFolder),
+            outputFile: "TESTS-report.xml",
+            useBrowserName: false
+        },
         singleRun: true,
         plugins: [
             "karma-coverage",
@@ -58,13 +62,12 @@ module.exports = (config: Config) => {
             "karma-jasmine",
             "karma-sourcemap-loader",
             "karma-chrome-launcher",
+            "karma-junit-reporter",
             "karma-coverage-istanbul-reporter"
         ],
         files: [
             "node_modules/jquery/dist/jquery.min.js",
             "node_modules/jasmine-jquery/lib/jasmine-jquery.js",
-            globals,
-            srcRecursivePath,
             testRecursivePath,
             {
                 pattern: srcOriginalRecursivePath,
@@ -79,22 +82,34 @@ module.exports = (config: Config) => {
             }
         ],
         preprocessors: {
-            [testRecursivePath]: ["webpack"],
-            [srcRecursivePath]: ["sourcemap"]
+            [testRecursivePath]: ["webpack", "coverage"]
         },
         typescriptPreprocessor: {
             options: tsconfig.compilerOptions
         },
         coverageIstanbulReporter: {
-            reports: ["html", "lcovonly", "text-summary"],
+            reports: ["html", "lcovonly", "text-summary", "cobertura"],
+            dir: path.join(__dirname, coverageFolder),
+            'report-config': {
+                html: {
+                    subdir: 'html-report'
+                }
+            },
             combineBrowserReports: true,
-            fixWebpackSourcePaths: true
+            fixWebpackSourcePaths: true,
+            verbose: false
         },
         coverageReporter: {
-            dir: coverageFolder,
+            dir: path.join(__dirname, coverageFolder),
             reporters: [
-                { type: "html" },
-                { type: "lcov" }
+                // reporters not supporting the `file` property
+                { type: 'html', subdir: 'html-report' },
+                { type: 'lcov', subdir: 'lcov' },
+                // reporters supporting the `file` property, use `subdir` to directly
+                // output them in the `dir` directory
+                { type: 'cobertura', subdir: '.', file: 'cobertura-coverage.xml' },
+                { type: 'lcovonly', subdir: '.', file: 'report-lcovonly.txt' },
+                { type: 'text-summary', subdir: '.', file: 'text-summary.txt' },
             ]
         },
         mime: {

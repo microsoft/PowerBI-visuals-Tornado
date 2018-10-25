@@ -318,7 +318,7 @@ describe("TornadoChart", () => {
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                let columns: JQuery[] = visualBuilder.columns
+                let columns: JQuery<any>[] = visualBuilder.columns
                     .toArray()
                     .map($);
 
@@ -464,7 +464,7 @@ describe("TornadoChart", () => {
 
     describe("Highligh test", () => {
         const expectedHighligtedCount: number = 1;
-        let columns: JQuery[];
+        let columns: JQuery<any>[];
         let dataViewWithHighLighted: DataView;
 
         beforeEach(() => {
@@ -502,8 +502,8 @@ describe("TornadoChart", () => {
         const backgroundColor: string = "#000000";
         const foregroundColor: string = "#ff00ff";
 
-        let columns: JQuery[],
-            linkElements: JQuery[];
+        let columns: JQuery<any>[],
+            linkElements: JQuery<any>[];
 
         beforeEach(() => {
             visualBuilder.visualHost.colorPalette.isHighContrast = true;
