@@ -1,3 +1,7 @@
+  ## 2.1.0
+* Update all package to the latest version.
+* Fix highlighting issue
+
  ## 2.0.1
  * UPD: powerbi-visuals-tools has been updated to 3.0.9 to add IE11 support
  * UPD: API has been updated to 2.3.0 to add IE11 support
