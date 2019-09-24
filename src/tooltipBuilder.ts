@@ -34,8 +34,7 @@ import DataViewCategoricalColumn = powerbi.DataViewCategoricalColumn;
 import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
 import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
 
-import { valueFormatter as vf } from "powerbi-visuals-utils-formattingutils";
-import valueFormatter = vf.valueFormatter;
+import { valueFormatter } from "powerbi-visuals-utils-formattingutils";
 
 import { TooltipCategoryDataItem, TooltipSeriesDataItem } from "./interfaces";
 

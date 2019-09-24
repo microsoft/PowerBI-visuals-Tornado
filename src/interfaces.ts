@@ -37,9 +37,12 @@ import { valueFormatter as vf, textMeasurementService as tms } from "powerbi-vis
 import IValueFormatter = vf.IValueFormatter;
 import TextProperties = tms.TextProperties;
 
-import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
+import {
+    interactivitySelectionService as interactivityService,
+    interactivityBaseService
+} from "powerbi-visuals-utils-interactivityutils";
 import SelectableDataPoint = interactivityService.SelectableDataPoint;
-import IInteractivityService = interactivityService.IInteractivityService;
+import IInteractivityService = interactivityBaseService.IInteractivityService;
 
 import { legendInterfaces, dataLabelInterfaces } from "powerbi-visuals-utils-chartutils";
 import LegendData = legendInterfaces.LegendData;
@@ -125,10 +128,10 @@ export interface TextData {
     textProperties: TextProperties;
 }
 
-export interface TornadoBehaviorOptions {
+export interface TornadoBehaviorOptions extends interactivityBaseService.IBehaviorOptions<TornadoChartPoint> {
     columns: Selection<any>;
     clearCatcher: Selection<any>;
-    interactivityService: IInteractivityService;
+    interactivityService: IInteractivityService<TornadoChartPoint>;
 }
 
 export interface TooltipCategoryDataItem {
