@@ -490,7 +490,7 @@ export class TornadoChart implements IVisual {
 
         this.interactivityService = createInteractivityService(this.hostService);
 
-        let interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? <any>(new OpacityLegendBehavior()) : null;
+        let interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? <IInteractiveBehavior>(new OpacityLegendBehavior()) : null;
         this.legend = createLegend(options.element, false, this.interactivityService, true, null, interactiveBehavior);
 
         let root: Selection<any> = this.root = d3.select(options.element)
@@ -547,7 +547,6 @@ export class TornadoChart implements IVisual {
             this.clearData();
             return;
         }
-        debugger;
 
         this.viewport = {
             height: Math.max(0, options.viewport.height - this.margin.top - this.margin.bottom),
@@ -737,9 +736,7 @@ export class TornadoChart implements IVisual {
             }
         }
 
-        if (this.dataView.hasHighlights) {
-            // this.interactivityService.clearSelection();
-        } else {
+        if (!this.dataView.hasHighlights) {
             this.interactivityService.applySelectionStateToData(tornadoChartDataView.dataPoints);
             this.interactivityService.applySelectionStateToData(tornadoChartDataView.highlightedDataPoints);
         }
@@ -857,13 +854,11 @@ export class TornadoChart implements IVisual {
         columnsSelectionMerged
             .style("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
             .style("stroke", (p: TornadoChartPoint) => p.color)
-            .style("fill-opacity", (p: TornadoChartPoint) => {
-                return tornadoChartUtils.getOpacity(
+            .style("fill-opacity", (p: TornadoChartPoint) => tornadoChartUtils.getOpacity(
                 p.selected,
                 p.highlight,
                 hasSelection,
-                this.dataView.hasHighlights);
-            })
+                this.dataView.hasHighlights))
             .style("stroke-opacity", (p: TornadoChartPoint) => tornadoChartUtils.getOpacity(
                 p.selected,
                 p.highlight,
