@@ -63,9 +63,10 @@
     "stylelint": "^11.0.0",
     "ts-loader": "5.2.2",
     "ts-node": "^7.0.0",
-    "tslint": "5.11.0",
-    "typescript": "^3.0.1",
-    "webpack": "4.23.1"
+    "tslint": "5.20.0",
+    "tslint-microsoft-contrib": "6.2.0",
+    "typescript": "3.5.3",
+    "webpack": "4.39.2"
   },
   "dependencies": {
     "core-js": "3.2.1",

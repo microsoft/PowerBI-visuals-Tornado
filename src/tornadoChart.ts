@@ -862,7 +862,7 @@ export class TornadoChart implements IVisual {
                 p.selected,
                 p.highlight,
                 hasSelection,
-                this.dataView.hasHighlights) 
+                this.dataView.hasHighlights);
             })
             .style("stroke-opacity", (p: TornadoChartPoint) => tornadoChartUtils.getOpacity(
                 p.selected,
