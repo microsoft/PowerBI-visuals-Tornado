@@ -26,7 +26,7 @@
 
 import "./../style/tornadoChart.less";
 
-import "@babel/polyfill";
+import "core-js/stable";
 import * as d3 from "d3";
 import * as _ from "lodash";
 import powerbi from "powerbi-visuals-api";
@@ -61,8 +61,6 @@ import ISelectionId = powerbi.visuals.ISelectionId;
 import IVisualSelectionId = powerbi.visuals.ISelectionId;
 
 import { dataViewObject, dataViewObjects } from "powerbi-visuals-utils-dataviewutils";
-import DataViewObjectModule = dataViewObject.DataViewObject;
-import DataViewObjectsModule = dataViewObjects.DataViewObjects;
 
 import * as SVGUtil from "powerbi-visuals-utils-svgutils";
 import SVGManipulations = SVGUtil.manipulation;
@@ -76,7 +74,7 @@ import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutil
 
 import { legend as LegendModule, legendInterfaces, legendData, legendPosition, dataLabelUtils, OpacityLegendBehavior, dataLabelInterfaces } from "powerbi-visuals-utils-chartutils";
 import ILegend = legendInterfaces.ILegend;
-import LegendIcon = legendInterfaces.LegendIcon;
+import LegendIcon = legendInterfaces.MarkerShape;
 import LegendPosition = legendInterfaces.LegendPosition;
 import LegendData = legendInterfaces.LegendData;
 import legendProps = legendInterfaces.legendProps;
@@ -85,17 +83,22 @@ import LegendDataPoint = legendInterfaces.LegendDataPoint;
 import LegendDataModule = legendData;
 import VisualDataLabelsSettings = dataLabelInterfaces.VisualDataLabelsSettings;
 
-import { textMeasurementService as tms, valueFormatter as vf } from "powerbi-visuals-utils-formattingutils";
-import valueFormatter = vf.valueFormatter;
+import { textMeasurementService as tms, valueFormatter } from "powerbi-visuals-utils-formattingutils";
 import TextProperties = tms.TextProperties;
-import IValueFormatter = vf.IValueFormatter;
+import IValueFormatter = valueFormatter.IValueFormatter;
 import textMeasurementService = tms.textMeasurementService;
 
-import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
-import appendClearCatcher = interactivityService.appendClearCatcher;
-import IInteractiveBehavior = interactivityService.IInteractiveBehavior;
-import IInteractivityService = interactivityService.IInteractivityService;
-import createInteractivityService = interactivityService.createInteractivityService;
+import {
+    interactivitySelectionService as interactivityService,
+    interactivityBaseService
+} from "powerbi-visuals-utils-interactivityutils";
+import appendClearCatcher = interactivityBaseService.appendClearCatcher;
+import SelectableDataPoint = interactivityService.SelectableDataPoint;
+import IInteractiveBehavior = interactivityBaseService.IInteractiveBehavior;
+import IInteractivityServiceCommon = interactivityBaseService.IInteractivityService;
+import createInteractivityService = interactivityService.createInteractivitySelectionService;
+
+type IInteractivityService = IInteractivityServiceCommon<SelectableDataPoint>;
 
 import { ColorHelper } from "powerbi-visuals-utils-colorutils";
 import { createTooltipServiceWrapper, TooltipEventArgs, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
@@ -309,8 +312,8 @@ export class TornadoChart implements IVisual {
             hasDynamicSeries: hasDynamicSeries,
             hasHighlights: hasHighlights,
             labelHeight: labelHeight,
-            legendObjectProperties: DataViewObjectsModule.getObject(dataView.metadata.objects, "legend", {}),
-            categoriesObjectProperties: DataViewObjectsModule.getObject(dataView.metadata.objects, "categories", {}),
+            legendObjectProperties: dataViewObjects.getObject(dataView.metadata.objects, "legend", {}),
+            categoriesObjectProperties: dataViewObjects.getObject(dataView.metadata.objects, "categories", {}),
         };
     }
 
@@ -487,7 +490,7 @@ export class TornadoChart implements IVisual {
 
         this.interactivityService = createInteractivityService(this.hostService);
 
-        let interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? new OpacityLegendBehavior() : null;
+        let interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? <IInteractiveBehavior>(new OpacityLegendBehavior()) : null;
         this.legend = createLegend(options.element, false, this.interactivityService, true, null, interactiveBehavior);
 
         let root: Selection<any> = this.root = d3.select(options.element)
@@ -568,7 +571,7 @@ export class TornadoChart implements IVisual {
 
     private updateElements(): void {
         let translateX: number = 0,
-            position: string = DataViewObjectModule.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left);
+            position: string = dataViewObject.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left);
         if (position === "Left") {
             translateX = this.allLabelsWidth;
         }
@@ -591,7 +594,7 @@ export class TornadoChart implements IVisual {
     private static parseSettings(objects: DataViewObjects, value: number, colors: IColorPalette): TornadoChartSettings {
         let precision: number = TornadoChart.getPrecision(objects);
 
-        let displayUnits: number = DataViewObjectsModule.getValue<number>(
+        let displayUnits: number = dataViewObjects.getValue<number>(
             objects,
             tornadoChartProperties.labels.labelDisplayUnits,
             TornadoChart.DefaultTornadoChartSettings.labelSettings.displayUnits);
@@ -612,12 +615,12 @@ export class TornadoChart implements IVisual {
                 colors),
 
             labelSettings: {
-                show: DataViewObjectsModule.getValue<boolean>(
+                show: dataViewObjects.getValue<boolean>(
                     objects,
                     tornadoChartProperties.labels.show,
                     labelSettings.show),
                 precision: precision,
-                fontSize: DataViewObjectsModule.getValue<number>(
+                fontSize: dataViewObjects.getValue<number>(
                     objects,
                     tornadoChartProperties.labels.fontSize,
                     labelSettings.fontSize),
@@ -628,15 +631,15 @@ export class TornadoChart implements IVisual {
                     objects,
                     colors),
             },
-            showCategories: DataViewObjectsModule.getValue<boolean>(
+            showCategories: dataViewObjects.getValue<boolean>(
                 objects,
                 tornadoChartProperties.categories.show,
                 TornadoChart.DefaultTornadoChartSettings.showCategories),
-            showLegend: DataViewObjectsModule.getValue<boolean>(
+            showLegend: dataViewObjects.getValue<boolean>(
                 objects,
                 tornadoChartProperties.legend.show,
                 TornadoChart.DefaultTornadoChartSettings.showLegend),
-            legendFontSize: DataViewObjectsModule.getValue<number>(
+            legendFontSize: dataViewObjects.getValue<number>(
                 objects,
                 tornadoChartProperties.legend.fontSize,
                 TornadoChart.DefaultTornadoChartSettings.legendFontSize),
@@ -650,11 +653,11 @@ export class TornadoChart implements IVisual {
                 TornadoChart.DefaultTornadoChartSettings.categoriesFillColor,
                 objects,
                 colors),
-            categoriesFontSize: DataViewObjectsModule.getValue<number>(
+            categoriesFontSize: dataViewObjects.getValue<number>(
                 objects,
                 tornadoChartProperties.categories.fontSize,
                 TornadoChart.DefaultTornadoChartSettings.legendFontSize),
-            categoriesPosition: DataViewObjectModule.getValue<string>(
+            categoriesPosition: dataViewObject.getValue<string>(
                 objects,
                 "position",
                 legendPosition.left),
@@ -663,7 +666,7 @@ export class TornadoChart implements IVisual {
     }
 
     private static getPrecision(objects: DataViewObjects): number {
-        let precision: number = DataViewObjectsModule.getValue<number>(
+        let precision: number = dataViewObjects.getValue<number>(
             objects,
             tornadoChartProperties.labels.labelPrecision,
             TornadoChart.DefaultTornadoChartSettings.labelSettings.precision);
@@ -678,7 +681,7 @@ export class TornadoChart implements IVisual {
                 return <LegendDataPoint>{
                     label: series.name,
                     color: series.fill,
-                    icon: LegendIcon.Box,
+                    icon: LegendIcon.circle,
                     selected: false,
                     identity: series.selectionId
                 };
@@ -733,9 +736,7 @@ export class TornadoChart implements IVisual {
             }
         }
 
-        if (this.dataView.hasHighlights) {
-            this.interactivityService.clearSelection();
-        } else {
+        if (!this.dataView.hasHighlights) {
             this.interactivityService.applySelectionStateToData(tornadoChartDataView.dataPoints);
             this.interactivityService.applySelectionStateToData(tornadoChartDataView.highlightedDataPoints);
         }
@@ -879,9 +880,11 @@ export class TornadoChart implements IVisual {
             let behaviorOptions: TornadoBehaviorOptions = {
                 columns: columnsSelectionMerged,
                 clearCatcher: this.clearCatcher,
-                interactivityService: this.interactivityService
+                interactivityService: this.interactivityService,
+                behavior: this.behavior,
+                dataPoints: columnsData
             };
-            interactivityService.bind(columnsData, this.behavior, behaviorOptions);
+            interactivityService.bind(behaviorOptions);
         }
 
         this.renderTooltip(columnsSelectionMerged);
@@ -1067,7 +1070,7 @@ export class TornadoChart implements IVisual {
         let settings: TornadoChartSettings = this.dataView.settings,
             color: string = settings.categoriesFillColor,
             fontSizeInPx: string = PixelConverter.fromPoint(settings.categoriesFontSize),
-            position: string = DataViewObjectModule.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left),
+            position: string = dataViewObject.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left),
             categoriesSelectionMerged: Selection<any>,
             categoriesSelection: Selection<any>,
             categoryElements: Selection<any> = this.main
@@ -1278,7 +1281,7 @@ export class TornadoChart implements IVisual {
     }
 
     private enumerateCategories(settings: TornadoChartSettings): VisualObjectInstance[] {
-        let position: string = DataViewObjectModule.getValue<string>(
+        let position: string = dataViewObject.getValue<string>(
             this.dataView.categoriesObjectProperties,
             legendProps.position,
             legendPosition.left);
@@ -1305,17 +1308,17 @@ export class TornadoChart implements IVisual {
             legend: VisualObjectInstance[],
             position: string;
 
-        showTitle = DataViewObjectModule.getValue<boolean>(
+        showTitle = dataViewObject.getValue<boolean>(
             this.dataView.legendObjectProperties,
             legendProps.showTitle,
             showTitle);
 
-        titleText = DataViewObjectModule.getValue<string>(
+        titleText = dataViewObject.getValue<string>(
             this.dataView.legendObjectProperties,
             legendProps.titleText,
             titleText);
 
-        position = DataViewObjectModule.getValue<string>(
+        position = dataViewObject.getValue<string>(
             this.dataView.legendObjectProperties,
             legendProps.position,
             legendPosition.top);

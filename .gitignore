@@ -6,4 +6,4 @@ typings
 .api
 *.log
 /coverage
-webpack.statistics.html
+webpack.statistics.*.html
