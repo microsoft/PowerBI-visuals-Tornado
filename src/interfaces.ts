@@ -24,14 +24,14 @@
  *  THE SOFTWARE.
  */
 
-import powerbi from "powerbi-visuals-api";
+import powerbiVisualsApi from "powerbi-visuals-api";
 type Selection<T> = d3.Selection<d3.BaseType, T, d3.BaseType, any>;
 
-import DataViewObject = powerbi.DataViewObject;
-import DataViewMetadataColumn = powerbi.DataViewMetadataColumn;
-import DataViewValueColumn = powerbi.DataViewValueColumn;
-import ISelectionId = powerbi.visuals.ISelectionId;
-import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
+import DataViewObject = powerbiVisualsApi.DataViewObject;
+import DataViewMetadataColumn = powerbiVisualsApi.DataViewMetadataColumn;
+import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
+import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
+import VisualTooltipDataItem = powerbiVisualsApi.extensibility.VisualTooltipDataItem;
 
 import { valueFormatter as vf, textMeasurementService as tms } from "powerbi-visuals-utils-formattingutils";
 import IValueFormatter = vf.IValueFormatter;

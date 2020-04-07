@@ -24,15 +24,15 @@
  *  THE SOFTWARE.
  */
 
-import powerbi from "powerbi-visuals-api";
+import powerbiVisualsApi from "powerbi-visuals-api";
 
-import DataViewValueColumn = powerbi.DataViewValueColumn;
-import DataViewCategorical = powerbi.DataViewCategorical;
-import DataViewMetadataColumn = powerbi.DataViewMetadataColumn;
-import DataViewCategoricalColumn = powerbi.DataViewCategoricalColumn;
+import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
+import DataViewCategorical = powerbiVisualsApi.DataViewCategorical;
+import DataViewMetadataColumn = powerbiVisualsApi.DataViewMetadataColumn;
+import DataViewCategoricalColumn = powerbiVisualsApi.DataViewCategoricalColumn;
 
-import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
-import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
+import VisualTooltipDataItem = powerbiVisualsApi.extensibility.VisualTooltipDataItem;
+import ILocalizationManager = powerbiVisualsApi.extensibility.ILocalizationManager;
 
 import { valueFormatter } from "powerbi-visuals-utils-formattingutils";
 
@@ -49,7 +49,6 @@ export function createTooltipInfo(
     localizationManager: ILocalizationManager,
     value?: any,
     seriesIndex?: number,
-    categoryIndex?: number,
     highlightedValue?: any): VisualTooltipDataItem[] {
 
     let categorySource: TooltipCategoryDataItem,

@@ -70,7 +70,7 @@ export function getHexColorFromNumber(value: number): string {
     const hexColor: string = value.toString(16).toUpperCase(),
         color: string = hexColor.length === 6
             ? hexColor
-            : `${_.range(0, 6 - hexColor.length, 0).join("")}${hexColor}`;
+            : `${_(null).range(6 - hexColor.length).join("")}${hexColor}`;
 
     return `#${color}`;
 }

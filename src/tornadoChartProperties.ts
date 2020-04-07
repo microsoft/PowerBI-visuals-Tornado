@@ -24,8 +24,8 @@
  *  THE SOFTWARE.
  */
 
-import powerbi from "powerbi-visuals-api";
-import DataViewObjectPropertyIdentifier = powerbi.DataViewObjectPropertyIdentifier;
+import powerbiVisualsApi from "powerbi-visuals-api";
+import DataViewObjectPropertyIdentifier = powerbiVisualsApi.DataViewObjectPropertyIdentifier;
 
 export let tornadoChartProperties = {
     dataPoint: {

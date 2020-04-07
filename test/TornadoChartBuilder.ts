@@ -5,7 +5,7 @@
  *  All rights reserved.
  *  MIT License
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  Permission is hereby granted, free of charge, to powerbiVisualsApi. person obtaining a copy
  *  of this software and associated documentation files (the ""Software""), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,16 +24,16 @@
  *  THE SOFTWARE.
  */
 
-import powerbi from "powerbi-visuals-api";
+import powerbiVisualsApi from "powerbi-visuals-api";
 
-import DataView = powerbi.DataView;
-import DataViewValueColumns = powerbi.DataViewValueColumns;
-import DataViewValueColumnGroup = powerbi.DataViewValueColumnGroup;
+import DataView = powerbiVisualsApi.DataView;
+import DataViewValueColumns = powerbiVisualsApi.DataViewValueColumns;
+import DataViewValueColumnGroup = powerbiVisualsApi.DataViewValueColumnGroup;
 
 import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
-import { TornadoChart as VisualClass } from "./../src/tornadoChart";
-import { TornadoChartSeries, TornadoChartDataView } from "./../src/interfaces";
-import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
+import { TornadoChart as VisualClass } from "../src/TornadoChart";
+import { TornadoChartSeries, TornadoChartDataView } from "../src/interfaces";
+import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualConstructorOptions;
 
 export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
     constructor(width: number, height: number) {
@@ -101,7 +101,7 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
         isGrouped: boolean,
         columnGroup: DataViewValueColumnGroup): TornadoChartSeries {
 
-        return VisualClass.parseSeries(
+        return VisualClass.PARSE_SERIES(
             dataView,
             dataViewValueColumns,
             this.visualHost,
@@ -112,7 +112,7 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
     }
 
     public converter(dataView: DataView): TornadoChartDataView {
-        return VisualClass.converter(
+        return VisualClass.CONVERTER(
             dataView,
             this.visualHost,
             this.visual.textOptions,

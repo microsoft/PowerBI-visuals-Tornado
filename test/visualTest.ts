@@ -24,24 +24,24 @@
  *  THE SOFTWARE.
  */
 
-import powerbi from "powerbi-visuals-api";
+import powerbiVisualsApi from "powerbi-visuals-api";
 import * as _ from "lodash";
 
-import DataView = powerbi.DataView;
-import DataViewValueColumn = powerbi.DataViewValueColumn;
-import DataViewValueColumns = powerbi.DataViewValueColumns;
-import DataViewValueColumnGroup = powerbi.DataViewValueColumnGroup;
+import DataView = powerbiVisualsApi.DataView;
+import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
+import DataViewValueColumns = powerbiVisualsApi.DataViewValueColumns;
+import DataViewValueColumnGroup = powerbiVisualsApi.DataViewValueColumnGroup;
 
-import ISelectionId = powerbi.visuals.ISelectionId;
-import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
+import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
+import EnumerateVisualObjectInstancesOptions = powerbiVisualsApi.EnumerateVisualObjectInstancesOptions;
 
 import { assertColorsMatch } from "powerbi-visuals-utils-testutils";
 
-import { TornadoData } from "./visualData";
-import { TornadoChartBuilder } from "./visualBuilder";
+import { TornadoData } from "./TornadoData";
+import { TornadoChartBuilder } from "./TornadoChartBuilder";
 import { areColorsEqual, isColorAppliedToElements, getRandomUniqueHexColors, getSolidColorStructuralObject } from "./helpers/helpers";
 import { TornadoChartPoint, TornadoChartSeries, TornadoChartDataView } from "./../src/interfaces";
-import { tornadoChartUtils } from "./../src/utils";
+import { tornadoChartUtils } from "./../src/tornadoChartUtils";
 
 describe("TornadoChart", () => {
     let visualBuilder: TornadoChartBuilder,
@@ -141,7 +141,7 @@ describe("TornadoChart", () => {
 
             visualBuilder.updateRenderTimeout(dataView, () => {
                 visualBuilder.categories.each((i: number, element: Element) => {
-                    expect((element as any).getBBox().width)
+                    expect((<any>element).getBBox().width)
                         .toBeLessThan(visualBuilder.viewport.width / 3 * 2);
 
                     expect($(element).children("text.category-text").text()).toContain("...");
@@ -228,7 +228,7 @@ describe("TornadoChart", () => {
 
             expect(series.selectionId).toBeDefined();
             expect(series.selectionId).not.toBeNull();
-            expect((series.selectionId as ISelectionId).getKey()).toBeDefined();
+            expect((<ISelectionId>series.selectionId).getKey()).toBeDefined();
 
             expect(series.categoryAxisEnd).toBeDefined();
         });
@@ -282,8 +282,8 @@ describe("TornadoChart", () => {
                     expect(dataPoint.identity).toBeDefined();
                     expect(dataPoint.identity).not.toBeNull();
 
-                    expect((dataPoint.identity as ISelectionId).getKey()).toBeDefined();
-                    expect((dataPoint.identity as ISelectionId).getKey()).not.toBeNull();
+                    expect((<ISelectionId>dataPoint.identity).getKey()).toBeDefined();
+                    expect((<ISelectionId>dataPoint.identity).getKey()).not.toBeNull();
                 });
             });
         });
@@ -297,7 +297,7 @@ describe("TornadoChart", () => {
             it("identity is defined with key", () => {
                 tornadoChartSeries.forEach((series: TornadoChartSeries) => {
                     expect(series.selectionId).not.toBeNull();
-                    expect((series.selectionId as ISelectionId).getKey()).toBeDefined();
+                    expect((<ISelectionId>series.selectionId).getKey()).toBeDefined();
                 });
             });
         });
@@ -350,7 +350,7 @@ describe("TornadoChart", () => {
 
                 expect(visualBuilder.labelText).toBeInDOM();
 
-                (dataView.metadata.objects as any).labels.show = false;
+                (dataView.metadata.objects).labels.show = false;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
                 expect(visualBuilder.labelText).not.toBeInDOM();
@@ -416,7 +416,7 @@ describe("TornadoChart", () => {
                 const fontSize: number = 23,
                     fontSizeInPt: string = "30.6667px";
 
-                (dataView.metadata.objects as any).labels.fontSize = fontSize;
+                (dataView.metadata.objects).labels.fontSize = fontSize;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
                 visualBuilder.labelText
@@ -441,7 +441,7 @@ describe("TornadoChart", () => {
 
                 expect(visualBuilder.categoryText).toBeInDOM();
 
-                (dataView.metadata.objects as any).categories.show = false;
+                (dataView.metadata.objects).categories.show = false;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
                 expect(visualBuilder.categoryText).not.toBeInDOM();
@@ -450,7 +450,7 @@ describe("TornadoChart", () => {
             it("color", () => {
                 const color: string = "#ABCDEF";
 
-                (dataView.metadata.objects as any).categories.fill = getSolidColorStructuralObject(color);
+                (dataView.metadata.objects).categories.fill = getSolidColorStructuralObject(color);
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
                 visualBuilder.categoryText
