@@ -28,7 +28,6 @@ import "./../style/tornadoChart.less";
 
 import "core-js/stable";
 import * as d3 from "d3";
-import * as _ from "lodash";
 import powerbiVisualsApi from "powerbi-visuals-api";
 const getEvent = () => require("d3-selection").event;
 
@@ -172,7 +171,14 @@ export class TornadoChart implements IVisual {
         categoriesFillColor: "#777"
     };
 
-    private static buildIdentitySelection(hostService, category, i, values, columnGroup, measureName): ISelectionId {
+    private static buildIdentitySelection(
+        hostService: IVisualHost,
+        category: DataViewCategoryColumn,
+        i: number,
+        values: DataViewValueColumns,
+        columnGroup: DataViewValueColumnGroup,
+        measureName: string
+    ): ISelectionId {
         return hostService.createSelectionIdBuilder()
             .withCategory(category, i)
             .withSeries(values, columnGroup)
@@ -1146,7 +1152,7 @@ export class TornadoChart implements IVisual {
                 width: this.viewport.width + this.margin.left + this.margin.right,
             };
 
-            this.legend.drawLegend(legendData, _.clone(this.viewport));
+            this.legend.drawLegend(legendData, { ...this.viewport });
             LegendModule.positionChartArea(this.root, this.legend);
 
             if (legendData.dataPoints.length > 0 && settings.showLegend) {
@@ -1263,6 +1269,12 @@ export class TornadoChart implements IVisual {
     }
 
     private enumerateCategories(settings: TornadoChartSettings): VisualObjectInstance[] {
+        let position: string = dataViewObject.getValue<string>(
+            this.dataView.categoriesObjectProperties,
+            legendProps.position,
+            legendPosition.left
+        );
+
         return [{
             objectName: "categories",
             displayName: this.localizationManager.getDisplayName(VisualizationText.Categories),
@@ -1271,10 +1283,7 @@ export class TornadoChart implements IVisual {
                 show: settings.showCategories,
                 fill: settings.categoriesFillColor,
                 fontSize: settings.categoriesFontSize,
-                position: dataViewObject.getValue<string>(
-                    this.dataView.categoriesObjectProperties,
-                    legendProps.position,
-                    legendPosition.left)
+                position,
             }
         }];
     }

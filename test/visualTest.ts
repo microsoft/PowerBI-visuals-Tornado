@@ -25,7 +25,6 @@
  */
 
 import powerbiVisualsApi from "powerbi-visuals-api";
-import * as _ from "lodash";
 
 import DataView = powerbiVisualsApi.DataView;
 import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
@@ -174,15 +173,11 @@ describe("TornadoChart", () => {
             visualBuilder.updateRenderTimeout(dataView, () => {
                 const labelsText: JQuery = visualBuilder.labels.children("text.label-text");
 
-                const labelsTextWith$: JQuery = labelsText.filter((i: number, element: Element) => {
-                    return _.includes($(element).text(), "$");
-                });
+                const labelsTextWith$: JQuery = labelsText.filter((i: number, element: Element) => $(element).text().indexOf("$") >=0);
 
                 expect(labelsTextWith$.length).toEqual(labelsText.length / 2);
 
-                const labelsTextWithPercent: JQuery = labelsText.filter((i: number, element: Element) => {
-                    return _.includes($(element).text(), "%");
-                });
+                const labelsTextWithPercent: JQuery = labelsText.filter((i: number, element: Element) => $(element).text().indexOf("%") >= 0);
 
                 expect(labelsTextWithPercent.length).toEqual(labelsText.length / 2);
 

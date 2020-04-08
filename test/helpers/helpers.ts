@@ -24,8 +24,6 @@
  *  THE SOFTWARE.
  */
 
-import * as _ from "lodash";
-
 import { RgbColor, parseColorString } from "powerbi-visuals-utils-colorutils";
 import { getRandomNumber } from "powerbi-visuals-utils-testutils";
 
@@ -70,7 +68,7 @@ export function getHexColorFromNumber(value: number): string {
     const hexColor: string = value.toString(16).toUpperCase(),
         color: string = hexColor.length === 6
             ? hexColor
-            : `${_(null).range(6 - hexColor.length).join("")}${hexColor}`;
+            : `${[0,0,0,0,0,0].slice(0, 6 - hexColor.length).join("")}${hexColor}`;
 
     return `#${color}`;
 }
