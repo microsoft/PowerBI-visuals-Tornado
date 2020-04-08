@@ -24,9 +24,9 @@
  *  THE SOFTWARE.
  */
 
-import powerbi from "powerbi-visuals-api";
+import powerbiVisualsApi from "powerbi-visuals-api";
 
-import DataView = powerbi.DataView;
+import DataView = powerbiVisualsApi.DataView;
 
 import { valueType as vt } from "powerbi-visuals-utils-typeutils";
 import ValueType = vt.ValueType;

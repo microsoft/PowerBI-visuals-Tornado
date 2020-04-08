@@ -38,7 +38,7 @@ import IInteractiveBehavior = interactivityBaseService.IInteractiveBehavior;
 import IInteractivityService = interactivityBaseService.IInteractivityService;
 
 import { TornadoBehaviorOptions, TornadoChartPoint } from "./interfaces";
-import { tornadoChartUtils } from "./utils";
+import { tornadoChartUtils } from "./tornadoChartUtils";
 
 export class TornadoWebBehavior implements IInteractiveBehavior {
     private columns: Selection<any>;
@@ -51,7 +51,7 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
         this.interactivityService = options.interactivityService;
 
         this.columns.on("click", (d: SelectableDataPoint, i: number) => {
-            selectionHandler.handleSelection(d, (getEvent() as MouseEvent).ctrlKey);
+            selectionHandler.handleSelection(d, (getEvent()).ctrlKey);
         });
 
         this.clearCatcher.on("click", () => {

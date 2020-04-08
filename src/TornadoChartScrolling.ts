@@ -24,20 +24,20 @@
  *  THE SOFTWARE.
  */
 
-import powerbi from "powerbi-visuals-api";
+import powerbiVisualsApi from "powerbi-visuals-api";
 import * as d3 from "d3";
 import * as jQuery from "jquery";
 
 type Selection<T> = d3.Selection<any, T, any, any>;
 
-import IViewport = powerbi.IViewport;
+import IViewport = powerbiVisualsApi.IViewport;
 
 import * as SVGUtil from "powerbi-visuals-utils-svgutils";
 import IMargin = SVGUtil.IMargin;
 import translate = SVGUtil.manipulation.translate;
 
 import { TornadoChartDataView } from "./interfaces";
-import { TornadoChart } from "./tornadoChart";
+import { TornadoChart } from "./TornadoChart";
 
 export class TornadoChartScrolling {
     public isScrollable: boolean;
@@ -176,7 +176,7 @@ export class TornadoChartScrolling {
             .call(brush)
             .call(brush.move, [0, scrollbarHight]);
 
-        /* Disabling the zooming feature */
+        // Disabling the zooming feature
         brushGraphicsContext
             .selectAll(".handle")
             .remove();
