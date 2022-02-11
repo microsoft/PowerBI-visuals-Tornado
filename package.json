@@ -26,7 +26,7 @@
     "@types/jquery": "3.3.22",
     "@types/karma": "3.0.0",
     "@types/webpack": "4.4.17",
-    "ajv": "^6.12.0",
+    "ajv": "^6.12.3",
     "coveralls": "3.0.2",
     "css-loader": "1.0.0",
     "istanbul-instrumenter-loader": "^3.0.1",
