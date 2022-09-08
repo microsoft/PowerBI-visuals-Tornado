@@ -47,7 +47,7 @@
     "less": "^3.11.1",
     "less-loader": "^4.1.0",
     "powerbi-visuals-api": "2.6.1",
-    "powerbi-visuals-tools": "^3.1.12",
+    "powerbi-visuals-tools": "^3.4.3",
     "powerbi-visuals-utils-chartutils": "2.4.1",
     "powerbi-visuals-utils-colorutils": "2.2.1",
     "powerbi-visuals-utils-dataviewutils": "2.2.1",
