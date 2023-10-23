@@ -26,7 +26,6 @@
 
 import * as d3 from "d3";
 type Selection<T> = d3.Selection<any, T, any, any>;
-const getEvent = () => require("d3-selection").event;
 
 import {
     interactivitySelectionService as interactivityService,
@@ -50,8 +49,10 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
         this.clearCatcher = options.clearCatcher;
         this.interactivityService = options.interactivityService;
 
-        this.columns.on("click", (d: SelectableDataPoint, i: number) => {
-            selectionHandler.handleSelection(d, (getEvent()).ctrlKey);
+        this.columns.on("click", (event : PointerEvent, dataPoint: SelectableDataPoint) => {
+            event && selectionHandler.handleSelection(
+                dataPoint,
+                event.ctrlKey);
         });
 
         this.clearCatcher.on("click", () => {

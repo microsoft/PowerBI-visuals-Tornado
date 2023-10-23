@@ -164,7 +164,7 @@ export class TornadoChartScrolling {
             let d3Selection: Selection<any> = d3Event().selection;
 
             if (!this.isYScrollBarVisible) return;
-            let wheelEvent: any = d3.event; // Casting to any to avoid compilation errors
+            let wheelEvent: any = d3Event(); // Casting to any to avoid compilation errors
             onRender(d3Selection, wheelEvent.deltaY);
         });
 
