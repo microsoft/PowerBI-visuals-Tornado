@@ -37,17 +37,31 @@ import IInteractiveBehavior = interactivityBaseService.IInteractiveBehavior;
 import IInteractivityService = interactivityBaseService.IInteractivityService;
 
 import { TornadoBehaviorOptions, TornadoChartPoint } from "./interfaces";
-import { tornadoChartUtils } from "./tornadoChartUtils";
+import { TornadoChartUtils } from "./tornadoChartUtils";
+import { createTooltipServiceWrapper, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
 
 export class TornadoWebBehavior implements IInteractiveBehavior {
     private columns: Selection<any>;
     private clearCatcher: Selection<any>;
     private interactivityService: IInteractivityService<TornadoChartPoint>;
+    private tooltipServiceWrapper: ITooltipServiceWrapper;
 
     public bindEvents(options: TornadoBehaviorOptions, selectionHandler: ISelectionHandler) {
         this.columns = options.columns;
         this.clearCatcher = options.clearCatcher;
         this.interactivityService = options.interactivityService;
+        this.tooltipServiceWrapper = createTooltipServiceWrapper(
+            options.tooltipArgs.tooltipService,
+            options.tooltipArgs.tooltipElement);
+        
+        this.tooltipServiceWrapper.addTooltip(
+            this.columns,
+            (tooltipEvent: TornadoChartPoint) => {
+                return tooltipEvent.tooltipData;
+            },
+            (tooltipEvent: TornadoChartPoint) => {
+                return tooltipEvent.identity;}
+        );
 
         this.columns.on("click", (event : PointerEvent, dataPoint: SelectableDataPoint) => {
             event && selectionHandler.handleSelection(
@@ -55,20 +69,44 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
                 event.ctrlKey);
         });
 
+        //Handle contextmenu on columns
+        this.columns.on("contextmenu", (event: PointerEvent, dataPoint: SelectableDataPoint) => {
+            selectionHandler.handleContextMenu((dataPoint) ? dataPoint: {"selected" : false},
+                {
+                    x: event.clientX,
+                    y: event.clientY
+                }
+            );
+            event.preventDefault(); 
+        });
+
+        //Handle contextmenu on empty area
+        this.clearCatcher.on("contextmenu", (event: PointerEvent, dataPoint: SelectableDataPoint) => {
+            console.log(dataPoint);
+            selectionHandler.handleContextMenu({"selected" : false},
+            {
+                x: event.clientX,
+                y: event.clientY
+            });
+            event.preventDefault(); 
+        });
+
+        this.columns.on("")
+
         this.clearCatcher.on("click", () => {
             selectionHandler.handleClearSelection();
         });
     }
 
     public renderSelection(hasSelection: boolean) {
-        let hasHighlights: boolean = this.interactivityService.hasSelection();
+        const hasHighlights: boolean = this.interactivityService.hasSelection();
         this.changeOpacityAttribute("fill-opacity", hasSelection, hasHighlights);
         this.changeOpacityAttribute("stroke-opacity", hasSelection, hasHighlights);
     }
 
     private changeOpacityAttribute(attributeName: string, hasSelection: boolean, hasHighlights: boolean) {
         this.columns.style(attributeName, (d: TornadoChartPoint) => {
-            return tornadoChartUtils.getOpacity(
+            return TornadoChartUtils.getOpacity(
                 d.selected,
                 d.highlight,
                 !d.highlight && hasSelection,

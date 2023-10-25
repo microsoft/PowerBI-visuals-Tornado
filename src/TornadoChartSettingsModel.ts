@@ -10,6 +10,7 @@ import Card = formattingSettings.SimpleCard;
 import Model = formattingSettings.Model;
 
 import IEnumMember = powerbi.IEnumMember;
+import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
 
 class DataColorCardSettings extends Card {
     fill = new formattingSettings.ColorPicker({
@@ -143,15 +144,19 @@ export class DataLabelSettings extends BaseFontCardSettings {
     slices = [this.font, this.labelPrecision, this.labelDisplayUnits, this.insideFill, this.outsideFill];
 }
 
-const positionOptions : IEnumMember[] = [
-    {value : LegendPosition[LegendPosition.Top], displayName : "Top"}, 
-    {value : LegendPosition[LegendPosition.Bottom], displayName : "Bottom"},
-    {value : LegendPosition[LegendPosition.Left], displayName : "Left"}, 
-    {value : LegendPosition[LegendPosition.Right], displayName : "Right"}, 
-    {value : LegendPosition[LegendPosition.TopCenter], displayName : "Top Center"}, 
-    {value : LegendPosition[LegendPosition.BottomCenter], displayName : "Bottom Center"}, 
-    {value : LegendPosition[LegendPosition.LeftCenter], displayName : "Left Center"}, 
-    {value : LegendPosition[LegendPosition.RightCenter], displayName : "Right Center"}, 
+interface IEnumMemberWithKey extends IEnumMember{
+    key: string;
+}
+
+const positionOptions : IEnumMemberWithKey[] = [
+    {value : LegendPosition[LegendPosition.Top], displayName : "Top", key: "Visual_Legend_Position_Top"}, 
+    {value : LegendPosition[LegendPosition.Bottom], displayName : "Bottom", key: "Visual_Legend_Position_Bottom"},
+    {value : LegendPosition[LegendPosition.Left], displayName : "Left", key: "Visual_Legend_Position_Left"}, 
+    {value : LegendPosition[LegendPosition.Right], displayName : "Right", key: "Visual_Legend_Position_Right"}, 
+    {value : LegendPosition[LegendPosition.TopCenter], displayName : "Top Center", key: "Visual_Legend_Position_Top_Center"}, 
+    {value : LegendPosition[LegendPosition.BottomCenter], displayName : "Bottom Center", key: "Visual_Legend_Position_Bottom_Center"}, 
+    {value : LegendPosition[LegendPosition.LeftCenter], displayName : "Left Center", key: "Visual_Legend_Position_Left_Center"}, 
+    {value : LegendPosition[LegendPosition.RightCenter], displayName : "Right Center", key: "Visual_Legend_Position_Right_Center"}, 
 ];
 
 export class LegendCardSettings extends Card {
@@ -224,9 +229,9 @@ export class LegendCardSettings extends Card {
     slices = [this.positionDropdown, this.showTitle, this.titleText, this.font, this.labelColor];
 }
 
-const categoryPositionOptions : IEnumMember[] = [
-    {value : LegendPosition[LegendPosition.Left], displayName : "Left"}, 
-    {value : LegendPosition[LegendPosition.Right], displayName : "Right"},
+const categoryPositionOptions : IEnumMemberWithKey[] = [
+    {value : LegendPosition[LegendPosition.Left], displayName : "Left", key: "Visual_Group_Left"}, 
+    {value : LegendPosition[LegendPosition.Right], displayName : "Right", key: "Visual_Group_Right"},
      
 ];
 
@@ -278,9 +283,20 @@ export class TornadoChartSettingsModel extends Model {
         this.categoryCardSettings
     ];
 
+    setLocalizedOptions(localizationManager: ILocalizationManager) {
+        this.setLocalizedDisplayName(positionOptions, localizationManager);
+        this.setLocalizedDisplayName(categoryPositionOptions, localizationManager);
+    }   
+
+    public setLocalizedDisplayName(options: IEnumMemberWithKey[], localizationManager: ILocalizationManager) {
+        options.forEach(option => {
+            option.displayName = localizationManager.getDisplayName(option.key)
+        });
+    }
+
     public populateDataColorSlice(dataPoints: TornadoChartSeries[]){
         this.dataColorsCardSettings.slices = [];
-        for (let dataPoint of dataPoints) {
+        for (const dataPoint of dataPoints) {
             this.dataColorsCardSettings.slices.push(
                 new formattingSettings.ColorPicker(
                 {
@@ -297,7 +313,7 @@ export class TornadoChartSettingsModel extends Model {
 
     public populateCategoryAxisSlice(dataPoints: TornadoChartSeries[]){
         this.categoryAxisCardSettings.slices = [];
-        for (let dataPoint of dataPoints) {
+        for (const dataPoint of dataPoints) {
             this.categoryAxisCardSettings.slices.push(
                 new formattingSettings.NumUpDown({
                     name: "end",

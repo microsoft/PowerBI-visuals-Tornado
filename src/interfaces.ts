@@ -33,7 +33,7 @@ import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
 import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
 import VisualTooltipDataItem = powerbiVisualsApi.extensibility.VisualTooltipDataItem;
 
-import { valueFormatter as vf, textMeasurementService as tms } from "powerbi-visuals-utils-formattingutils";
+import { valueFormatter as vf} from "powerbi-visuals-utils-formattingutils";
 import { TextProperties } from "powerbi-visuals-utils-formattingutils/lib/src/interfaces";
 import IValueFormatter = vf.IValueFormatter;
 
@@ -44,11 +44,10 @@ import {
 import SelectableDataPoint = interactivityService.SelectableDataPoint;
 import IInteractivityService = interactivityBaseService.IInteractivityService;
 
-import { legendInterfaces, dataLabelInterfaces } from "powerbi-visuals-utils-chartutils";
+import { legendInterfaces } from "powerbi-visuals-utils-chartutils";
 import LegendData = legendInterfaces.LegendData;
-import VisualDataLabelsSettings = dataLabelInterfaces.VisualDataLabelsSettings;
 
-import { TornadoChartSettingsModel } from "./TornadoChartSettingsModel";
+import ITooltipService = powerbiVisualsApi.extensibility.ITooltipService;
 
 export interface TornadoChartTextOptions {
     fontFamily?: string;
@@ -62,19 +61,6 @@ export interface TornadoChartSeries {
     categoryAxisEnd: number;
 }
 
-export interface TornadoChartSettings {
-    labelOutsideFillColor: string;
-    categoriesFillColor: string;
-    labelSettings: VisualDataLabelsSettings;
-    showLegend?: boolean;
-    showCategories?: boolean;
-    categoriesFontSize?: number;
-    categoriesPosition?: any;
-    legendFontSize?: number;
-    legendColor?: string;
-    getLabelValueFormatter?: (formatString: string) => IValueFormatter;
-}
-
 export interface TornadoChartLabelFormatter {
     getLabelValueFormatter?: (formatString: string) => IValueFormatter;
 }
@@ -82,7 +68,6 @@ export interface TornadoChartLabelFormatter {
 export interface TornadoChartDataView {
     categories: TextData[];
     series: TornadoChartSeries[];
-    formattingSettings: TornadoChartSettingsModel;
     legend: LegendData;
     dataPoints: TornadoChartPoint[];
     highlightedDataPoints?: TornadoChartPoint[];
@@ -139,6 +124,7 @@ export interface TornadoBehaviorOptions extends interactivityBaseService.IBehavi
     columns: Selection<any>;
     clearCatcher: Selection<any>;
     interactivityService: IInteractivityService<TornadoChartPoint>;
+    tooltipArgs: TooltipArgsWrapper;
 }
 
 export interface TooltipCategoryDataItem {
@@ -150,5 +136,16 @@ export interface TooltipSeriesDataItem {
     value?: any;
     highlightedValue?: any;
     metadata: DataViewValueColumn;
+}
+
+export class TooltipArgsWrapper {
+    tooltipElement?: HTMLElement;
+    tooltipService?: ITooltipService;
+
+    constructor(tooltipElement: HTMLElement, tooltipService: ITooltipService)
+    {
+        this.tooltipElement = tooltipElement;
+        this.tooltipService = tooltipService;
+    }
 }
 

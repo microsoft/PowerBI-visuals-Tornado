@@ -9,8 +9,8 @@
     "pbiviz": "pbiviz",
     "start": "pbiviz start",
     "package": "pbiviz package --no-minify",
-    "lint": "node node_modules/tslint/bin/tslint \"+(src|test)/**/*.ts\"",
-    "pretest": "pbiviz package --resources --no-minify --no-pbiviz --no-plugin",
+    "eslint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
+    "pretest": "pbiviz package --resources --no-minify --no-pbiviz",
     "test": "karma start",
     "cert": "pbiviz --create-cert"
   },
@@ -64,7 +64,11 @@
     "webpack": "5.88.2"
   },
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
     "d3": "^7.8.5",
+    "eslint": "^8.52.0",
+    "eslint-plugin-powerbi-visuals": "^0.8.1",
     "powerbi-models": "^1.13.0",
     "powerbi-visuals-utils-formattingmodel": "^6.0.0"
   }
