@@ -119,7 +119,7 @@ import { tornadoChartProperties } from "./tornadoChartProperties";
 import { TornadoWebBehavior } from "./TornadoWebBehavior";
 import * as tooltipBuilder from "./tooltipBuilder";
 import { TornadoChartUtils } from "./tornadoChartUtils";
-import { TornadoChartSettingsModel, DataLabelSettings, LegendCardSettings, CategoryCardSettings } from "./TornadoChartSettingsModel";
+import { TornadoChartSettingsModel, DataLabelSettings} from "./TornadoChartSettingsModel";
 
 export class TornadoChart implements IVisual {
     private static ClassName: string = "tornado-chart";

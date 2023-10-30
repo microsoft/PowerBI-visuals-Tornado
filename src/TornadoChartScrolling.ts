@@ -99,8 +99,8 @@ export class TornadoChartScrolling {
         const scrollSpaceLength: number = this.viewport.height;
         const extentData: any = this.getExtentData(this.getPrefferedHeight(), scrollSpaceLength);
 
-        let onRender = (event, selection : Selection<any>) => {
-            let position = selection || extentData.value;
+        const onRender = (event, selection : Selection<any>) => {
+            const position = selection || extentData.value;
 
             if (event && event.sourceEvent && event.sourceEvent.type === 'wheel') {
                 // Handle mouse wheel manually by moving the scrollbar half of its size
@@ -158,7 +158,7 @@ export class TornadoChartScrolling {
     ): void {
 
         brush.on("brush", (event) => {
-            let d3Selection = event.selection;
+            const d3Selection = event.selection;
             window.requestAnimationFrame(() => onRender(event, d3Selection));
         });
         
