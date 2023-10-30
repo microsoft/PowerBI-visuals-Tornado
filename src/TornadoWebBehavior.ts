@@ -24,8 +24,10 @@
  *  THE SOFTWARE.
  */
 
-import * as d3 from "d3";
-type Selection<T> = d3.Selection<any, T, any, any>;
+import {
+    Selection as d3Selection 
+} from "d3-selection";
+type Selection<T> = d3Selection<any, T, any, any>;
 
 import {
     interactivitySelectionService as interactivityService,

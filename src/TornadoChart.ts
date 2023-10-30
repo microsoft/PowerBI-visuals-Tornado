@@ -28,12 +28,14 @@ import "./../style/tornadoChart.less";
 
 import {
     select as d3Select,
+    Selection as d3Selection 
 } from "d3-selection";
 
-import * as d3 from "d3";
+import { min, max } from "d3-array";
+
 import powerbiVisualsApi from "powerbi-visuals-api";
 
-type Selection<T> = d3.Selection<any, T, any, any>;
+type Selection<T> = d3Selection<any, T, any, any>;
 
 import DataView = powerbiVisualsApi.DataView;
 import IViewport = powerbiVisualsApi.IViewport;
@@ -181,11 +183,11 @@ export class TornadoChart implements IVisual {
         const categories: DataViewCategoryColumn[] = categorical.categories || [];
         const values: DataViewValueColumns = categorical.values;
         const category: DataViewCategoryColumn = categories[0];
-        let maxValue: number = d3.max(<number[]>values[0].values);
-        let minValue: number = Math.min(d3.min(<number[]>values[0].values), 0);
+        let maxValue: number = max(<number[]>values[0].values);
+        let minValue: number = Math.min(min(<number[]>values[0].values), 0);
         if (values.length >= TornadoChart.MaxSeries) {
-            minValue = d3.min([minValue, d3.min(<number[]>values[1].values)]);
-            maxValue = d3.max([maxValue, d3.max(<number[]>values[1].values)]);
+            minValue = min([minValue, min(<number[]>values[1].values)]);
+            maxValue = max([maxValue, max(<number[]>values[1].values)]);
         }
         const labelFormatter = TornadoChart.prepareFormatter(dataView.metadata.objects, maxValue);
         const formattingSettings = this.formattingSettings;
@@ -458,7 +460,7 @@ export class TornadoChart implements IVisual {
         const interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? <IInteractiveBehavior>(new OpacityLegendBehavior()) : null;
         this.legend = createLegend(options.element, false, this.interactivityService, true, null, interactiveBehavior);
 
-        const root: Selection<any> = this.root = d3.select(options.element)
+        const root: Selection<any> = this.root = d3Select(options.element)
             .append("svg")
             .classed(TornadoChart.ClassName, true);
 
@@ -532,10 +534,6 @@ export class TornadoChart implements IVisual {
         //Populate slices for DataColors and CategoryAxisCard 
         TornadoChart.formattingSettings.populateDataColorSlice(this.dataView.series);
         TornadoChart.formattingSettings.populateCategoryAxisSlice(this.dataView.series);
-        
-        // this.root.on('contextmenu', (event : PointerEvent) =>
-        //     this.handleContextMenu(event)
-        // );
         
         this.render();
     }
