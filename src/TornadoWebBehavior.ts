@@ -90,8 +90,6 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
             event.preventDefault(); 
         });
 
-        this.columns.on("")
-
         this.clearCatcher.on("click", () => {
             selectionHandler.handleClearSelection();
         });

@@ -26,9 +26,9 @@
 
 import powerbiVisualsApi from "powerbi-visuals-api";
 import {
-    Selection as d3Selection 
+    Selection as d3Selection
 } from "d3-selection";
-import {BrushBehavior, brushY} from "d3-brush"
+import { BrushBehavior, brushY , D3BrushEvent, BrushSelection } from "d3-brush"
 
 type Selection<T> = d3Selection<any, T, any, any>;
 
@@ -99,12 +99,14 @@ export class TornadoChartScrolling {
         const scrollSpaceLength: number = this.viewport.height;
         const extentData: any = this.getExtentData(this.getPrefferedHeight(), scrollSpaceLength);
 
-        const onRender = (event, selection : Selection<any>) => {
-            const position = selection || extentData.value;
-
-            if (event && event.sourceEvent && event.sourceEvent.type === 'wheel') {
+        const onRender = (selection: BrushSelection, wheelDelta: number = 0) => {
+            let position = extentData.value;
+            if(selection[0] != -1 && selection[1] != -1){
+                position = selection;
+            }
+            
+            if (wheelDelta !== 0) {
                 // Handle mouse wheel manually by moving the scrollbar half of its size
-                const wheelDelta = Math.sign(event.sourceEvent.deltaY);
                 const halfScrollsize: number = (position[1] - position[0]) / 2;
                 position[0] += (wheelDelta > 0) ? halfScrollsize : -halfScrollsize;
                 position[1] += (wheelDelta > 0) ? halfScrollsize : -halfScrollsize;
@@ -137,8 +139,6 @@ export class TornadoChartScrolling {
             extentData.value[1],
             onRender
         );
-
-        this.scrollYBrush.on("brush", onRender);
     }
 
     private createOrRemoveScrollbar(isVisible: boolean, brushGraphicsContext: Selection<any>, brushClass: string) {
@@ -154,17 +154,16 @@ export class TornadoChartScrolling {
         brushGraphicsContext: Selection<any>,
         brushX: number,
         scrollbarHight: number,
-        onRender: (event, d3Selection) => void
+        onRender: (selection: BrushSelection, wheelDelta: number) => void
     ): void {
 
-        brush.on("brush", (event) => {
-            const d3Selection = event.selection;
-            window.requestAnimationFrame(() => onRender(event, d3Selection));
+        brush.on("brush", (event : D3BrushEvent<any>) => {
+            const brushSelection = event.selection;
+            window.requestAnimationFrame(() => onRender(brushSelection, 0));
         });
-        
-        this.root.on("wheel", (event) => {
+        this.root.on("wheel", (event : WheelEvent) => {
             if (!this.isYScrollBarVisible) return;
-            onRender(event, null);
+            onRender([-1,-1], event.deltaY);
         });
 
         brushGraphicsContext
