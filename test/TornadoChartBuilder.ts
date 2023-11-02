@@ -106,7 +106,8 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
             this.visualHost,
             this.visual.textOptions,
             this.visual.colors,
-            this.visualHost.createLocalizationManager()
+            this.visualHost.createLocalizationManager(),
+            undefined
         );
     }
 }
