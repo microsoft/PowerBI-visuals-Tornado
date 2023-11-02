@@ -144,11 +144,11 @@ export class DataLabelSettings extends BaseFontCardSettings {
     slices = [this.font, this.labelPrecision, this.labelDisplayUnits, this.insideFill, this.outsideFill];
 }
 
-interface IEnumMemberWithKey extends IEnumMember{
+interface IEnumMemberWithDisplayNameKey extends IEnumMember{
     key: string;
 }
 
-const positionOptions : IEnumMemberWithKey[] = [
+const positionOptions : IEnumMemberWithDisplayNameKey[] = [
     {value : LegendPosition[LegendPosition.Top], displayName : "Top", key: "Visual_Legend_Position_Top"}, 
     {value : LegendPosition[LegendPosition.Bottom], displayName : "Bottom", key: "Visual_Legend_Position_Bottom"},
     {value : LegendPosition[LegendPosition.Left], displayName : "Left", key: "Visual_Legend_Position_Left"}, 
@@ -229,7 +229,7 @@ export class LegendCardSettings extends Card {
     slices = [this.positionDropdown, this.showTitle, this.titleText, this.font, this.labelColor];
 }
 
-const categoryPositionOptions : IEnumMemberWithKey[] = [
+const categoryPositionOptions : IEnumMemberWithDisplayNameKey[] = [
     {value : LegendPosition[LegendPosition.Left], displayName : "Left", key: "Visual_Group_Left"}, 
     {value : LegendPosition[LegendPosition.Right], displayName : "Right", key: "Visual_Group_Right"},
      
@@ -288,7 +288,7 @@ export class TornadoChartSettingsModel extends Model {
         this.setLocalizedDisplayName(categoryPositionOptions, localizationManager);
     }   
 
-    public setLocalizedDisplayName(options: IEnumMemberWithKey[], localizationManager: ILocalizationManager) {
+    public setLocalizedDisplayName(options: IEnumMemberWithDisplayNameKey[], localizationManager: ILocalizationManager) {
         options.forEach(option => {
             option.displayName = localizationManager.getDisplayName(option.key)
         });

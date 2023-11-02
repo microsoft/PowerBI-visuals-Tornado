@@ -30,11 +30,9 @@ import {
 type Selection<T> = d3Selection<any, T, any, any>;
 
 import {
-    interactivitySelectionService as interactivityService,
     interactivityBaseService
 } from "powerbi-visuals-utils-interactivityutils";
 import ISelectionHandler = interactivityBaseService.ISelectionHandler;
-import SelectableDataPoint = interactivityService.SelectableDataPoint;
 import IInteractiveBehavior = interactivityBaseService.IInteractiveBehavior;
 import IInteractivityService = interactivityBaseService.IInteractivityService;
 
@@ -65,15 +63,15 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
                 return tooltipEvent.identity;}
         );
 
-        this.columns.on("click", (event : PointerEvent, dataPoint: SelectableDataPoint) => {
+        this.columns.on("click", (event : PointerEvent, dataPoint: TornadoChartPoint) => {
             event && selectionHandler.handleSelection(
                 dataPoint,
                 event.ctrlKey);
         });
 
         //Handle contextmenu on columns
-        this.columns.on("contextmenu", (event: PointerEvent, dataPoint: SelectableDataPoint) => {
-            selectionHandler.handleContextMenu((dataPoint) ? dataPoint: {"selected" : false},
+        this.columns.on("contextmenu", (event: PointerEvent, dataPoint: TornadoChartPoint) => {
+            selectionHandler.handleContextMenu(dataPoint,
                 {
                     x: event.clientX,
                     y: event.clientY
@@ -83,8 +81,7 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
         });
 
         //Handle contextmenu on empty area
-        this.clearCatcher.on("contextmenu", (event: PointerEvent, dataPoint: SelectableDataPoint) => {
-            console.log(dataPoint);
+        this.clearCatcher.on("contextmenu", (event: PointerEvent) => {
             selectionHandler.handleContextMenu({"selected" : false},
             {
                 x: event.clientX,

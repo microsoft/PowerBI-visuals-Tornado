@@ -77,7 +77,6 @@ import ILegend = legendInterfaces.ILegend;
 import MarkerShape = legendInterfaces.MarkerShape;
 import LegendPosition = legendInterfaces.LegendPosition;
 import LegendData = legendInterfaces.LegendData;
-import legendProps = legendInterfaces.legendProps;
 import createLegend = LegendModule.createLegend;
 import LegendDataPoint = legendInterfaces.LegendDataPoint;
 import LegendDataModule = legendData;
@@ -149,12 +148,12 @@ export class TornadoChart implements IVisual {
     public static ScrollBarWidth = 22;
     public static DefaultLabelsWidth = 3;
 
-    private static formattingSettingsService: FormattingSettingsService;
+    private formattingSettingsService: FormattingSettingsService;
     private formattingSettings: TornadoChartSettingsModel;
     private tooltipArgs: TooltipArgsWrapper;
 
     public getFormattingModel(): powerbi.visuals.FormattingModel {
-        return TornadoChart.formattingSettingsService.buildFormattingModel(this.formattingSettings);
+        return this.formattingSettingsService.buildFormattingModel(this.formattingSettings);
     }
 
     private static buildIdentitySelection(
@@ -269,7 +268,6 @@ export class TornadoChart implements IVisual {
             categories: categoriesLabels,
             series: series,
             labelFormatter: labelFormatter,
-            // formattingSettings: formattingSettings,
             legend: TornadoChart.getLegendData(series, hasDynamicSeries),
             dataPoints: dataPoints,
             highlightedDataPoints: highlightedDataPoints,
@@ -427,7 +425,6 @@ export class TornadoChart implements IVisual {
     private viewport: IViewport;
     private dataView: TornadoChartDataView;
     private heightColumn: number = 0;
-    // private tooltipServiceWrapper: ITooltipServiceWrapper;
 
     private get allLabelsWidth(): number {
         const labelsWidth: number = this.formattingSettings.categoryCardSettings.show.value
@@ -495,7 +492,7 @@ export class TornadoChart implements IVisual {
             .classed(TornadoChart.Categories.className, true);
 
         this.behavior = new TornadoWebBehavior();
-        TornadoChart.formattingSettingsService = new FormattingSettingsService(this.localizationManager);
+        this.formattingSettingsService = new FormattingSettingsService(this.localizationManager);
     }
 
     public update(options: VisualUpdateOptions): void {
@@ -521,7 +518,7 @@ export class TornadoChart implements IVisual {
 
         const dataView: DataView = this.validateDataView(options.dataViews[0]);
         if(dataView){
-            this.formattingSettings = TornadoChart.formattingSettingsService.populateFormattingSettingsModel(TornadoChartSettingsModel, dataView);
+            this.formattingSettings = this.formattingSettingsService.populateFormattingSettingsModel(TornadoChartSettingsModel, dataView);
             this.formattingSettings.setLocalizedOptions(this.localizationManager);
         }
 
@@ -691,7 +688,7 @@ export class TornadoChart implements IVisual {
 
     private updateViewport(): void {
         const legendMargins: IViewport = this.legend.getMargins(),
-            legendPosition: LegendPosition = LegendPosition[<string>this.dataView.legendObjectProperties[legendProps.position]];
+            legendPosition: LegendPosition = LegendPosition[this.formattingSettings.legendCardSettings.positionDropdown.value.value];
 
         switch (legendPosition) {
             case LegendPosition.Top:
@@ -1083,7 +1080,7 @@ export class TornadoChart implements IVisual {
             if (this.dataView.legendObjectProperties) {
                 LegendDataModule.update(legendData, this.dataView.legendObjectProperties);
 
-                const position : string = <string>this.dataView.legendObjectProperties[legendProps.position];
+                const position = this.formattingSettings.legendCardSettings.positionDropdown.value.value;
 
                 if (position) {
                     this.legend.changeOrientation(LegendPosition[position]);
