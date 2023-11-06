@@ -81,7 +81,7 @@ export function isColorAppliedToElements(
     return elements.some((element: HTMLElement) => {
         const currentColor: string = getComputedStyle(element).getPropertyValue(colorStyleName);
 
-        if (!currentColor || color === undefined) {
+        if (!currentColor || !color) {
             return currentColor === color;
         }
 
