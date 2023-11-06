@@ -271,5 +271,10 @@
     "sorting": {
         "default": {}
     },
-    "privileges": []
+    "privileges": [],
+    "tooltips": {
+        "supportedTypes": {
+            "default": true
+        }
+    }
 }
