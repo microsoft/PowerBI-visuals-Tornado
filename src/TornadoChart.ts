@@ -119,6 +119,7 @@ import { TornadoWebBehavior } from "./TornadoWebBehavior";
 import * as tooltipBuilder from "./tooltipBuilder";
 import { TornadoChartUtils } from "./tornadoChartUtils";
 import { TornadoChartSettingsModel, DataLabelSettings} from "./TornadoChartSettingsModel";
+import IVisualEventService = powerbi.extensibility.IVisualEventService;
 
 export class TornadoChart implements IVisual {
     private static ClassName: string = "tornado-chart";
@@ -151,6 +152,7 @@ export class TornadoChart implements IVisual {
     private formattingSettingsService: FormattingSettingsService;
     private formattingSettings: TornadoChartSettingsModel;
     private tooltipArgs: TooltipArgsWrapper;
+    private events: IVisualEventService;
 
     public getFormattingModel(): powerbi.visuals.FormattingModel {
         return this.formattingSettingsService.buildFormattingModel(this.formattingSettings);
@@ -493,6 +495,7 @@ export class TornadoChart implements IVisual {
 
         this.behavior = new TornadoWebBehavior();
         this.formattingSettingsService = new FormattingSettingsService(this.localizationManager);
+        this.events = options.host.eventService;
     }
 
     public update(options: VisualUpdateOptions): void {
@@ -510,6 +513,7 @@ export class TornadoChart implements IVisual {
             this.clearData();
             return;
         }
+        this.events.renderingStarted(options);
 
         this.viewport = {
             height: Math.max(0, options.viewport.height - this.margin.top - this.margin.bottom),
@@ -525,6 +529,7 @@ export class TornadoChart implements IVisual {
         this.dataView = TornadoChart.converter(dataView, this.hostService, this.textOptions, this.colors, this.localizationManager, this.formattingSettings);
         if (!this.dataView || this.scrolling.scrollViewport.height < TornadoChart.CategoryMinHeight) {
             this.clearData();
+            this.events.renderingFinished(options);
             return;
         }
 
@@ -533,6 +538,7 @@ export class TornadoChart implements IVisual {
         this.formattingSettings.populateCategoryAxisSlice(this.dataView.series);
         
         this.render();
+        this.events.renderingFinished(options);
     }
 
     public handleContextMenu(event : PointerEvent) {
