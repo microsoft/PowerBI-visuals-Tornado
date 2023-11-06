@@ -74,7 +74,7 @@ export class TornadoData extends TestDataViewBuilder {
     public generateHightLightedValues(lenght: number, hightlightedElementNumber?: number): number[] {
         let array: number[] = [];
         for (let i: number = 0; i < lenght; i++) {
-            array[i] = null;
+            array[i] = NaN;
         }
         if (!hightlightedElementNumber)
             return array;
@@ -138,6 +138,6 @@ export class TornadoData extends TestDataViewBuilder {
                 column1,
                 column2,
                 column3
-            ], columnNames).build();
+            ], columnNames!).build();
     }
 }

@@ -27,7 +27,7 @@
 import powerbiVisualsApi from "powerbi-visuals-api";
 import DataViewObjectPropertyIdentifier = powerbiVisualsApi.DataViewObjectPropertyIdentifier;
 
-export let tornadoChartProperties = {
+export const tornadoChartProperties = {
     dataPoint: {
         fill: <DataViewObjectPropertyIdentifier>{ objectName: "dataPoint", propertyName: "fill" }
     },

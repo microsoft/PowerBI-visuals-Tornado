@@ -25,10 +25,12 @@
  */
 
 import powerbiVisualsApi from "powerbi-visuals-api";
-import * as d3 from "d3";
-import * as jQuery from "jquery";
+import {
+    Selection as d3Selection
+} from "d3-selection";
+import { BrushBehavior, brushY , D3BrushEvent, BrushSelection } from "d3-brush"
 
-type Selection<T> = d3.Selection<any, T, any, any>;
+type Selection<T> = d3Selection<any, T, any, any>;
 
 import IViewport = powerbiVisualsApi.IViewport;
 
@@ -55,7 +57,7 @@ export class TornadoChartScrolling {
 
     private isYScrollBarVisible: boolean;
     private brushGraphicsContextY: Selection<any>;
-    private scrollYBrush: d3.BrushBehavior<any> = d3.brushY();
+    private scrollYBrush: BrushBehavior<any> = brushY();
 
     private getRoot: () => Selection<any>;
     private getViewport: () => IViewport;
@@ -82,7 +84,7 @@ export class TornadoChartScrolling {
         this.getPrefferedHeight = getPrefferedHeight;
     }
 
-    public renderY(data: TornadoChartDataView, onScroll: () => {}): void {
+    public renderY(data: TornadoChartDataView, onScroll: () => object): void {
         this.isYScrollBarVisible = this.isScrollable
             && this.getPrefferedHeight() > this.viewport.height
             && this.viewport.height > 0
@@ -90,30 +92,32 @@ export class TornadoChartScrolling {
 
         this.brushGraphicsContextY = this.createOrRemoveScrollbar(this.isYScrollBarVisible, this.brushGraphicsContextY, "y brush");
         if (!this.isYScrollBarVisible) {
-            onScroll.call(this, jQuery.extend(true, {}, data), 0, 1);
+            onScroll.call(this, Object.assign({}, data), 0, 1);
             return;
         }
 
-        let scrollSpaceLength: number = this.viewport.height;
-        let extentData: any = this.getExtentData(this.getPrefferedHeight(), scrollSpaceLength);
-        let getEvent = () => require("d3-selection").event;
+        const scrollSpaceLength: number = this.viewport.height;
+        const extentData: any = this.getExtentData(this.getPrefferedHeight(), scrollSpaceLength);
 
-        let onRender = (selection: any = getEvent() && getEvent().selection, wheelDelta: number = 0) => {
-            let position = selection || extentData.value;
-
+        const onRender = (selection: BrushSelection, wheelDelta: number = 0) => {
+            let position = extentData.value;
+            if(selection[0] != -1 && selection[1] != -1){
+                position = selection;
+            }
+            
             if (wheelDelta !== 0) {
                 // Handle mouse wheel manually by moving the scrollbar half of its size
-                let halfScrollsize: number = (position[1] - position[0]) / 2;
+                const halfScrollsize: number = (position[1] - position[0]) / 2;
                 position[0] += (wheelDelta > 0) ? halfScrollsize : -halfScrollsize;
                 position[1] += (wheelDelta > 0) ? halfScrollsize : -halfScrollsize;
 
                 if (position[0] < 0) {
-                    let offset: number = -position[0];
+                    const offset: number = -position[0];
                     position[0] += offset;
                     position[1] += offset;
                 }
                 if (position[1] > scrollSpaceLength) {
-                    let offset: number = position[1] - scrollSpaceLength;
+                    const offset: number = position[1] - scrollSpaceLength;
                     position[0] -= offset;
                     position[1] -= offset;
                 }
@@ -122,8 +126,8 @@ export class TornadoChartScrolling {
                 this.brushGraphicsContextY.select(".selection").attr("y", position[0]);
             }
 
-            let scrollPosition: number[] = extentData.toScrollPosition(position, scrollSpaceLength);
-            onScroll.call(this, jQuery.extend(true, {}, data), scrollPosition[0], scrollPosition[1]);
+            const scrollPosition: number[] = extentData.toScrollPosition(position, scrollSpaceLength);
+            onScroll.call(this, Object.assign({}, data), scrollPosition[0], scrollPosition[1]);
         };
 
         this.scrollYBrush.extent([[0, 0], [TornadoChart.ScrollBarWidth, this.viewport.height]]);
@@ -135,8 +139,6 @@ export class TornadoChartScrolling {
             extentData.value[1],
             onRender
         );
-
-        onRender();
     }
 
     private createOrRemoveScrollbar(isVisible: boolean, brushGraphicsContext: Selection<any>, brushClass: string) {
@@ -148,24 +150,20 @@ export class TornadoChartScrolling {
     }
 
     private renderScrollbar(
-        brush: d3.BrushBehavior<any>,
+        brush: BrushBehavior<any>,
         brushGraphicsContext: Selection<any>,
         brushX: number,
         scrollbarHight: number,
-        onRender: (d3Selection: any, value: number) => void
+        onRender: (selection: BrushSelection, wheelDelta: number) => void
     ): void {
 
-        let d3Event = () => require("d3-selection").event;
-        brush.on("brush", () => {
-            let d3Selection: Selection<any> = d3Event().selection;
-            window.requestAnimationFrame(() => onRender(d3Selection, 0));
+        brush.on("brush", (event : D3BrushEvent<any>) => {
+            const brushSelection = event.selection;
+            window.requestAnimationFrame(() => onRender(brushSelection, 0));
         });
-        this.root.on("wheel", () => {
-            let d3Selection: Selection<any> = d3Event().selection;
-
+        this.root.on("wheel", (event : WheelEvent) => {
             if (!this.isYScrollBarVisible) return;
-            let wheelEvent: any = d3.event; // Casting to any to avoid compilation errors
-            onRender(d3Selection, wheelEvent.deltaY);
+            onRender([-1,-1], event.deltaY);
         });
 
         brushGraphicsContext
@@ -199,20 +197,20 @@ export class TornadoChartScrolling {
     private getExtentData(svgLength: number, scrollSpaceLength: number): any {
         let value: number = scrollSpaceLength * scrollSpaceLength / svgLength;
 
-        let scaleMultipler: number = TornadoChartScrolling.ScrollBarMinLength <= value
+        const scaleMultipler: number = TornadoChartScrolling.ScrollBarMinLength <= value
             ? TornadoChartScrolling.DefaultScaleMultipler
             : value / TornadoChartScrolling.ScrollBarMinLength;
 
         value = Math.max(value, TornadoChartScrolling.ScrollBarMinLength);
 
-        let toScrollPosition = (extent: number[], scrollSpaceLength: number): number[] => {
+        const toScrollPosition = (extent: number[], scrollSpaceLength: number): number[] => {
             let scrollSize: number = extent[1] - extent[0];
-            let scrollPosition: number = extent[0] / (scrollSpaceLength - scrollSize);
+            const scrollPosition: number = extent[0] / (scrollSpaceLength - scrollSize);
 
             scrollSize *= scaleMultipler;
 
-            let start: number = (scrollPosition * (scrollSpaceLength - scrollSize));
-            let end: number = (start + scrollSize);
+            const start: number = (scrollPosition * (scrollSpaceLength - scrollSize));
+            const end: number = (start + scrollSize);
 
             return [start / scrollSpaceLength, end / scrollSpaceLength];
         };

@@ -1,5 +1,5 @@
 # PowerBI-visuals-Tornado
-![Node.js CI](https://github.com/microsoft/PowerBI-visuals-Tornado/workflows/Node.js%20CI/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/PowerBI-visuals-Tornado/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/PowerBI-visuals-Tornado?branch=master)
+[![build](https://github.com/microsoft/PowerBI-visuals-Tornado/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/microsoft/PowerBI-visuals-Tornado/actions/workflows/build.yml)
 
 
 > A bar chart with category values listed vertically. Use for comparing the relative importance of a variable between two distinct groups.

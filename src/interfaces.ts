@@ -25,7 +25,12 @@
  */
 
 import powerbiVisualsApi from "powerbi-visuals-api";
-type Selection<T> = d3.Selection<d3.BaseType, T, d3.BaseType, any>;
+import {
+    BaseType as d3BaseType,
+    Selection as d3Selection 
+} from "d3-selection";
+
+type Selection<T> = d3Selection<d3BaseType, T, d3BaseType, any>;
 
 import DataViewObject = powerbiVisualsApi.DataViewObject;
 import DataViewMetadataColumn = powerbiVisualsApi.DataViewMetadataColumn;
@@ -33,9 +38,9 @@ import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
 import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
 import VisualTooltipDataItem = powerbiVisualsApi.extensibility.VisualTooltipDataItem;
 
-import { valueFormatter as vf, textMeasurementService as tms } from "powerbi-visuals-utils-formattingutils";
+import { valueFormatter as vf} from "powerbi-visuals-utils-formattingutils";
+import { TextProperties } from "powerbi-visuals-utils-formattingutils/lib/src/interfaces";
 import IValueFormatter = vf.IValueFormatter;
-import TextProperties = tms.TextProperties;
 
 import {
     interactivitySelectionService as interactivityService,
@@ -44,9 +49,10 @@ import {
 import SelectableDataPoint = interactivityService.SelectableDataPoint;
 import IInteractivityService = interactivityBaseService.IInteractivityService;
 
-import { legendInterfaces, dataLabelInterfaces } from "powerbi-visuals-utils-chartutils";
+import { legendInterfaces } from "powerbi-visuals-utils-chartutils";
 import LegendData = legendInterfaces.LegendData;
-import VisualDataLabelsSettings = dataLabelInterfaces.VisualDataLabelsSettings;
+
+import ITooltipService = powerbiVisualsApi.extensibility.ITooltipService;
 
 export interface TornadoChartTextOptions {
     fontFamily?: string;
@@ -60,23 +66,13 @@ export interface TornadoChartSeries {
     categoryAxisEnd: number;
 }
 
-export interface TornadoChartSettings {
-    labelOutsideFillColor: string;
-    categoriesFillColor: string;
-    labelSettings: VisualDataLabelsSettings;
-    showLegend?: boolean;
-    showCategories?: boolean;
-    categoriesFontSize?: number;
-    categoriesPosition?: any;
-    legendFontSize?: number;
-    legendColor?: string;
+export interface TornadoChartLabelFormatter {
     getLabelValueFormatter?: (formatString: string) => IValueFormatter;
 }
 
 export interface TornadoChartDataView {
     categories: TextData[];
     series: TornadoChartSeries[];
-    settings: TornadoChartSettings;
     legend: LegendData;
     dataPoints: TornadoChartPoint[];
     highlightedDataPoints?: TornadoChartPoint[];
@@ -86,6 +82,7 @@ export interface TornadoChartDataView {
     maxLabelsWidth: number;
     legendObjectProperties: DataViewObject;
     categoriesObjectProperties: DataViewObject;
+    labelFormatter: TornadoChartLabelFormatter;
 }
 
 export interface TornadoChartPoint extends SelectableDataPoint {
@@ -132,6 +129,7 @@ export interface TornadoBehaviorOptions extends interactivityBaseService.IBehavi
     columns: Selection<any>;
     clearCatcher: Selection<any>;
     interactivityService: IInteractivityService<TornadoChartPoint>;
+    tooltipArgs: TooltipArgsWrapper;
 }
 
 export interface TooltipCategoryDataItem {
@@ -143,5 +141,16 @@ export interface TooltipSeriesDataItem {
     value?: any;
     highlightedValue?: any;
     metadata: DataViewValueColumn;
+}
+
+export class TooltipArgsWrapper {
+    tooltipElement?: HTMLElement;
+    tooltipService?: ITooltipService;
+
+    constructor(tooltipElement: HTMLElement, tooltipService: ITooltipService)
+    {
+        this.tooltipElement = tooltipElement;
+        this.tooltipService = tooltipService;
+    }
 }
 
