@@ -266,7 +266,7 @@
                 }
             }
         }
-},
+    },
     "supportsHighlight": true,
     "sorting": {
         "default": {}
@@ -276,5 +276,6 @@
         "supportedTypes": {
             "default": true
         }
-    }
+    },
+    "supportsKeyboardFocus": true
 }

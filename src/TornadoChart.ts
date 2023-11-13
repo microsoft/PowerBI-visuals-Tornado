@@ -252,7 +252,7 @@ export class TornadoChart implements IVisual {
 
                     highlightedDataPoints.push({
                         ...dataPointCommon,
-                        value: highlightedValue,
+                        value: (highlight ? highlightedValue : 0),
                         tooltipData: buildTooltip(highlightedValue),
                         highlight: !!highlight,
                     });
@@ -802,7 +802,8 @@ export class TornadoChart implements IVisual {
                 this.dataView.hasHighlights))
             .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
             .attr("height", (p: TornadoChartPoint) => p.height)
-            .attr("width", (p: TornadoChartPoint) => p.width);
+            .attr("width", (p: TornadoChartPoint) => p.width)
+            .attr("tabindex", 0);
 
         columnsSelection
             .exit()

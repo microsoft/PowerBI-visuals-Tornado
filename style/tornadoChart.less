@@ -40,6 +40,18 @@
     font-family: @regularFontFamily;
     font-size: 11px;
 
+    .columns {
+        .column{
+            &:focus {
+                outline: none;
+            }
+    
+            &:focus-visible {
+                stroke-width: 8 !important;
+            }
+        }
+    }
+    
     .axes {
         .axis {
             fill: none;
