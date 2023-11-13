@@ -266,7 +266,7 @@
                 }
             }
         }
-},
+    },
     "supportsHighlight": true,
     "sorting": {
         "default": {}
