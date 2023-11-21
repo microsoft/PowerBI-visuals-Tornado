@@ -86,6 +86,7 @@ export interface TornadoChartDataView {
 }
 
 export interface TornadoChartPoint extends SelectableDataPoint {
+    uniqId: number;
     dx?: number;
     dy?: number;
     px?: number;
@@ -99,6 +100,7 @@ export interface TornadoChartPoint extends SelectableDataPoint {
     categoryIndex: number;
     highlight?: boolean;
     value: number;
+    highlightedValue: number;
     minValue: number;
     maxValue: number;
     formatString: string;

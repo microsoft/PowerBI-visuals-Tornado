@@ -70,11 +70,11 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
         });
 
         this.columns.on("keypress", (event : KeyboardEvent, dataPoint: TornadoChartPoint) => {
-            if(event?.key == "Enter")
+            if(event?.code == "Enter" || event?.code == "Space")
             {
                 selectionHandler.handleSelection(
                     dataPoint,
-                    event.shiftKey);
+                    event.shiftKey || event.ctrlKey);
             }
         });
 

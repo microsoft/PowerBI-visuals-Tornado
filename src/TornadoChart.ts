@@ -208,6 +208,7 @@ export class TornadoChart implements IVisual {
         });
         const categoriesLabels: TextData[] = category.values.map(value => TornadoChart.getTextData(categorySourceFormatter.format(value), textOptions, true));
         const groupedValues: DataViewValueColumnGroup[] = values.grouped ? values.grouped() : null;
+        let uniqId = 0;
 
         for (let seriesIndex = 0; seriesIndex < Math.min(values.length, TornadoChart.MaxSeries); seriesIndex++) {
             const columnGroup: DataViewValueColumnGroup = groupedValues && groupedValues.length > seriesIndex
@@ -234,8 +235,9 @@ export class TornadoChart implements IVisual {
                 // Limit maximum value with what the user choose
                 const currentMaxValue = parsedSeries.categoryAxisEnd ? parsedSeries.categoryAxisEnd : maxValue;
                 const formatString: string = dataView.categorical.values[seriesIndex].source.format;
-                let highlight: number = null;
                 const dataPointCommon = {
+                    uniqId: uniqId,
+                    highlightedValue: value,
                     value,
                     minValue,
                     maxValue: currentMaxValue,
@@ -245,14 +247,15 @@ export class TornadoChart implements IVisual {
                     identity,
                     categoryIndex: i,
                 };
-
+                
+                let highlight: number = null;
                 if (hasHighlights) {
                     highlight = <number>currentSeries.highlights[i];
-                    const highlightedValue: number = highlight != null ? highlight : value;
-
+                    const highlightedValue: number = highlight != null ? highlight : 0;
                     highlightedDataPoints.push({
                         ...dataPointCommon,
-                        value: (highlight ? highlightedValue : 0),
+                        highlightedValue: highlightedValue,
+                        value: value,
                         tooltipData: buildTooltip(highlightedValue),
                         highlight: !!highlight,
                     });
@@ -263,6 +266,7 @@ export class TornadoChart implements IVisual {
                     tooltipData: buildTooltip(null),
                     highlight: hasHighlights && !!highlight,
                 });
+                uniqId += 1;
             }
         }
 
@@ -539,6 +543,7 @@ export class TornadoChart implements IVisual {
         
         this.render();
         this.events.renderingFinished(options);
+        console.log("update end")
     }
 
     public handleContextMenu(event : PointerEvent) {
@@ -726,7 +731,8 @@ export class TornadoChart implements IVisual {
         this.calculateDataPoints(tornadoChartDataView.dataPoints);
         this.calculateDataPoints(tornadoChartDataView.highlightedDataPoints);
         const dataPointsWithHighlights: TornadoChartPoint[] = this.dataView.hasHighlights ? tornadoChartDataView.highlightedDataPoints : tornadoChartDataView.dataPoints;
-        this.renderColumns(dataPointsWithHighlights);
+        this.renderColumns(dataPointsWithHighlights, this.dataView.hasHighlights);
+        // this.renderColumns(tornadoChartDataView.highlightedDataPoints, this.dataView.hasHighlights);
         this.renderLabels(this.dataView.hasHighlights ? tornadoChartDataView.highlightedDataPoints : tornadoChartDataView.dataPoints, this.formattingSettings.dataLabelsSettings);
     }
 
@@ -773,12 +779,87 @@ export class TornadoChart implements IVisual {
         }
     }
 
-    private renderColumns(columnsData: TornadoChartPoint[]): void {
+    private renderColumns(columnsData: TornadoChartPoint[], hasHighlights: boolean): void {
         const hasSelection: boolean = this.interactivityService && this.interactivityService.hasSelection();
 
+        // const columnsSelection: Selection<any> = this.columns
+        //     .selectAll(TornadoChart.Column.selectorName)
+        //     .data(columnsData);
+        
+        // const gradient = this.columns.append("defs")
+        //     .append("linearGradient")
+        //     .attr("id", "gradient")
+        //     .attr("x1", "0%")
+        //     .attr("y1", "0%")
+        //     .attr("x2", "100%")
+        //     .attr("y2", "0%");
+
+        // gradient.append("stop")
+        //     .attr("offset", "50%")
+        //     .attr("stop-color", "red")
+        //     .attr("stop-opacity", 1);
+
+        // gradient.append("stop")
+        //     .attr("offset", "50%")
+        //     .attr("stop-color", "red")
+        //     .attr("stop-opacity", 0.5);
+
+        // const columnsSelectionMerged = columnsSelection
+        //     .enter()
+        //     .append("svg:rect")
+        //     .merge(columnsSelection);
+
+        // columnsSelectionMerged.classed(TornadoChart.Column.className, true);
+
+        // columnsSelectionMerged
+        //     .style("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
+        //     .style("stroke", (p: TornadoChartPoint) => p.color)
+        //     .style("fill-opacity", (p: TornadoChartPoint) => TornadoChartUtils.getOpacity(
+        //         p.selected,
+        //         p.highlight,
+        //         hasSelection,
+        //         this.dataView.hasHighlights))
+        //     .style("stroke-opacity", (p: TornadoChartPoint) => TornadoChartUtils.getOpacity(
+        //         p.selected,
+        //         p.highlight,
+        //         hasSelection,
+        //         this.dataView.hasHighlights))
+        //     .style("fill", "url(#gradient)")
+        //     .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
+        //     .attr("height", (p: TornadoChartPoint) => p.height)
+        //     .attr("width", (p: TornadoChartPoint) => p.width)
+        //     .attr("tabindex", 0);
+
+        // columnsSelection
+        //     .exit()
+        //     .remove();
+        console.log(columnsData)
         const columnsSelection: Selection<any> = this.columns
             .selectAll(TornadoChart.Column.selectorName)
             .data(columnsData);
+    
+        const gradients = this.columns.append("defs")
+            .selectAll("linearGradient")
+            .data(columnsData)
+            .enter()
+            .append("linearGradient")
+            .attr("id", (p: TornadoChartPoint) => "gradient-" + p.uniqId) // Use the index of the column as the id
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "100%")
+            .attr("y2", "0%");
+
+        gradients.append("stop")
+            .attr("offset", (p: TornadoChartPoint) => p.highlightedValue / p.value * 100 + "%")
+            .attr("stop-color", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
+            .attr("stop-opacity", 1);
+
+        gradients.append("stop")
+            .attr("offset", (p: TornadoChartPoint) => p.highlightedValue / p.value * 100 + "%")
+            .attr("stop-color", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
+            .attr("stop-opacity", 0.5);
+        
+        console.log(gradients)
 
         const columnsSelectionMerged = columnsSelection
             .enter()
@@ -788,7 +869,6 @@ export class TornadoChart implements IVisual {
         columnsSelectionMerged.classed(TornadoChart.Column.className, true);
 
         columnsSelectionMerged
-            .style("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
             .style("stroke", (p: TornadoChartPoint) => p.color)
             .style("fill-opacity", (p: TornadoChartPoint) => TornadoChartUtils.getOpacity(
                 p.selected,
@@ -800,6 +880,7 @@ export class TornadoChart implements IVisual {
                 p.highlight,
                 hasSelection,
                 this.dataView.hasHighlights))
+            .style("fill", (p: TornadoChartPoint) => "url(#gradient-" + p.uniqId + ")")
             .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
             .attr("height", (p: TornadoChartPoint) => p.height)
             .attr("width", (p: TornadoChartPoint) => p.width)
