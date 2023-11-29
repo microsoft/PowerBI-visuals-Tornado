@@ -75,7 +75,6 @@ export interface TornadoChartDataView {
     series: TornadoChartSeries[];
     legend: LegendData;
     dataPoints: TornadoChartPoint[];
-    highlightedDataPoints?: TornadoChartPoint[];
     hasDynamicSeries: boolean;
     hasHighlights: boolean;
     labelHeight: number;
