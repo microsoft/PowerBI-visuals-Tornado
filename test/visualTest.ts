@@ -41,6 +41,13 @@ import { areColorsEqual, isColorAppliedToElements, getRandomUniqueHexColors, get
 import { TornadoChartPoint, TornadoChartSeries, TornadoChartDataView } from "./../src/interfaces";
 import { TornadoChartUtils } from "./../src/tornadoChartUtils";
 
+import {
+    select as d3Select,
+    Selection as d3Selection 
+} from "d3-selection";
+
+type Selection<T> = d3Selection<any, T, any, any>;
+
 describe("TornadoChart", () => {
     let visualBuilder: TornadoChartBuilder,
         dataViewBuilder: TornadoData,
@@ -437,6 +444,7 @@ describe("TornadoChart", () => {
     describe("Highligh test", () => {
         const expectedHighligtedCount: number = 1;
         let columns: HTMLElement[];
+        let columnsDefs: HTMLElement[];
         let dataViewWithHighLighted: DataView;
 
         beforeEach(() => {
@@ -445,6 +453,7 @@ describe("TornadoChart", () => {
 
             visualBuilder.updateRenderTimeout(dataViewWithHighLighted, () => {
                 columns = Array.from(visualBuilder.columns);
+                columnsDefs = Array.from(visualBuilder.columnsDefs);
             });
         });
 
@@ -452,21 +461,21 @@ describe("TornadoChart", () => {
             visualBuilder.updateRenderTimeout(dataViewWithHighLighted, () => {
                 let highligtedCount: number = 0;
                 let nonHighlightedCount: number = 0;
-                const defaultOpacity: string = TornadoChartUtils.DefaultOpacity.toString();
-                const dimmedOpacity: string = TornadoChartUtils.DimmedOpacity.toString();
-
-                columns.forEach((element: HTMLElement) => {
-                    const style = window.getComputedStyle(element);
-                    const fillOpacity: string = style.getPropertyValue("fill-opacity");
-                    const strokeOpacity: string = style.getPropertyValue("stroke-opacity");
-                    if (fillOpacity === defaultOpacity && strokeOpacity === defaultOpacity)
-                        highligtedCount++;
-                    if (fillOpacity === dimmedOpacity && strokeOpacity === dimmedOpacity)
-                        nonHighlightedCount++;
+                
+                Array.from(columnsDefs[0].children).forEach((element) => {
+                    Array.from(element.children).forEach((childElement) => {
+                        if(childElement.outerHTML.indexOf("100%") != -1){
+                            highligtedCount += 1;
+                        }
+                        else{
+                            nonHighlightedCount+=1
+                        }
+                    })
                 });
                 const expectedNonHighligtedCount: number = columns.length - expectedHighligtedCount;
-                expect(highligtedCount).toBe(expectedHighligtedCount);
-                expect(nonHighlightedCount).toBe(expectedNonHighligtedCount);
+                // As there are two gradient point per each column, to find distinct columns we divide by 2.
+                expect(highligtedCount / 2).toBe(expectedHighligtedCount);
+                expect(nonHighlightedCount / 2).toBe(expectedNonHighligtedCount);
 
                 done();
             });

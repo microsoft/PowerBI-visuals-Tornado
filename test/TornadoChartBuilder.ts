@@ -74,6 +74,10 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
     public get columns(): NodeListOf<HTMLElement> {
         return this.scrollable[0].querySelectorAll("g.columns rect.column");
     }
+
+    public get columnsDefs(): NodeListOf<HTMLElement> {
+        return this.scrollable[0].querySelectorAll("g.columns defs");
+    }
     
     public get labels(): NodeListOf<HTMLElement> {
         return this.scrollable[0].querySelectorAll("g.labels > g.label");
