@@ -39,14 +39,6 @@ import { TornadoData } from "./TornadoData";
 import { TornadoChartBuilder } from "./TornadoChartBuilder";
 import { areColorsEqual, isColorAppliedToElements, getRandomUniqueHexColors, getSolidColorStructuralObject } from "./helpers/helpers";
 import { TornadoChartPoint, TornadoChartSeries, TornadoChartDataView } from "./../src/interfaces";
-import { TornadoChartUtils } from "./../src/tornadoChartUtils";
-
-import {
-    select as d3Select,
-    Selection as d3Selection 
-} from "d3-selection";
-
-type Selection<T> = d3Selection<any, T, any, any>;
 
 describe("TornadoChart", () => {
     let visualBuilder: TornadoChartBuilder,
