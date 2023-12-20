@@ -34,11 +34,22 @@
 @regularFontFamily: helvetica, arial, sans-serif;
 @neutralSecondaryAltColor: #777777;
 
+.tornadoContainer {
+    position: fixed;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.legend {
+    z-index: 1;
+}
+
 .tornado-chart {
     @tornadoChartAxisColor: @neutralSecondaryAltColor;
 
     font-family: @regularFontFamily;
     font-size: 11px;
+    padding: 0;
 
     .columns {
         .column{

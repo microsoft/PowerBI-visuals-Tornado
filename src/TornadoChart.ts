@@ -113,16 +113,16 @@ import {
     TextData,
     TooltipArgsWrapper
 } from "./interfaces";
-import { TornadoChartScrolling } from "./TornadoChartScrolling";
 import { tornadoChartProperties } from "./tornadoChartProperties";
 import { TornadoWebBehavior } from "./TornadoWebBehavior";
 import * as tooltipBuilder from "./tooltipBuilder";
 import { TornadoChartUtils } from "./tornadoChartUtils";
-import { TornadoChartSettingsModel, DataLabelSettings} from "./TornadoChartSettingsModel";
+import { TornadoChartSettingsModel, DataLabelSettings, LegendCardSettings} from "./TornadoChartSettingsModel";
 import IVisualEventService = powerbi.extensibility.IVisualEventService;
 
 export class TornadoChart implements IVisual {
     private static ClassName: string = "tornado-chart";
+    private static Container: string = "tornadoContainer";
     private static Columns: ClassAndSelector = createClassAndSelector("columns");
     private static Column: ClassAndSelector = createClassAndSelector("column");
     private static Axes: ClassAndSelector = createClassAndSelector("axes");
@@ -405,6 +405,7 @@ export class TornadoChart implements IVisual {
     };
 
     private root: Selection<any>;
+    private rootContainer: HTMLElement;
     private main: Selection<any>;
     private columns: Selection<any>;
     private axes: Selection<any>;
@@ -418,21 +419,29 @@ export class TornadoChart implements IVisual {
     private interactivityService: IInteractivityServiceSelectable;
     private hostService: IVisualHost;
     private localizationManager: ILocalizationManager;
-    private scrolling: TornadoChartScrolling;
+    private isScrollVisible: boolean = false;
 
     private viewport: IViewport;
     private dataView: TornadoChartDataView;
     private heightColumn: number = 0;
 
+    private get viewportWidth(): number {
+        return this.viewport.width - (TornadoChart.getScrollBarWidth(this.rootContainer) * +this.isScrollVisible);
+    }
+
     private get allLabelsWidth(): number {
         const labelsWidth: number = this.formattingSettings.categoryCardSettings.show.value
-            ? Math.min(this.dataView.maxLabelsWidth, this.scrolling.scrollViewport.width / 2)
+            ? Math.min(this.dataView.maxLabelsWidth, this.viewportWidth / 2)
             : TornadoChart.DefaultLabelsWidth;
         return labelsWidth + TornadoChart.CategoryLabelMargin;
     }
 
     private get allColumnsWidth(): number {
-        return this.scrolling.scrollViewport.width - this.allLabelsWidth;
+        return this.viewportWidth - this.allLabelsWidth;
+    }
+
+    private static getScrollBarWidth(element: HTMLElement): number{
+        return element.offsetWidth - element.clientWidth;
     }
 
     private get columnWidth(): number {
@@ -455,7 +464,11 @@ export class TornadoChart implements IVisual {
         const interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? <IInteractiveBehavior>(new OpacityLegendBehavior()) : null;
         this.legend = createLegend(options.element, false, this.interactivityService, true, null, interactiveBehavior);
 
-        const root: Selection<any> = this.root = d3Select(options.element)
+        this.rootContainer = document.createElement("div");
+        this.rootContainer.classList.add(TornadoChart.Container);
+        options.element.append(this.rootContainer);
+
+        const root: Selection<any> = this.root = d3Select(this.rootContainer)
             .append("svg")
             .classed(TornadoChart.ClassName, true);
 
@@ -463,13 +476,6 @@ export class TornadoChart implements IVisual {
 
         this.textOptions.fontSize = Number(fontSize.slice(0, fontSize.length - 2));
         this.textOptions.fontFamily = root.style("font-family");
-
-        this.scrolling = new TornadoChartScrolling(
-            () => root,
-            () => this.viewport,
-            () => this.margin,
-            () => this.dataView.categories.length * TornadoChart.CategoryMinHeight,
-            true);
 
         const main: Selection<any> = this.main = root.append("g");
         this.clearCatcher = appendClearCatcher(main);
@@ -523,7 +529,7 @@ export class TornadoChart implements IVisual {
         }
 
         this.dataView = TornadoChart.converter(dataView, this.hostService, this.textOptions, this.colors, this.localizationManager, this.formattingSettings);
-        if (!this.dataView || this.scrolling.scrollViewport.height < TornadoChart.CategoryMinHeight) {
+        if (!this.dataView || this.viewport.height < TornadoChart.CategoryMinHeight) {
             this.clearData();
             this.events.renderingFinished(options);
             return;
@@ -553,7 +559,7 @@ export class TornadoChart implements IVisual {
         const elementsTranslate: string = translate(translateX, 0);
 
         this.root
-            .attr("height", this.viewport.height + this.margin.top + this.margin.bottom)
+            .attr("height", TornadoChart.calculateRootHeight(this.dataView.dataPoints))
             .attr("width", this.viewport.width + this.margin.left + this.margin.right);
 
         this.columns
@@ -564,6 +570,11 @@ export class TornadoChart implements IVisual {
 
         this.axes
             .attr("transform", elementsTranslate);
+    }
+
+    private static calculateRootHeight(dataPoints: TornadoChartPoint[]): number{
+        const length: number = dataPoints.length;
+        return dataPoints[length - 1].dy + dataPoints[length - 1].height;
     }
 
     private static prepareFormatter(objects: DataViewObjects, value: number): TornadoChartLabelFormatter {
@@ -613,9 +624,8 @@ export class TornadoChart implements IVisual {
     }
 
     private render(): void {
-        this.updateElements();
         this.renderLegend();
-        this.scrolling.renderY(this.dataView, this.renderWithScrolling.bind(this));
+        this.renderWithScrolling(this.dataView);
     }
 
     private clearData(): void {
@@ -625,7 +635,6 @@ export class TornadoChart implements IVisual {
         this.categories.selectAll("*").remove();
         this.legend.reset();
         this.legend.drawLegend({ dataPoints: [] }, this.viewport);
-        this.scrolling.clearData();
     }
 
     public onClearSelection(): void {
@@ -634,35 +643,14 @@ export class TornadoChart implements IVisual {
         }
     }
 
-    private renderWithScrolling(tornadoChartDataView: TornadoChartDataView, scrollStart: number, scrollEnd: number): void {
+    private renderWithScrolling(tornadoChartDataView: TornadoChartDataView): void {
         if (!this.dataView || !this.formattingSettings) {
             return;
-        }
-        const categoriesLength: number = tornadoChartDataView.categories.length;
-        const startIndex: number = scrollStart * categoriesLength;
-        let endIndex: number = scrollEnd * categoriesLength;
-
-        let startIndexRound: number = Math.floor(startIndex);
-        const endIndexRound: number = Math.floor(endIndex);
-
-        const maxValues: number = Math.floor(this.scrolling.scrollViewport.height / TornadoChart.CategoryMinHeight);
-
-        if (scrollEnd - scrollStart < 1 && maxValues < endIndexRound - startIndexRound) {
-            if (startIndex - startIndexRound > endIndex - endIndexRound) {
-                startIndexRound++;
-            }
-            else {
-                endIndex--;
-            }
         }
 
         if (!this.dataView.hasHighlights) {
             this.interactivityService.applySelectionStateToData(tornadoChartDataView.dataPoints);
         }
-
-        // Filter data according to the visible visual area
-        tornadoChartDataView.categories = tornadoChartDataView.categories.slice(startIndexRound, endIndexRound);
-        tornadoChartDataView.dataPoints = tornadoChartDataView.dataPoints.filter((d: TornadoChartPoint) => d.categoryIndex >= startIndexRound && d.categoryIndex < endIndexRound);
 
         this.dataView = tornadoChartDataView;
 
@@ -698,12 +686,20 @@ export class TornadoChart implements IVisual {
 
     private computeHeightColumn(): void {
         const length: number = this.dataView.categories.length;
-        this.heightColumn = (this.scrolling.scrollViewport.height - ((length - 1) * this.columnPadding)) / length;
+
+        const numberOfDisplayedRows: number = Math.floor(this.viewport.height / TornadoChart.CategoryMinHeight) > length
+            ? length
+            : Math.floor(this.viewport.height / TornadoChart.CategoryMinHeight);
+
+        this.heightColumn = (this.viewport.height - (numberOfDisplayedRows - 1) * this.columnPadding) / (numberOfDisplayedRows);
+        this.isScrollVisible = numberOfDisplayedRows < length;
+        this.rootContainer.style.overflowY = this.isScrollVisible ? "scroll" : "hidden";
     }
 
     private renderMiddleSection(): void {
         const tornadoChartDataView: TornadoChartDataView = this.dataView;
         this.calculateDataPoints(tornadoChartDataView.dataPoints);
+        this.updateElements();
         this.renderColumns(tornadoChartDataView.dataPoints);
         this.renderLabels(tornadoChartDataView.dataPoints, this.formattingSettings.dataLabelsSettings);
     }
@@ -941,7 +937,7 @@ export class TornadoChart implements IVisual {
     private generateAxesData(): LineData[] {
         const x: number = this.allColumnsWidth / 2,
             y1: number = 0,
-            y2: number = this.scrolling.scrollViewport.height;
+            y2: number = TornadoChart.calculateRootHeight(this.dataView.dataPoints);
 
         return [{
             x1: x,
@@ -1118,7 +1114,7 @@ export class TornadoChart implements IVisual {
             }
 
             this.legend.drawLegend(legendData, { ...this.viewport });
-            LegendModule.positionChartArea(this.root, this.legend);
+            TornadoChart.SetPositionsDependingOnLegend(this.rootContainer, formattingSettings.legendCardSettings, this.legend);
 
             if (legendData.dataPoints.length > 0 && formattingSettings.legendCardSettings.show.value) {
                 this.updateViewport();
@@ -1129,6 +1125,33 @@ export class TornadoChart implements IVisual {
             this.legend.drawLegend({ dataPoints: [] }, this.viewport);
         }
 
+    }
+
+    public static SetPositionsDependingOnLegend(chartArea: HTMLElement, legendSettings: LegendCardSettings, legend: ILegend): void{
+        const legendMargin: IViewport = legend.getMargins();
+
+        switch (legendSettings.positionDropdown.value.value){
+            case LegendPosition[LegendPosition.Top]:
+            case LegendPosition[LegendPosition.TopCenter]: {
+                chartArea.style.inset = `${legendMargin.height}px 0px 20px 0px`;
+                break;
+            }
+            case LegendPosition[LegendPosition.Bottom]:
+            case LegendPosition[LegendPosition.BottomCenter]: {
+                chartArea.style.inset = `0px 0px ${legendMargin.height + 20}px 0px`;
+                break;
+            }
+            case LegendPosition[LegendPosition.Right]:
+            case LegendPosition[LegendPosition.RightCenter]: {
+                chartArea.style.inset = `0px 0px 20px 0px`;
+                break;
+            }
+            case LegendPosition[LegendPosition.Left]:
+            case LegendPosition[LegendPosition.LeftCenter]: {
+                chartArea.style.inset = `0px 0px 20px ${legendMargin.width}px`;
+                break;
+            }
+        }
     }
 
     public destroy(): void {
