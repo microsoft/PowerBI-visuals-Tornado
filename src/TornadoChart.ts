@@ -538,6 +538,7 @@ export class TornadoChart implements IVisual {
         //Populate slices for DataColors and CategoryAxisCard 
         this.formattingSettings.populateDataColorSlice(this.dataView.series);
         this.formattingSettings.populateCategoryAxisSlice(this.dataView.series);
+        this.formattingSettings.setVisibilityOfLegendCardSettings(this.dataView.legend);
         
         this.render();
         this.events.renderingFinished(options);

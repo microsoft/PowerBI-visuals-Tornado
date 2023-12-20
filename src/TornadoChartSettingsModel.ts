@@ -11,6 +11,7 @@ import Model = formattingSettings.Model;
 
 import IEnumMember = powerbi.IEnumMember;
 import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
+import { LegendData } from "powerbi-visuals-utils-chartutils/lib/legend/legendInterfaces";
 
 class DataColorCardSettings extends Card {
     fill = new formattingSettings.ColorPicker({
@@ -224,6 +225,7 @@ export class LegendCardSettings extends Card {
     });
 
     name: string = "legend";
+    visible?: boolean = false;
     displayName: string = "Legend";
     displayNameKey: string = "Visual_Legend";
     slices = [this.positionDropdown, this.showTitle, this.titleText, this.font, this.labelColor];
@@ -294,6 +296,10 @@ export class TornadoChartSettingsModel extends Model {
         });
     }
 
+    public setVisibilityOfLegendCardSettings(legend: LegendData){
+        this.legendCardSettings.visible = legend.dataPoints.length > 0;
+    }
+    
     public populateDataColorSlice(dataPoints: TornadoChartSeries[]){
         this.dataColorsCardSettings.slices = [];
         for (const dataPoint of dataPoints) {
