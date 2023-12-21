@@ -195,10 +195,8 @@ export class TornadoChart implements IVisual {
         const hasDynamicSeries: boolean = !!values.source;
         const hasHighlights: boolean = values.length > 0 && values.some(value => value.highlights && value.highlights.some(_ => _));
         const labelHeight: number = textMeasurementService.estimateSvgTextHeight({
-            fontFamily: formattingSettings?.dataLabelsSettings.font.fontFamily.value,
-            fontSize: PixelConverter.fromPoint(formattingSettings?.dataLabelsSettings.font.fontSize.value),
-            fontWeight: formattingSettings?.dataLabelsSettings.font.bold.value ? "bold" : "normal",
-            fontStyle: formattingSettings?.dataLabelsSettings.font.italic.value ? "italic" : "normal"
+            fontFamily: dataLabelUtils.StandardFontFamily,
+            fontSize: PixelConverter.fromPoint(formattingSettings?.dataLabelsSettings.font.fontSize.value)
         });
         const series: TornadoChartSeries[] = [];
         const dataPoints: TornadoChartPoint[] = [];
