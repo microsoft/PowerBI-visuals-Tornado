@@ -66,7 +66,7 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
         this.columns.on("click", (event : PointerEvent, dataPoint: TornadoChartPoint) => {
             event && selectionHandler.handleSelection(
                 dataPoint,
-                event.ctrlKey);
+                event.ctrlKey || event.metaKey || event.shiftKey);
         });
 
         this.columns.on("keypress", (event : KeyboardEvent, dataPoint: TornadoChartPoint) => {
@@ -74,7 +74,7 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
             {
                 selectionHandler.handleSelection(
                     dataPoint,
-                    event.shiftKey || event.ctrlKey);
+                    event.ctrlKey || event.metaKey || event.shiftKey);
             }
         });
 
