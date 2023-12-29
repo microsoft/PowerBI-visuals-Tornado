@@ -60,7 +60,7 @@ import IVisualHost = powerbiVisualsApi.extensibility.visual.IVisualHost;
 import ISelectionManager = powerbiVisualsApi.extensibility.ISelectionManager;
 import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
 
-import { dataViewObject, dataViewObjects } from "powerbi-visuals-utils-dataviewutils";
+import { dataViewObjects } from "powerbi-visuals-utils-dataviewutils";
 
 import * as SVGUtil from "powerbi-visuals-utils-svgutils";
 import manipulation = SVGUtil.manipulation;
@@ -72,7 +72,7 @@ import translateAndRotate = manipulation.translateAndRotate;
 
 import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
 
-import { legend as LegendModule, legendInterfaces, legendData, legendPosition, dataLabelUtils, OpacityLegendBehavior } from "powerbi-visuals-utils-chartutils";
+import { legend as LegendModule, legendInterfaces, legendData, dataLabelUtils, OpacityLegendBehavior } from "powerbi-visuals-utils-chartutils";
 import ILegend = legendInterfaces.ILegend;
 import MarkerShape = legendInterfaces.MarkerShape;
 import LegendPosition = legendInterfaces.LegendPosition;
@@ -402,6 +402,7 @@ export class TornadoChart implements IVisual {
         left: 10
     };
 
+    private element: Selection<any>;
     private root: Selection<any>;
     private rootContainer: HTMLElement;
     private main: Selection<any>;
@@ -462,6 +463,7 @@ export class TornadoChart implements IVisual {
         const interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? <IInteractiveBehavior>(new OpacityLegendBehavior()) : null;
         this.legend = createLegend(options.element, false, this.interactivityService, true, null, interactiveBehavior);
 
+        this.element = d3Select(options.element);
         this.rootContainer = document.createElement("div");
         this.rootContainer.classList.add(TornadoChart.Container);
         options.element.append(this.rootContainer);
@@ -551,7 +553,7 @@ export class TornadoChart implements IVisual {
 
     private updateElements(): void {
         let translateX: number = 0;
-        const position: string = dataViewObject.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left);
+        const position: string = this.formattingSettings.categoryCardSettings.positionDropdown.value.value.toString();
         if (position === "Left") {
             translateX = this.allLabelsWidth;
         }
@@ -690,7 +692,10 @@ export class TornadoChart implements IVisual {
             ? length
             : Math.floor(this.viewport.height / TornadoChart.CategoryMinHeight);
 
-        this.heightColumn = (this.viewport.height - (numberOfDisplayedRows - 1) * this.columnPadding) / (numberOfDisplayedRows);
+        this.heightColumn = numberOfDisplayedRows > 0 
+            ? (this.viewport.height - (numberOfDisplayedRows - 1) * this.columnPadding) / (numberOfDisplayedRows)
+            : 0;
+
         this.isScrollVisible = numberOfDisplayedRows < length;
         this.rootContainer.style.overflowY = this.isScrollVisible ? "scroll" : "hidden";
     }
@@ -1016,7 +1021,8 @@ export class TornadoChart implements IVisual {
         const formattingSettings: TornadoChartSettingsModel = this.formattingSettings,
             color: string = formattingSettings.categoryCardSettings.fill.value.value,
             fontSizeInPx: string = PixelConverter.fromPoint( formattingSettings.categoryCardSettings.font.fontSize.value),
-            position: string = dataViewObject.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left),
+            position: string = this.formattingSettings.categoryCardSettings.positionDropdown.value.value.toString(),
+
             categoryElements: Selection<any> = this.main
                 .select(TornadoChart.Categories.selectorName)
                 .selectAll(TornadoChart.Category.selectorName);
@@ -1113,7 +1119,10 @@ export class TornadoChart implements IVisual {
             }
 
             this.legend.drawLegend(legendData, { ...this.viewport });
-            TornadoChart.SetPositionsDependingOnLegend(this.rootContainer, formattingSettings.legendCardSettings, this.legend);
+            d3Select(this.element.node()).selectAll("g#legendGroup text")
+            .style("font-weight",  () => this.formattingSettings.legendCardSettings.font.bold.value ? "bold" : "normal")
+            .style("font-style",  () => this.formattingSettings.legendCardSettings.font.italic.value ? "italic" : "normal")
+            .style("text-decoration", () => this.formattingSettings.legendCardSettings.font.underline.value ? "underline" : "none");
 
             if (legendData.dataPoints.length > 0 && formattingSettings.legendCardSettings.show.value) {
                 this.updateViewport();
@@ -1123,11 +1132,16 @@ export class TornadoChart implements IVisual {
             this.legend.reset();
             this.legend.drawLegend({ dataPoints: [] }, this.viewport);
         }
-
+        TornadoChart.SetPositionsDependingOnLegend(this.rootContainer, formattingSettings.legendCardSettings, this.legend);
     }
 
     public static SetPositionsDependingOnLegend(chartArea: HTMLElement, legendSettings: LegendCardSettings, legend: ILegend): void{
         const legendMargin: IViewport = legend.getMargins();
+
+        if (!legendSettings.topLevelSlice.value){
+            chartArea.style.inset = `0px 0px 20px 0px`;
+            return;
+        }
 
         switch (legendSettings.positionDropdown.value.value){
             case LegendPosition[LegendPosition.Top]:
