@@ -626,7 +626,7 @@ export class TornadoChart implements IVisual {
 
     private render(): void {
         this.renderLegend();
-        this.renderWithScrolling(this.dataView);
+        this.renderWithScrolling();
     }
 
     private clearData(): void {
@@ -644,16 +644,14 @@ export class TornadoChart implements IVisual {
         }
     }
 
-    private renderWithScrolling(tornadoChartDataView: TornadoChartDataView): void {
+    private renderWithScrolling(): void {
         if (!this.dataView || !this.formattingSettings) {
             return;
         }
 
         if (!this.dataView.hasHighlights) {
-            this.interactivityService.applySelectionStateToData(tornadoChartDataView.dataPoints);
+            this.interactivityService.applySelectionStateToData(this.dataView.dataPoints);
         }
-
-        this.dataView = tornadoChartDataView;
 
         this.computeHeightColumn();
         this.renderMiddleSection();
