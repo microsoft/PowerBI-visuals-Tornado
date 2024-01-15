@@ -203,7 +203,7 @@ export class TornadoChart implements IVisual {
         const categorySourceFormatter: IValueFormatter = valueFormatter.create({
             format: valueFormatter.getFormatStringByColumn(category.source)
         });
-        const categoriesLabels: TextData[] = category.values.map(value => TornadoChart.getTextData(categorySourceFormatter.format(value), textOptions, true));
+        const categoriesLabels: TextData[] = category.values.map(value => TornadoChart.getTextData(categorySourceFormatter.format(value), textOptions, true, false, formattingSettings.categoryCardSettings.font.fontSize.value));
         const groupedValues: DataViewValueColumnGroup[] = values.grouped ? values.grouped() : null;
         let uniqId = 0;
 
@@ -1053,8 +1053,7 @@ export class TornadoChart implements IVisual {
         let xShift: number = 0;
 
         if (position === "Right") {
-            const width: number = this.viewport.width + this.margin.left + this.margin.right;
-            xShift = width - this.allLabelsWidth;
+            xShift = this.viewportWidth - this.allLabelsWidth + TornadoChart.CategoryLabelMargin;
         }
 
         categoriesSelectionMerged
@@ -1082,7 +1081,7 @@ export class TornadoChart implements IVisual {
             .attr("text-decoration", categoryFontIsUnderlined? "underline" : "normal")
             .text((data: TextData) => formattingSettings.categoryCardSettings.show.value
                 ? textMeasurementService.getTailoredTextOrDefault(
-                    TornadoChart.getTextData(data.text, this.textOptions).textProperties, this.allLabelsWidth)
+                    TornadoChart.getTextData(data.text, this.textOptions, false, true, formattingSettings.categoryCardSettings.font.fontSize.value).textProperties, this.allLabelsWidth)
                 : "");
 
         categoriesSelection
