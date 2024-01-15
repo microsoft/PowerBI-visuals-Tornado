@@ -154,7 +154,7 @@ export class TornadoChart implements IVisual {
     };
 
     private formattingSettingsService: FormattingSettingsService;
-    private formattingSettings: TornadoChartSettingsModel;
+    public formattingSettings: TornadoChartSettingsModel;
     private tooltipArgs: TooltipArgsWrapper;
     private events: IVisualEventService;
 

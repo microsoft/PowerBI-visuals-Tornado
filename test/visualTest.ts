@@ -39,6 +39,7 @@ import { TornadoData } from "./TornadoData";
 import { TornadoChartBuilder } from "./TornadoChartBuilder";
 import { areColorsEqual, isColorAppliedToElements, getRandomUniqueHexColors, getSolidColorStructuralObject } from "./helpers/helpers";
 import { TornadoChartPoint, TornadoChartSeries, TornadoChartDataView } from "./../src/interfaces";
+import { TornadoChartSettingsModel } from "../src/TornadoChartSettingsModel";
 
 describe("TornadoChart", () => {
     let visualBuilder: TornadoChartBuilder,
@@ -166,15 +167,15 @@ describe("TornadoChart", () => {
         });
 
         it("every argument is null", () => {
-            callParseSeriesAndExpectExceptions(null, null, null, null, null);
+            callParseSeriesAndExpectExceptions(null, null, null, null, null, null);
         });
 
         it("every argument is undefined", () => {
-            callParseSeriesAndExpectExceptions(undefined, undefined, undefined, undefined, undefined);
+            callParseSeriesAndExpectExceptions(undefined, undefined, undefined, undefined, undefined, undefined);
         });
 
         it("index is negative, other arguments are null", () => {
-            callParseSeriesAndExpectExceptions(null, null, -5, null, null);
+            callParseSeriesAndExpectExceptions(null, null, -5, null, null, null);
         });
 
         it("every argument is correct", () => {
@@ -184,7 +185,8 @@ describe("TornadoChart", () => {
                     dataView.categorical!.values!,
                     index,
                     true,
-                    dataView.categorical!.values!.grouped()[index])!;
+                    dataView.categorical!.values!.grouped()[index],
+                    visualBuilder.instance.formattingSettings)!;
 
             expect(series.categoryAxisEnd).toBeDefined();
             expect(series.name).toBeDefined();
@@ -201,7 +203,8 @@ describe("TornadoChart", () => {
             dataViewValueColumns: DataViewValueColumns | null | undefined,
             index: number | null | undefined,
             isGrouped: boolean | null | undefined,
-            columnGroup: DataViewValueColumnGroup | null | undefined): TornadoChartSeries | undefined {
+            columnGroup: DataViewValueColumnGroup | null | undefined,
+            formattingSettings: TornadoChartSettingsModel | null | undefined): TornadoChartSeries | undefined {
 
             let series: TornadoChartSeries | undefined = undefined;
             expect(() => {
@@ -210,7 +213,8 @@ describe("TornadoChart", () => {
                     dataViewValueColumns!,
                     index!,
                     isGrouped!,
-                    columnGroup!);
+                    columnGroup!,
+                    formattingSettings!);
             }).not.toThrow();
 
             return series;
@@ -224,7 +228,7 @@ describe("TornadoChart", () => {
         beforeEach(() => {
             visualBuilder.update(dataView);
 
-            tornadoChartDataView = visualBuilder.converter(dataView);
+            tornadoChartDataView = visualBuilder.converter(dataView, visualBuilder.instance.formattingSettings);
             tornadoChartSeries = tornadoChartDataView.series;
         });
 
