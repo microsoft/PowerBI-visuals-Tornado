@@ -39,12 +39,11 @@ type Selection<T> = d3Selection<any, T, any, any>;
 
 import DataView = powerbiVisualsApi.DataView;
 import IViewport = powerbiVisualsApi.IViewport;
-import DataViewObject = powerbiVisualsApi.DataViewObject;
 import DataViewObjects = powerbiVisualsApi.DataViewObjects;
+import DataViewObjectPropertyIdentifier = powerbiVisualsApi.DataViewObjectPropertyIdentifier;
 import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
 import DataViewCategorical = powerbiVisualsApi.DataViewCategorical;
 import DataViewValueColumns = powerbiVisualsApi.DataViewValueColumns;
-import DataViewObjectWithId = powerbiVisualsApi.DataViewObjectWithId;
 import DataViewMetadataColumn = powerbiVisualsApi.DataViewMetadataColumn;
 import DataViewCategoryColumn = powerbiVisualsApi.DataViewCategoryColumn;
 import DataViewValueColumnGroup = powerbiVisualsApi.DataViewValueColumnGroup;
@@ -113,7 +112,6 @@ import {
     TextData,
     TooltipArgsWrapper
 } from "./interfaces";
-import { tornadoChartProperties } from "./tornadoChartProperties";
 import { TornadoWebBehavior } from "./TornadoWebBehavior";
 import * as tooltipBuilder from "./tooltipBuilder";
 import { TornadoChartUtils } from "./tornadoChartUtils";
@@ -148,6 +146,12 @@ export class TornadoChart implements IVisual {
 
     public static ScrollBarWidth = 22;
     public static DefaultLabelsWidth = 3;
+
+    public static Properties = {
+        dataPoint: {
+            fill: <DataViewObjectPropertyIdentifier>{ objectName: "dataPoint", propertyName: "fill" }
+        }
+    };
 
     private formattingSettingsService: FormattingSettingsService;
     private formattingSettings: TornadoChartSettingsModel;
@@ -191,7 +195,7 @@ export class TornadoChart implements IVisual {
             minValue = min([minValue, min(<number[]>values[1].values)]);
             maxValue = max([maxValue, max(<number[]>values[1].values)]);
         }
-        const labelFormatter = TornadoChart.prepareFormatter(dataView.metadata.objects, maxValue);
+        const labelFormatter = TornadoChart.prepareFormatter(maxValue, formattingSettings.dataLabelsSettings);
         const hasDynamicSeries: boolean = !!values.source;
         const hasHighlights: boolean = values.length > 0 && values.some(value => value.highlights && value.highlights.some(_ => _));
         const labelHeight: number = textMeasurementService.estimateSvgTextHeight({
@@ -210,7 +214,7 @@ export class TornadoChart implements IVisual {
         for (let seriesIndex = 0; seriesIndex < Math.min(values.length, TornadoChart.MaxSeries); seriesIndex++) {
             const columnGroup: DataViewValueColumnGroup = groupedValues && groupedValues.length > seriesIndex
                 && groupedValues[seriesIndex].values ? groupedValues[seriesIndex] : null;
-            const parsedSeries: TornadoChartSeries = TornadoChart.parseSeries(dataView, values, hostService, seriesIndex, hasDynamicSeries, columnGroup, colors);
+            const parsedSeries: TornadoChartSeries = TornadoChart.parseSeries(dataView, values, hostService, seriesIndex, hasDynamicSeries, columnGroup, colors, formattingSettings);
             const currentSeries: DataViewValueColumn = values[seriesIndex];
             const measureName: string = currentSeries.source.queryName;
 
@@ -283,7 +287,8 @@ export class TornadoChart implements IVisual {
         index: number,
         isGrouped: boolean,
         columnGroup: DataViewValueColumnGroup,
-        colors: IColorPalette): TornadoChartSeries {
+        colors: IColorPalette,
+        formattingSettings: TornadoChartSettingsModel): TornadoChartSeries {
 
         if (!dataView) {
             return;
@@ -303,34 +308,26 @@ export class TornadoChart implements IVisual {
             sourceGroupName = "" + source.groupName;
         }
 
-        let objects: DataViewObjects,
-            categoryAxisObject: DataViewObject | DataViewObjectWithId[];
+        let objects: DataViewObjects;
 
         const displayName: PrimitiveValue = source ? sourceGroupName
                 ? sourceGroupName : source.displayName
                 : null;
 
         if (isGrouped && columnGroup && columnGroup.objects) {
-            categoryAxisObject = columnGroup.objects ? columnGroup.objects["categoryAxis"] : null;
             objects = columnGroup.objects;
         } else if (source && source.objects) {
             objects = source.objects;
-            categoryAxisObject = objects ? objects["categoryAxis"] : null;
         } else if (dataView && dataView.metadata && dataView.metadata.objects) {
             objects = dataView.metadata.objects;
         }
 
         const fillColor: string = TornadoChart.getColor(
-            tornadoChartProperties.dataPoint.fill,
+            TornadoChart.Properties.dataPoint.fill,
             ["purple", "teal"][index],
             objects, colors);
 
-        let categoryAxisEnd: number = categoryAxisObject ? categoryAxisObject["end"] : null;
-        if(!categoryAxisEnd){
-            if(objects?.categoryAxis?.end){
-                categoryAxisEnd = objects.categoryAxis.end as number;
-            }
-        }
+        const categoryAxisEnd: number = formattingSettings.categoryAxisCardSettings.end.value;
 
         return <TornadoChartSeries>{
             fill: fillColor,
@@ -578,14 +575,10 @@ export class TornadoChart implements IVisual {
         return dataPoints[length - 1].dy + dataPoints[length - 1].height;
     }
 
-    private static prepareFormatter(objects: DataViewObjects, value: number): TornadoChartLabelFormatter {
-        const precision: number = TornadoChart.getPrecision(objects);
+    private static prepareFormatter(value: number, labelsSettings: DataLabelSettings): TornadoChartLabelFormatter {
+        const precision: number = TornadoChart.getPrecision(labelsSettings);
 
-        const displayUnits: number = dataViewObjects.getValue<number>(
-            objects,
-            tornadoChartProperties.labels.labelDisplayUnits,
-            TornadoChart.DefaultLabelSettingsDisplayUnits);
-
+        const displayUnits: number = +labelsSettings.labelDisplayUnits.value;
         const getLabelValueFormatter = (formatString: string) => valueFormatter.create({
             format: formatString,
             precision: precision,
@@ -597,12 +590,8 @@ export class TornadoChart implements IVisual {
         };
     }
 
-    private static getPrecision(objects: DataViewObjects): number {
-        const precision: number = dataViewObjects.getValue<number>(
-            objects,
-            tornadoChartProperties.labels.labelPrecision,
-            TornadoChart.DefaultLabelSettingsLabelPrecision);
-
+    private static getPrecision(labelsSettings: DataLabelSettings): number {
+        const precision: number = labelsSettings.labelPrecision.value;
         return Math.min(Math.max(0, precision), TornadoChart.MaxPrecision);
     }
 
