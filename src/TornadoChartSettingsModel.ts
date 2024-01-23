@@ -11,6 +11,7 @@ import Model = formattingSettings.Model;
 
 import IEnumMember = powerbi.IEnumMember;
 import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
+import { LegendData } from "powerbi-visuals-utils-chartutils/lib/legend/legendInterfaces";
 
 class DataColorCardSettings extends Card {
     fill = new formattingSettings.ColorPicker({
@@ -52,45 +53,7 @@ class CategoryAxisCardSettings extends Card {
     slices = [this.end];
 }
 
-class BaseFontCardSettings extends Card {
-    font = new formattingSettings.FontControl({
-        name: "font",
-        fontFamily: new formattingSettings.FontPicker({
-            name: "fontFamily",
-            value: "Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif"
-        }),
-        fontSize: new formattingSettings.NumUpDown({
-            name: "fontSize",
-            displayName: "Text Size",
-            displayNameKey: "Visual_TextSize",
-            value: 9,
-            options: {
-                minValue: {
-                    type: powerbiVisualsApi.visuals.ValidatorType.Min,
-                    value: 8,
-                },
-                maxValue: {
-                    type: powerbiVisualsApi.visuals.ValidatorType.Max,
-                    value: 55,
-                }
-            }
-        }),
-        bold: new formattingSettings.ToggleSwitch({
-            name: "fontBold",
-            value: false
-        }),
-        italic: new formattingSettings.ToggleSwitch({
-            name: "fontItalic",
-            value: false
-        }),
-        underline: new formattingSettings.ToggleSwitch({
-            name: "fontUnderline",
-            value: false
-        })
-    });
-}
-
-export class DataLabelSettings extends BaseFontCardSettings {
+export class DataLabelSettings extends Card {
     show = new formattingSettings.ToggleSwitch({
         name: "show",
         displayName: "Show",
@@ -99,6 +62,8 @@ export class DataLabelSettings extends BaseFontCardSettings {
     });
     
     topLevelSlice? = this.show;
+
+    font: formattingSettings.FontControl = new BaseFontControlSettings(9);
 
     labelPrecision = new formattingSettings.NumUpDown({
         name: "labelPrecision",
@@ -184,29 +149,7 @@ export class LegendCardSettings extends Card {
         value: true,
     });
 
-    font = new formattingSettings.FontControl({
-        name: "font",
-        fontFamily: new formattingSettings.FontPicker({
-            name: "fontFamily",
-            value: "Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif"
-        }),
-        fontSize: new formattingSettings.NumUpDown({
-            name: "fontSize",
-            displayName: "Text Size",
-            displayNameKey: "Visual_TextSize",
-            value: 9,
-            options: {
-                minValue: {
-                    type: powerbiVisualsApi.visuals.ValidatorType.Min,
-                    value: 8,
-                },
-                maxValue: {
-                    type: powerbiVisualsApi.visuals.ValidatorType.Max,
-                    value: 55,
-                }
-            }
-        })
-    });
+    font: formattingSettings.FontControl = new BaseFontControlSettings(8);
 
     titleText = new formattingSettings.TextInput({
         placeholder: "",
@@ -224,6 +167,7 @@ export class LegendCardSettings extends Card {
     });
 
     name: string = "legend";
+    visible?: boolean = false;
     displayName: string = "Legend";
     displayNameKey: string = "Visual_Legend";
     slices = [this.positionDropdown, this.showTitle, this.titleText, this.font, this.labelColor];
@@ -235,7 +179,49 @@ const categoryPositionOptions : IEnumMemberWithDisplayNameKey[] = [
      
 ];
 
-export class CategoryCardSettings extends BaseFontCardSettings {
+export class BaseFontControlSettings extends formattingSettings.FontControl {
+    constructor(defaultFontSize: number){
+        super(
+            new formattingSettings.FontControl({
+                name: "font",
+                fontFamily: new formattingSettings.FontPicker({
+                    name: "fontFamily",
+                    value: "Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif"
+                }),
+                fontSize: new formattingSettings.NumUpDown({
+                    name: "fontSize",
+                    displayName: "Text Size",
+                    displayNameKey: "Visual_TextSize",
+                    value: defaultFontSize,
+                    options: {
+                        minValue: {
+                            type: powerbiVisualsApi.visuals.ValidatorType.Min,
+                            value: 8,
+                        },
+                        maxValue: {
+                            type: powerbiVisualsApi.visuals.ValidatorType.Max,
+                            value: 60,
+                        }
+                    }
+                }),
+                bold: new formattingSettings.ToggleSwitch({
+                    name: "fontBold",
+                    value: false
+                }),
+                italic: new formattingSettings.ToggleSwitch({
+                    name: "fontItalic",
+                    value: false
+                }),
+                underline: new formattingSettings.ToggleSwitch({
+                    name: "fontUnderline",
+                    value: false
+                })
+            })
+        );
+    }
+}
+
+export class CategoryCardSettings extends Card {
     show = new formattingSettings.ToggleSwitch({
         name: "show",
         displayName: "Show",
@@ -244,6 +230,8 @@ export class CategoryCardSettings extends BaseFontCardSettings {
     });
     
     topLevelSlice? = this.show;
+
+    font: formattingSettings.FontControl = new BaseFontControlSettings(8);
 
     fill = new formattingSettings.ColorPicker({
         name: "fill",
@@ -294,6 +282,10 @@ export class TornadoChartSettingsModel extends Model {
         });
     }
 
+    public setVisibilityOfLegendCardSettings(legend: LegendData){
+        this.legendCardSettings.visible = legend.dataPoints.length > 0;
+    }
+    
     public populateDataColorSlice(dataPoints: TornadoChartSeries[]){
         this.dataColorsCardSettings.slices = [];
         for (const dataPoint of dataPoints) {

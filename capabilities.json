@@ -210,6 +210,21 @@
                             "fontFamily": true
                         }
                     }
+                },
+                "fontBold": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "fontUnderline": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "fontItalic": {
+                    "type": {
+                        "bool": true
+                    }
                 }
             }
         },
@@ -266,7 +281,7 @@
                 }
             }
         }
-},
+    },
     "supportsHighlight": true,
     "sorting": {
         "default": {}
@@ -276,5 +291,6 @@
         "supportedTypes": {
             "default": true
         }
-    }
+    },
+    "supportsKeyboardFocus": true
 }

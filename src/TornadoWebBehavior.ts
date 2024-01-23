@@ -66,7 +66,16 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
         this.columns.on("click", (event : PointerEvent, dataPoint: TornadoChartPoint) => {
             event && selectionHandler.handleSelection(
                 dataPoint,
-                event.ctrlKey);
+                event.ctrlKey || event.metaKey || event.shiftKey);
+        });
+
+        this.columns.on("keypress", (event : KeyboardEvent, dataPoint: TornadoChartPoint) => {
+            if(event?.code == "Enter" || event?.code == "Space")
+            {
+                selectionHandler.handleSelection(
+                    dataPoint,
+                    event.ctrlKey || event.metaKey || event.shiftKey);
+            }
         });
 
         //Handle contextmenu on columns

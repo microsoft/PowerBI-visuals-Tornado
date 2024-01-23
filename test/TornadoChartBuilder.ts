@@ -34,6 +34,7 @@ import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
 import { TornadoChart as VisualClass } from "../src/TornadoChart";
 import { TornadoChartSeries, TornadoChartDataView } from "../src/interfaces";
 import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualConstructorOptions;
+import { TornadoChartSettingsModel } from "../src/TornadoChartSettingsModel";
 
 export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
     constructor(width: number, height: number) {
@@ -42,6 +43,10 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
 
     protected build(options: VisualConstructorOptions): VisualClass {
         return new VisualClass(options);
+    }
+
+    public get instance(): VisualClass {
+        return this.visual;
     }
 
     public get mainElement(): SVGElement {
@@ -74,6 +79,10 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
     public get columns(): NodeListOf<HTMLElement> {
         return this.scrollable[0].querySelectorAll("g.columns rect.column");
     }
+
+    public get columnsDefs(): NodeListOf<HTMLElement> {
+        return this.scrollable[0].querySelectorAll("g.columns defs");
+    }
     
     public get labels(): NodeListOf<HTMLElement> {
         return this.scrollable[0].querySelectorAll("g.labels > g.label");
@@ -88,7 +97,8 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
         dataViewValueColumns: DataViewValueColumns,
         index: number,
         isGrouped: boolean,
-        columnGroup: DataViewValueColumnGroup): TornadoChartSeries {
+        columnGroup: DataViewValueColumnGroup,
+        formattingSettings: TornadoChartSettingsModel): TornadoChartSeries {
 
         return VisualClass.parseSeries(
             dataView,
@@ -97,17 +107,18 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
             index,
             isGrouped,
             columnGroup,
-            this.visual.colors);
+            this.visual.colors,
+            formattingSettings);
     }
 
-    public converter(dataView: DataView): TornadoChartDataView {
+    public converter(dataView: DataView, formattingSettings: TornadoChartSettingsModel): TornadoChartDataView {
         return VisualClass.converter(
             dataView,
             this.visualHost,
             this.visual.textOptions,
             this.visual.colors,
             this.visualHost.createLocalizationManager(),
-            undefined
+            formattingSettings
         );
     }
 }

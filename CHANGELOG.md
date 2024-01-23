@@ -1,3 +1,9 @@
+## 3.0.0.0
+* Update packages to the latest versions
+* Replace custom scroll with native
+* Add keyboard navigation
+* Migrate to formatting pane
+
 ## 2.1.1
 * Update packages to the latest versions
 * Add context menu

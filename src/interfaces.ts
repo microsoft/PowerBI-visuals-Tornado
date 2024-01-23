@@ -75,7 +75,6 @@ export interface TornadoChartDataView {
     series: TornadoChartSeries[];
     legend: LegendData;
     dataPoints: TornadoChartPoint[];
-    highlightedDataPoints?: TornadoChartPoint[];
     hasDynamicSeries: boolean;
     hasHighlights: boolean;
     labelHeight: number;
@@ -86,6 +85,7 @@ export interface TornadoChartDataView {
 }
 
 export interface TornadoChartPoint extends SelectableDataPoint {
+    uniqId: number;
     dx?: number;
     dy?: number;
     px?: number;
@@ -99,6 +99,7 @@ export interface TornadoChartPoint extends SelectableDataPoint {
     categoryIndex: number;
     highlight?: boolean;
     value: number;
+    highlightedValue: number;
     minValue: number;
     maxValue: number;
     formatString: string;
