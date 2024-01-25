@@ -32,7 +32,5 @@
   "Visual_HighlightedValueDisplayName": "강조됨",
   "Visual_Label": "레이블",
   "Visual_Labels": "레이블",
-  "Visual_Position": "위치",
-  "Tornado_Short_Description": "두 그룹 간에 변수의 상대적 중요도를 비교합니다.",
-  "Tornado_Long_Description": "토네이도 차트는 특수한 막대 차트 유형으로, 데이터 범주가 표준 가로 표시 대신 세로로 나열되며 범주의 순서는 가장 큰 막대가 차트의 맨 위에 나타나고 두 번째로 큰 막대가 맨 위에서 두 번째로 오는 식으로 지정됩니다. 마지막 차트는 토네이도의 절반 또는 완전한 토네이도와 비슷해 보이기 때문에 토네이도라는 이름이 붙었습니다.\n토네이도 차트는 선택한 변수를 변경한 결과의 민감도를 나타내는 데 일반적으로 사용하는 도구로, 다른 모든 입력 값은 초기(공칭) 값으로 유지한 상태로 각 입력 변수를 한 번에 변경한 결과에 미치는 영향을 보여 줍니다. 일반적으로는 각각의 입력에 대해 \"낮음\" 및 \"높음\" 값을 선택합니다.\n이는 오픈 소스 시각적 개체입니다. GitHub에서 코드를 받아 보세요. https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Position": "위치"
 }

@@ -32,7 +32,5 @@
   "Visual_HighlightedValueDisplayName": "Označeno",
   "Visual_Label": "Oznaka",
   "Visual_Labels": "Oznake",
-  "Visual_Position": "Položaj",
-  "Tornado_Short_Description": "Primerjava relativne pomembnosti spremenljivk v dveh skupinah",
-  "Tornado_Long_Description": "Grafikoni tornado so posebna vrsta paličnih grafikonov, kjer so podatkovne kategorije prikazane navpično namesto vodoravno, tako kot v standardni predstavitvi, kategorije pa so razporejene tako, da je največja vrstica prikazana na vrhu grafikona, tej sledi druga največja vrstica itd. Kategorije so tudi poimenovane, ker je končni grafikon vizualno podoben delu ali celemu grafikonu tornado.\nGrafikon tornado je običajno orodje, s katerim upodobite občutljivost rezultata na spremembe v izbranih spremenljivkah. Prikazan je učinek rezultata s spreminjanjem posameznih vnosnih spremenljivk, medtem ko je za vse druge vnosne spremenljivke ohranjena začetna (nominalna) vrednost. Običajno izberete »nizko« in »visoko« vrednost za vsak vnos.\nTo je odprtokodna ponazoritev. Kodo lahko pridobite na spletnem mestu storitve GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Position": "Položaj"
 }
