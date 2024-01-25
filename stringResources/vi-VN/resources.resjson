@@ -32,7 +32,5 @@
   "Visual_HighlightedValueDisplayName": "Được tô sáng",
   "Visual_Label": "Nhãn",
   "Visual_Labels": "Nhãn",
-  "Visual_Position": "Vị trí",
-  "Tornado_Short_Description": "So sánh tầm quan trọng tương đối của các biến giữa hai nhóm",
-  "Tornado_Long_Description": "Biểu đồ lốc xoáy là một loại biểu đồ thanh đặc biệt, trong đó các danh mục dữ liệu được liệt kê theo phương thẳng thay vì biểu diễn theo hướng ngang tiêu chuẩn, và các danh mục này được sắp xếp sao cho thanh lớn nhất ở trên cùng của biểu đồ, thanh lớn thứ hai ở ngay dưới thanh lớn nhất và cứ thế cho đến hết. Loại biểu đồ này có tên như vậy vì biểu đồ cuối cùng trông giống như một nửa hoặc một cơn lốc xoáy hoàn chỉnh.\nBiểu đồ lốc xoáy là một công cụ thông dụng được dùng để mô tả độ nhạy của kết quả với các thay đổi trong biến đã chọn. Biểu đồ này hiển thị tác động đến đầu ra của việc thay đổi từng biến đầu vào cùng một lúc, giúp dữ cho tất cả các biến đầu vào khác ở giá trị (danh định) ban đầu của chúng. Thông thường, bạn chọn giá trị “thấp” và “cao” cho từng đầu vào.\nĐây là hình ảnh nguồn mở. Tải mã từ GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Position": "Vị trí"
 }

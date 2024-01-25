@@ -32,7 +32,5 @@
   "Visual_HighlightedValueDisplayName": "Istaknuto",
   "Visual_Label": "Oznaka",
   "Visual_Labels": "Oznake",
-  "Visual_Position": "Pozicija",
-  "Tornado_Short_Description": "Poređenje relativne važnosti promenljivih između dve grupe",
-  "Tornado_Long_Description": "Tornado grafikoni predstavljaju specijalni tip trakastog grafikona u kom su kategorije podataka navedene vertikalno umesto standardnog horizontalnog predstavljanja i kategorije su poređane tako da se najveća traka prikazuje na vrhu grafikona, druga najveća se prikazuje odmah ispod vrha i tako dalje. Oni se tako zovu zato što konačni grafikon vizuelno podseća na polovinu potpunog tornada.\nTornado grafikon se uobičajena alatka koja se koristi za prikazivanje osetljivosti rezultata na promene u izabranim promenljivim. On prikazuje efekat na rezultat izmene jedne po jedne ulazne promenljive, uz zadržavanje svih ostalih ulaznih promenljivih na početnim (nominalnim) vrednostima. Obično ćete izabrati „nisku“ ili „visoku“ vrednost za svaki unos.\nOvo je open source vizuelni element. Preuzmite kôd iz usluge GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Position": "Pozicija"
 }

@@ -32,7 +32,5 @@
   "Visual_HighlightedValueDisplayName": "反白顯示",
   "Visual_Label": "標籤",
   "Visual_Labels": "標籤",
-  "Visual_Position": "位置",
-  "Tornado_Short_Description": "比較兩個群組之間變項的相對重要性",
-  "Tornado_Long_Description": "龍捲風圖是一種特殊的橫條圖，其中資料類別會垂直列出，而不是標準的水平表示法，而且類別會依序排列，因此最大的橫條會顯示在圖表最上方，第二大則顯示在從上方數來第二個位置，以此類推。最終圖表看起來會像是一半或完整的龍捲風，便依此為圖表命名。\n要說明選擇的變項經過變化後的敏感度時，常會使用龍捲風圖。其呈現了一次改變各輸入變項的輸出效果，同時讓其他所有輸入變項保持在初始 (名目) 值。通常，會為各輸入選擇「低」和「高」值。\n這是開放原始碼視覺效果。從 GitHub 取得程式碼: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Position": "位置"
 }

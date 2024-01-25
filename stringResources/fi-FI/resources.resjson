@@ -31,8 +31,6 @@
   "Visual_Description_DataColors": "Näytä tietojen värin vaihtoehdot",
   "Visual_HighlightedValueDisplayName": "Korostettu",
   "Visual_Label": "Otsikko",
-  "Visual_Labels": "Nimet",
-  "Visual_Position": "Sijainti",
-  "Tornado_Short_Description": "Vertaamalla muuttujien suhteellista tärkeyttä kahden ryhmän välillä",
-  "Tornado_Long_Description": "Tornadokaaviot ovat erityinen palkkikaavion tyyppi, jossa tietoluokat on luetteloitu pystysuunnassa tavallisen vaakasuuntaisen esityksen sijaan, ja luokat on järjestetty niin, että suurin palkki näkyy kaavion yläreunassa, toiseksi suurin näkyy toisena ylhäältä ja niin edelleen. Ne nimetään niin, koska viimeinen kaavio muistuttaa visuaalisesti kumpaa tahansa puolta tai valmista tornadoa.\nTornadokaavio on yleinen työkalu, jonka avulla ilmaistaan herkkyyttä valittujen muuttujien muutosten tuloksena. Se näyttää kunkin syötemuuttujan muuttamisen tuloksen vaikutuksen kerrallaan pitäen kaikki muut syötemuuttujat alkuarvoissaan (nimellisarvoissaan). Yleensä kullekin syötteelle valitaan low- ja high-arvo.\nTämä on avoimen lähteen visualisointi. Hanki koodi GitHubista: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Labels": "Otsikot",
+  "Visual_Position": "Sijainti"
 }

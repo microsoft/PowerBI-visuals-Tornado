@@ -12,8 +12,8 @@
   "Visual_DataLabels_OutsideFill": "Yttre fyllning",
   "Visual_Legend": "Förklaring",
   "Visual_Legend_Position": "Position",
-  "Visual_Legend_Position_Top": "Överst",
-  "Visual_Legend_Position_Bottom": "Nederst",
+  "Visual_Legend_Position_Top": "Högsta",
+  "Visual_Legend_Position_Bottom": "Lägsta",
   "Visual_Legend_Position_Left": "Vänster",
   "Visual_Legend_Position_Right": "Höger",
   "Visual_Legend_Position_Top_Center": "Överkant, centrerat",
@@ -32,7 +32,5 @@
   "Visual_HighlightedValueDisplayName": "Markerad",
   "Visual_Label": "Etikett",
   "Visual_Labels": "Etiketter",
-  "Visual_Position": "Position",
-  "Tornado_Short_Description": "Jämför den relativa vikten för variabler mellan två grupper",
-  "Tornado_Long_Description": "Tornado-diagram är en särskild typ av stapeldiagram där datakategorierna visas lodrätt istället för vågrät presentation som annars är standard och kategorierna sorteras så att den största stapeln visas överst i diagrammet, den näst största visas näst överst och så vidare. De heter så eftersom det slutliga diagrammet antingen liknar en hel eller halv tornado.\nEtt tornado-diagram är vanligt att använda för att visa ett resultats känslighet för förändringar i utvalda variabler. Det visar hur utdata påverkas när man varierar varje indatavariabel individuellt och behåller alla andra indatavariabler vid sina initiala (nominella) värden. Vanligtvis väljer du ett lågt och ett högt värde för varje indata.\nDet här är ett visuellt objekt med öppen källkod. Hämta koden från GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Position": "Position"
 }
