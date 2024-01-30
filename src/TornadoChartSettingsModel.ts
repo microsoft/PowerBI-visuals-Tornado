@@ -34,17 +34,7 @@ class CategoryAxisCardSettings extends Card {
         name: "end",
         displayName: "End",
         displayNameKey: "Visual_XAxisEnd",
-        value: 0,
-        options: {
-            minValue: {
-                type: powerbiVisualsApi.visuals.ValidatorType.Min,
-                value: 0,
-            },
-            maxValue: {
-                type: powerbiVisualsApi.visuals.ValidatorType.Max,
-                value: 25,
-            }
-        }
+        value: 0
     });
 
     name: string = "categoryAxis";
@@ -313,17 +303,7 @@ export class TornadoChartSettingsModel extends Model {
                     value: dataPoint.categoryAxisEnd ? dataPoint.categoryAxisEnd : 0,
                     selector: ColorHelper.normalizeSelector(
                         dataPoint.selectionId.getSelector(),
-                        false),
-                    options: {
-                        minValue: {
-                            type: powerbiVisualsApi.visuals.ValidatorType.Min,
-                            value: 0,
-                        },
-                        maxValue: {
-                            type: powerbiVisualsApi.visuals.ValidatorType.Max,
-                            value: 25,
-                        }
-                    }
+                        false)
                 })
             );
         }

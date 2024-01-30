@@ -97,8 +97,7 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
         dataViewValueColumns: DataViewValueColumns,
         index: number,
         isGrouped: boolean,
-        columnGroup: DataViewValueColumnGroup,
-        formattingSettings: TornadoChartSettingsModel): TornadoChartSeries {
+        columnGroup: DataViewValueColumnGroup): TornadoChartSeries {
 
         return VisualClass.parseSeries(
             dataView,
@@ -107,8 +106,7 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
             index,
             isGrouped,
             columnGroup,
-            this.visual.colors,
-            formattingSettings);
+            this.visual.colors);
     }
 
     public converter(dataView: DataView, formattingSettings: TornadoChartSettingsModel): TornadoChartDataView {
