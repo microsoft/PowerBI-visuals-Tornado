@@ -1000,7 +1000,7 @@ export class TornadoChart implements IVisual {
 
         labelSelectionMerged
             .select(TornadoChart.LabelText.selectorName)
-            .attr("fill", (p: TornadoChartPoint) => p.label.color)
+            .attr("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getHighContrastColor("foreground", p.color) : p.label.color)
             .attr("font-size", fontSizeInPx)
             .attr("font-family", labelFontFamily)
             .attr("font-weight", labelFontIsBold ? "bold" : "normal")
@@ -1071,7 +1071,7 @@ export class TornadoChart implements IVisual {
 
         categoriesSelectionMerged
             .select(TornadoChart.CategoryText.selectorName)
-            .attr("fill", color)
+            .attr("fill", this.colorHelper.isHighContrast ? this.colorHelper.getHighContrastColor("foreground", color) : color)
             .attr("font-size", fontSizeInPx)
             .attr("font-family", categoryFontFamily)
             .attr("font-weight", categoryFontIsBold ? "bold" : "normal")
@@ -1095,12 +1095,14 @@ export class TornadoChart implements IVisual {
             if (!legend) {
                 return;
             }
+
+            const legendLabelsColor: string = formattingSettings.legendCardSettings.labelColor.value.value;
             const legendData: LegendData = {
                 title: legend.title,
                 dataPoints: legend.dataPoints,
                 fontSize: formattingSettings.legendCardSettings.font.fontSize.value,
                 fontFamily: formattingSettings.legendCardSettings.font.fontFamily.value,
-                labelColor: formattingSettings.legendCardSettings.labelColor.value.value
+                labelColor: this.colorHelper.isHighContrast ? this.colorHelper.getHighContrastColor("foreground", legendLabelsColor) : legendLabelsColor
             };
 
             if (this.dataView.legendObjectProperties) {
