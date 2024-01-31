@@ -1,3 +1,7 @@
+## 3.0.1.0
+* Fix x-axis settings
+* Fix colors in high contrast mode
+
 ## 3.0.0.0
 * Update packages to the latest versions
 * Replace custom scroll with native
