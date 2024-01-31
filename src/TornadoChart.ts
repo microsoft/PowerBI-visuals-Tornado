@@ -1116,10 +1116,10 @@ export class TornadoChart implements IVisual {
             }
 
             this.legend.drawLegend(legendData, { ...this.viewport });
-            d3Select(this.element.node()).selectAll("g#legendGroup text")
-            .style("font-weight",  () => this.formattingSettings.legendCardSettings.font.bold.value ? "bold" : "normal")
-            .style("font-style",  () => this.formattingSettings.legendCardSettings.font.italic.value ? "italic" : "normal")
-            .style("text-decoration", () => this.formattingSettings.legendCardSettings.font.underline.value ? "underline" : "none");
+            this.element.selectAll("g#legendGroup text")
+                .style("font-weight",  () => this.formattingSettings.legendCardSettings.font.bold.value ? "bold" : "normal")
+                .style("font-style",  () => this.formattingSettings.legendCardSettings.font.italic.value ? "italic" : "normal")
+                .style("text-decoration", () => this.formattingSettings.legendCardSettings.font.underline.value ? "underline" : "none");
 
             if (legendData.dataPoints.length > 0 && formattingSettings.legendCardSettings.show.value) {
                 this.updateViewport();
