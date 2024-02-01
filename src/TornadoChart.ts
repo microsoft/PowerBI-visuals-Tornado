@@ -39,11 +39,13 @@ type Selection<T> = d3Selection<any, T, any, any>;
 
 import DataView = powerbiVisualsApi.DataView;
 import IViewport = powerbiVisualsApi.IViewport;
+import DataViewObject = powerbiVisualsApi.DataViewObject;
 import DataViewObjects = powerbiVisualsApi.DataViewObjects;
 import DataViewObjectPropertyIdentifier = powerbiVisualsApi.DataViewObjectPropertyIdentifier;
 import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
 import DataViewCategorical = powerbiVisualsApi.DataViewCategorical;
 import DataViewValueColumns = powerbiVisualsApi.DataViewValueColumns;
+import DataViewObjectWithId = powerbiVisualsApi.DataViewObjectWithId;
 import DataViewMetadataColumn = powerbiVisualsApi.DataViewMetadataColumn;
 import DataViewCategoryColumn = powerbiVisualsApi.DataViewCategoryColumn;
 import DataViewValueColumnGroup = powerbiVisualsApi.DataViewValueColumnGroup;
@@ -214,7 +216,7 @@ export class TornadoChart implements IVisual {
         for (let seriesIndex = 0; seriesIndex < Math.min(values.length, TornadoChart.MaxSeries); seriesIndex++) {
             const columnGroup: DataViewValueColumnGroup = groupedValues && groupedValues.length > seriesIndex
                 && groupedValues[seriesIndex].values ? groupedValues[seriesIndex] : null;
-            const parsedSeries: TornadoChartSeries = TornadoChart.parseSeries(dataView, values, hostService, seriesIndex, hasDynamicSeries, columnGroup, colors, formattingSettings);
+            const parsedSeries: TornadoChartSeries = TornadoChart.parseSeries(dataView, values, hostService, seriesIndex, hasDynamicSeries, columnGroup, colors);
             const currentSeries: DataViewValueColumn = values[seriesIndex];
             const measureName: string = currentSeries.source.queryName;
 
@@ -287,8 +289,7 @@ export class TornadoChart implements IVisual {
         index: number,
         isGrouped: boolean,
         columnGroup: DataViewValueColumnGroup,
-        colors: IColorPalette,
-        formattingSettings: TornadoChartSettingsModel): TornadoChartSeries {
+        colors: IColorPalette): TornadoChartSeries {
 
         if (!dataView) {
             return;
@@ -308,15 +309,18 @@ export class TornadoChart implements IVisual {
             sourceGroupName = "" + source.groupName;
         }
 
-        let objects: DataViewObjects;
+        let objects: DataViewObjects,
+        categoryAxisObject: DataViewObject | DataViewObjectWithId[];
 
         const displayName: PrimitiveValue = source ? sourceGroupName
                 ? sourceGroupName : source.displayName
                 : null;
 
         if (isGrouped && columnGroup && columnGroup.objects) {
+            categoryAxisObject = columnGroup.objects ? columnGroup.objects["categoryAxis"] : null;
             objects = columnGroup.objects;
         } else if (source && source.objects) {
+            categoryAxisObject = objects ? objects["categoryAxis"] : null;
             objects = source.objects;
         } else if (dataView && dataView.metadata && dataView.metadata.objects) {
             objects = dataView.metadata.objects;
@@ -327,7 +331,12 @@ export class TornadoChart implements IVisual {
             ["purple", "teal"][index],
             objects, colors);
 
-        const categoryAxisEnd: number = formattingSettings.categoryAxisCardSettings.end.value;
+        let categoryAxisEnd: number = categoryAxisObject ? categoryAxisObject["end"] : null;
+        if(!categoryAxisEnd){
+            if(objects?.categoryAxis?.end){
+                categoryAxisEnd = objects.categoryAxis.end as number;
+            }
+        }
 
         return <TornadoChartSeries>{
             fill: fillColor,
@@ -991,7 +1000,7 @@ export class TornadoChart implements IVisual {
 
         labelSelectionMerged
             .select(TornadoChart.LabelText.selectorName)
-            .attr("fill", (p: TornadoChartPoint) => p.label.color)
+            .attr("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getHighContrastColor("foreground", p.color) : p.label.color)
             .attr("font-size", fontSizeInPx)
             .attr("font-family", labelFontFamily)
             .attr("font-weight", labelFontIsBold ? "bold" : "normal")
@@ -1062,7 +1071,7 @@ export class TornadoChart implements IVisual {
 
         categoriesSelectionMerged
             .select(TornadoChart.CategoryText.selectorName)
-            .attr("fill", color)
+            .attr("fill", this.colorHelper.isHighContrast ? this.colorHelper.getHighContrastColor("foreground", color) : color)
             .attr("font-size", fontSizeInPx)
             .attr("font-family", categoryFontFamily)
             .attr("font-weight", categoryFontIsBold ? "bold" : "normal")
@@ -1086,12 +1095,14 @@ export class TornadoChart implements IVisual {
             if (!legend) {
                 return;
             }
+
+            const legendLabelsColor: string = formattingSettings.legendCardSettings.labelColor.value.value;
             const legendData: LegendData = {
                 title: legend.title,
                 dataPoints: legend.dataPoints,
                 fontSize: formattingSettings.legendCardSettings.font.fontSize.value,
                 fontFamily: formattingSettings.legendCardSettings.font.fontFamily.value,
-                labelColor: formattingSettings.legendCardSettings.labelColor.value.value
+                labelColor: this.colorHelper.isHighContrast ? this.colorHelper.getHighContrastColor("foreground", legendLabelsColor) : legendLabelsColor
             };
 
             if (this.dataView.legendObjectProperties) {
@@ -1105,10 +1116,10 @@ export class TornadoChart implements IVisual {
             }
 
             this.legend.drawLegend(legendData, { ...this.viewport });
-            d3Select(this.element.node()).selectAll("g#legendGroup text")
-            .style("font-weight",  () => this.formattingSettings.legendCardSettings.font.bold.value ? "bold" : "normal")
-            .style("font-style",  () => this.formattingSettings.legendCardSettings.font.italic.value ? "italic" : "normal")
-            .style("text-decoration", () => this.formattingSettings.legendCardSettings.font.underline.value ? "underline" : "none");
+            this.element.selectAll("g#legendGroup text")
+                .style("font-weight",  () => this.formattingSettings.legendCardSettings.font.bold.value ? "bold" : "normal")
+                .style("font-style",  () => this.formattingSettings.legendCardSettings.font.italic.value ? "italic" : "normal")
+                .style("text-decoration", () => this.formattingSettings.legendCardSettings.font.underline.value ? "underline" : "none");
 
             if (legendData.dataPoints.length > 0 && formattingSettings.legendCardSettings.show.value) {
                 this.updateViewport();

@@ -167,15 +167,15 @@ describe("TornadoChart", () => {
         });
 
         it("every argument is null", () => {
-            callParseSeriesAndExpectExceptions(null, null, null, null, null, null);
+            callParseSeriesAndExpectExceptions(null, null, null, null, null);
         });
 
         it("every argument is undefined", () => {
-            callParseSeriesAndExpectExceptions(undefined, undefined, undefined, undefined, undefined, undefined);
+            callParseSeriesAndExpectExceptions(undefined, undefined, undefined, undefined, undefined);
         });
 
         it("index is negative, other arguments are null", () => {
-            callParseSeriesAndExpectExceptions(null, null, -5, null, null, null);
+            callParseSeriesAndExpectExceptions(null, null, -5, null, null);
         });
 
         it("every argument is correct", () => {
@@ -185,8 +185,7 @@ describe("TornadoChart", () => {
                     dataView.categorical!.values!,
                     index,
                     true,
-                    dataView.categorical!.values!.grouped()[index],
-                    visualBuilder.instance.formattingSettings)!;
+                    dataView.categorical!.values!.grouped()[index])!;
 
             expect(series.categoryAxisEnd).toBeDefined();
             expect(series.name).toBeDefined();
@@ -203,8 +202,7 @@ describe("TornadoChart", () => {
             dataViewValueColumns: DataViewValueColumns | null | undefined,
             index: number | null | undefined,
             isGrouped: boolean | null | undefined,
-            columnGroup: DataViewValueColumnGroup | null | undefined,
-            formattingSettings: TornadoChartSettingsModel | null | undefined): TornadoChartSeries | undefined {
+            columnGroup: DataViewValueColumnGroup | null | undefined): TornadoChartSeries | undefined {
 
             let series: TornadoChartSeries | undefined = undefined;
             expect(() => {
@@ -213,8 +211,7 @@ describe("TornadoChart", () => {
                     dataViewValueColumns!,
                     index!,
                     isGrouped!,
-                    columnGroup!,
-                    formattingSettings!);
+                    columnGroup!);
             }).not.toThrow();
 
             return series;

@@ -69,7 +69,7 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
                 event.ctrlKey || event.metaKey || event.shiftKey);
         });
 
-        this.columns.on("keypress", (event : KeyboardEvent, dataPoint: TornadoChartPoint) => {
+        this.columns.on("keydown", (event : KeyboardEvent, dataPoint: TornadoChartPoint) => {
             if(event?.code == "Enter" || event?.code == "Space")
             {
                 selectionHandler.handleSelection(
