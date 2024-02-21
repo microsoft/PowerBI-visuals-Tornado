@@ -1,3 +1,7 @@
+## 3.0.2.0
+* Fix the data labels that didn't fit in the group on the right
+* Fix vertical position of the data labels
+
 ## 3.0.1.0
 * Fix x-axis settings
 * Fix colors in high contrast mode

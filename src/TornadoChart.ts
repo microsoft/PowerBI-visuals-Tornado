@@ -108,7 +108,6 @@ import {
     TornadoBehaviorOptions,
     TornadoChartDataView,
     TornadoChartPoint,
-    TornadoChartTextOptions,
     LineData,
     LabelData,
     TextData,
@@ -117,7 +116,7 @@ import {
 import { TornadoWebBehavior } from "./TornadoWebBehavior";
 import * as tooltipBuilder from "./tooltipBuilder";
 import { TornadoChartUtils } from "./tornadoChartUtils";
-import { TornadoChartSettingsModel, DataLabelSettings, LegendCardSettings} from "./TornadoChartSettingsModel";
+import { TornadoChartSettingsModel, DataLabelSettings, LegendCardSettings, BaseFontControlSettings, FontDefaultOptions} from "./TornadoChartSettingsModel";
 import IVisualEventService = powerbi.extensibility.IVisualEventService;
 
 export class TornadoChart implements IVisual {
@@ -182,7 +181,6 @@ export class TornadoChart implements IVisual {
     public static converter( 
         dataView: DataView,
         hostService: IVisualHost,
-        textOptions: TornadoChartTextOptions,
         colors: IColorPalette,
         localizationManager: ILocalizationManager,
         formattingSettings?: TornadoChartSettingsModel
@@ -209,7 +207,7 @@ export class TornadoChart implements IVisual {
         const categorySourceFormatter: IValueFormatter = valueFormatter.create({
             format: valueFormatter.getFormatStringByColumn(category.source)
         });
-        const categoriesLabels: TextData[] = category.values.map(value => TornadoChart.getTextData(categorySourceFormatter.format(value), textOptions, true, false, formattingSettings.categoryCardSettings.font.fontSize.value));
+        const categoriesLabels: TextData[] = category.values.map(value => TornadoChart.getTextData(categorySourceFormatter.format(value), formattingSettings.categoryCardSettings.font, true, false));
         const groupedValues: DataViewValueColumnGroup[] = values.grouped ? values.grouped() : null;
         let uniqId = 0;
 
@@ -357,23 +355,27 @@ export class TornadoChart implements IVisual {
 
     private static getTextData(
         text: string,
-        textOptions: TornadoChartTextOptions,
+        formattingOptions: BaseFontControlSettings,
         measureWidth: boolean = false,
         measureHeight: boolean = false,
-        overrideFontSize?: number): TextData {
+        useDefaultTextProperties: boolean = false): TextData {
 
         let width: number = 0,
             height: number = 0;
 
         text = text || "";
 
-        const fontSize = overrideFontSize
-            ? PixelConverter.fromPoint(overrideFontSize)
-            : PixelConverter.fromPoint(textOptions.fontSize);
+        const fontSize: string = useDefaultTextProperties 
+            ? PixelConverter.fromPoint(FontDefaultOptions.DefaultFontSizePt)
+            : PixelConverter.fromPoint(formattingOptions.fontSize.value);
+
+        const fontFamily: string = useDefaultTextProperties 
+            ? FontDefaultOptions.DefaultFontFamily
+            : formattingOptions.fontFamily.value;
 
         const textProperties = {
             text: text,
-            fontFamily: textOptions.fontFamily,
+            fontFamily: fontFamily,
             fontSize: fontSize
         };
 
@@ -395,7 +397,6 @@ export class TornadoChart implements IVisual {
 
     public colors: IColorPalette;
     public colorHelper: ColorHelper;
-    public textOptions: TornadoChartTextOptions = {};
 
     private columnPadding: number = 5;
     private leftLabelMargin: number = 4;
@@ -436,7 +437,7 @@ export class TornadoChart implements IVisual {
 
     private get allLabelsWidth(): number {
         const labelsWidth: number = this.formattingSettings.categoryCardSettings.show.value
-            ? Math.min(this.dataView.maxLabelsWidth, this.viewportWidth / 2)
+            ? Math.min(this.dataView.maxLabelsWidth, this.viewportWidth / 3)
             : TornadoChart.DefaultLabelsWidth;
         return labelsWidth + TornadoChart.CategoryLabelMargin;
     }
@@ -477,11 +478,6 @@ export class TornadoChart implements IVisual {
         const root: Selection<any> = this.root = d3Select(this.rootContainer)
             .append("svg")
             .classed(TornadoChart.ClassName, true);
-
-        const fontSize: string = root.style("font-size");
-
-        this.textOptions.fontSize = Number(fontSize.slice(0, fontSize.length - 2));
-        this.textOptions.fontFamily = root.style("font-family");
 
         const main: Selection<any> = this.main = root.append("g");
         this.clearCatcher = appendClearCatcher(main);
@@ -534,7 +530,7 @@ export class TornadoChart implements IVisual {
             this.formattingSettings.setLocalizedOptions(this.localizationManager);
         }
 
-        this.dataView = TornadoChart.converter(dataView, this.hostService, this.textOptions, this.colors, this.localizationManager, this.formattingSettings);
+        this.dataView = TornadoChart.converter(dataView, this.hostService, this.colors, this.localizationManager, this.formattingSettings);
         if (!this.dataView || this.viewport.height < TornadoChart.CategoryMinHeight) {
             this.clearData();
             this.events.renderingFinished(options);
@@ -875,12 +871,12 @@ export class TornadoChart implements IVisual {
         const maxLabelWidth: number = Math.max(maxOutsideLabelWidth, columnWidth - this.leftLabelMargin);
 
         const textProperties: TextProperties = {
-            fontFamily: dataLabelUtils.StandardFontFamily,
+            fontFamily: this.formattingSettings.dataLabelsSettings.font.fontFamily.value,
             fontSize: PixelConverter.fromPoint(fontSize),
             text: labelFormatter.getLabelValueFormatter(formatStringProp).format(value)
         };
         const valueAfterValueFormatter: string = textMeasurementService.getTailoredTextOrDefault(textProperties, maxLabelWidth);
-        const textDataAfterValueFormatter: TextData = TornadoChart.getTextData(valueAfterValueFormatter, this.textOptions, true, false, fontSize);
+        const textDataAfterValueFormatter: TextData = TornadoChart.getTextData(valueAfterValueFormatter, this.formattingSettings.dataLabelsSettings.font, true, false);
 
         if (columnWidth > textDataAfterValueFormatter.width + TornadoChart.LabelPadding) {
             dx = dxColumn + columnWidth / 2 - textDataAfterValueFormatter.width / 2;
@@ -1057,7 +1053,7 @@ export class TornadoChart implements IVisual {
         categoriesSelectionMerged
             .attr("transform", (text: string, index: number) => {
                 let shift: number = (this.heightColumn + this.columnPadding) * index + this.heightColumn / 2;
-                const textData: TextData = TornadoChart.getTextData(text, this.textOptions, false, true);
+                const textData: TextData = TornadoChart.getTextData(text, this.formattingSettings.categoryCardSettings.font, false, true, true);
 
                 shift = shift + textData.height / 2 - this.InnerTextHeightDelta;
 
@@ -1077,9 +1073,10 @@ export class TornadoChart implements IVisual {
             .attr("font-weight", categoryFontIsBold ? "bold" : "normal")
             .attr("font-style", categoryFontIsItalic ? "italic" : "normal")
             .attr("text-decoration", categoryFontIsUnderlined? "underline" : "normal")
+            .attr("dy", "0.25em")
             .text((data: TextData) => formattingSettings.categoryCardSettings.show.value
                 ? textMeasurementService.getTailoredTextOrDefault(
-                    TornadoChart.getTextData(data.text, this.textOptions, false, true, formattingSettings.categoryCardSettings.font.fontSize.value).textProperties, this.allLabelsWidth)
+                    TornadoChart.getTextData(data.text, this.formattingSettings.categoryCardSettings.font, false, true).textProperties, this.allLabelsWidth)
                 : "");
 
         categoriesSelection

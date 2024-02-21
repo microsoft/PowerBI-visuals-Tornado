@@ -113,7 +113,6 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
         return VisualClass.converter(
             dataView,
             this.visualHost,
-            this.visual.textOptions,
             this.visual.colors,
             this.visualHost.createLocalizationManager(),
             formattingSettings

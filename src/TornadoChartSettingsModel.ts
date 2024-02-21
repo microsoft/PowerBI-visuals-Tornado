@@ -169,6 +169,11 @@ const categoryPositionOptions : IEnumMemberWithDisplayNameKey[] = [
      
 ];
 
+export class FontDefaultOptions {
+    public static DefaultFontSizePt: number = 8;
+    public static DefaultFontFamily: string = "Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif";
+}
+
 export class BaseFontControlSettings extends formattingSettings.FontControl {
     constructor(defaultFontSize: number){
         super(
@@ -176,7 +181,7 @@ export class BaseFontControlSettings extends formattingSettings.FontControl {
                 name: "font",
                 fontFamily: new formattingSettings.FontPicker({
                     name: "fontFamily",
-                    value: "Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif"
+                    value: FontDefaultOptions.DefaultFontFamily
                 }),
                 fontSize: new formattingSettings.NumUpDown({
                     name: "fontSize",
