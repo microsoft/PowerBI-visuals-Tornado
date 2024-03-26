@@ -32,5 +32,7 @@
   "Visual_HighlightedValueDisplayName": "Korostettu",
   "Visual_Label": "Otsikko",
   "Visual_Labels": "Otsikot",
-  "Visual_Position": "Sijainti"
+  "Visual_Position": "Sijainti",
+  "Visual_Short_Description": "Comparing the relative importance of variables between two groups",
+  "Visual_Long_Description": "Tornado charts, are a special type of Bar chart, where the data categories are listed vertically instead of the standard horizontal presentation, and the categories are ordered so that the largest bar appears at the top of the chart, the second largest appears second from the top, and so on. They are so named because the final chart visually resembles either one half of or a complete tornado.\nA tornado chart is a common tool used to depict the sensitivity of a result to changes in selected variables. It shows the effect on the output of varying each input variable at a time, keeping all the other input variables at their initial (nominal) values. Typically, you choose a “low” and a “high” value for each input.\nThis is an open source visual. Get the code from GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
 }
