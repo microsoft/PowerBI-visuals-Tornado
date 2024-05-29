@@ -1,5 +1,7 @@
 ## 3.0.3.0
 * Fix issue with categoryAxis end type
+* Update packages
+* API 5.9.1
 
 ## 3.0.2.0
 * Fix the data labels that didn't fit in the group on the right
