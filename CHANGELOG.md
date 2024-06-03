@@ -1,3 +1,22 @@
+## 3.0.3.0
+* Fix issue with categoryAxis end type
+* Update packages
+* API 5.9.1
+
+## 3.0.2.0
+* Fix the data labels that didn't fit in the group on the right
+* Fix vertical position of the data labels
+
+## 3.0.1.0
+* Fix x-axis settings
+* Fix colors in high contrast mode
+
+## 3.0.0.0
+* Update packages to the latest versions
+* Replace custom scroll with native
+* Add keyboard navigation
+* Migrate to formatting pane
+
 ## 2.1.1
 * Update packages to the latest versions
 * Add context menu

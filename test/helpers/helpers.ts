@@ -74,12 +74,12 @@ export function getHexColorFromNumber(value: number): string {
 }
 
 export function isColorAppliedToElements(
-    elements: JQuery[],
+    elements: HTMLElement[],
     color?: string,
     colorStyleName: string = "fill"
 ): boolean {
-    return elements.some((element: JQuery) => {
-        const currentColor: string = element.css(colorStyleName);
+    return elements.some((element: HTMLElement) => {
+        const currentColor: string = getComputedStyle(element).getPropertyValue(colorStyleName);
 
         if (!currentColor || !color) {
             return currentColor === color;

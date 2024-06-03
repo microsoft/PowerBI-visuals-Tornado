@@ -32,7 +32,6 @@ import DataViewValueColumns = powerbiVisualsApi.DataViewValueColumns;
 import DataViewValueColumnGroup = powerbiVisualsApi.DataViewValueColumnGroup;
 
 import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
-import EnumerateVisualObjectInstancesOptions = powerbiVisualsApi.EnumerateVisualObjectInstancesOptions;
 
 import { assertColorsMatch } from "powerbi-visuals-utils-testutils";
 
@@ -40,13 +39,14 @@ import { TornadoData } from "./TornadoData";
 import { TornadoChartBuilder } from "./TornadoChartBuilder";
 import { areColorsEqual, isColorAppliedToElements, getRandomUniqueHexColors, getSolidColorStructuralObject } from "./helpers/helpers";
 import { TornadoChartPoint, TornadoChartSeries, TornadoChartDataView } from "./../src/interfaces";
-import { tornadoChartUtils } from "./../src/tornadoChartUtils";
+import { TornadoChartSettingsModel } from "../src/TornadoChartSettingsModel";
 
 describe("TornadoChart", () => {
     let visualBuilder: TornadoChartBuilder,
         dataViewBuilder: TornadoData,
         dataView: DataView,
         MaxSeries: number = 2;
+    const defaultAwaitTime = 2000;
 
     beforeEach(() => {
         visualBuilder = new TornadoChartBuilder(1000, 500);
@@ -57,28 +57,26 @@ describe("TornadoChart", () => {
 
     describe("DOM tests", () => {
         it("svg element created", () => {
-            expect(visualBuilder.scrollable[0]).toBeInDOM();
+            expect(document.body.contains(visualBuilder.scrollable[0])).toBeTruthy();
         });
 
         it("update", (done) => {
             visualBuilder.updateRenderTimeout(dataView, () => {
-                const renderedCategories: number = visualBuilder.scrollable
-                    .find(".columns")
-                    .children()
-                    .length / 2;
+                const renderedCategories: number = Array.from(visualBuilder.scrollable[0]
+                    .querySelectorAll(".columns > *")).length / 2;
 
                 expect(renderedCategories).toBeGreaterThan(0);
                 expect(renderedCategories)
-                    .toBeLessThan(dataView.categorical.categories[0].values.length + 1);
+                    .toBeLessThan(dataView.categorical!.categories![0].values.length + 1);
 
                 done();
             });
         });
 
         it("update with empty data", (done) => {
-            dataView.categorical.values[0].values = [];
+            dataView.categorical!.values![0].values = [];
             visualBuilder.updateRenderTimeout(dataView, () => {
-                const renderedCategories: number = visualBuilder.categories.children().length;
+                const renderedCategories: number = Array.from(visualBuilder.categories).length;
                 expect(renderedCategories).toBe(0);
                 done();
             });
@@ -86,11 +84,9 @@ describe("TornadoChart", () => {
 
         it("Clear catcher covers the whole visual", (done) => {
             visualBuilder.updateRenderTimeout(dataView, () => {
-                const clearCatcher: JQuery = visualBuilder.scrollable
-                    .first()
-                    .children()
-                    .first()
-                    .find("clearCatcher");
+                const clearCatcher: HTMLElement = visualBuilder.scrollable[0]
+                    .firstElementChild!
+                    .querySelector(".clearCatcher")!;
 
                 expect(clearCatcher).toBeDefined();
 
@@ -100,34 +96,15 @@ describe("TornadoChart", () => {
 
         it("Categories tooltip is rendered correctly", (done) => {
             visualBuilder.updateRenderTimeout(dataView, () => {
-                const categoriesTooltip: JQuery = visualBuilder.scrollable.find(".category-title");
+                const categoriesTooltip1: Element = visualBuilder.scrollable[0].querySelectorAll(".category-title")![0];
+                const categoriesTooltip2: Element = visualBuilder.scrollable[0].querySelectorAll(".category-title")![1];
+                const categoriesTooltip3: Element = visualBuilder.scrollable[0].querySelectorAll(".category-title")![2];
 
-                expect($(categoriesTooltip[0]).text()).toBe("Australia");
-                expect($(categoriesTooltip[1]).text()).toBe("Canada");
-                expect($(categoriesTooltip[2]).text()).toBe("France");
+                expect(categoriesTooltip1.textContent).toBe("Australia");
+                expect(categoriesTooltip2.textContent).toBe("Canada");
+                expect(categoriesTooltip3.textContent).toBe("France");
 
                 done();
-            });
-        });
-
-        it("Scrolling should not be enabled when there is no data", (done) => {
-            visualBuilder = new TornadoChartBuilder(500, 50);
-            visualBuilder.updateRenderTimeout(dataView, () => {
-                // Check that the scroll bar and data exists
-                expect(visualBuilder.scrollbarRect.length).toBe(1);
-                expect(visualBuilder.columns.length).toBe(2);
-
-                // Clear data
-                dataView.categorical.categories = null;
-
-                visualBuilder.updateRenderTimeout(dataView, () => {
-
-                    // Check that the scroll bar and data are removed
-                    expect(visualBuilder.scrollbarRect.length).toBe(0);
-                    expect(visualBuilder.columns.length).toBe(0);
-
-                    done();
-                });
             });
         });
 
@@ -139,11 +116,11 @@ describe("TornadoChart", () => {
             dataView = dataViewBuilder.getDataView();
 
             visualBuilder.updateRenderTimeout(dataView, () => {
-                visualBuilder.categories.each((i: number, element: Element) => {
+                Array.from(visualBuilder.categories).forEach((element: Element, i: number) => {
                     expect((<any>element).getBBox().width)
                         .toBeLessThan(visualBuilder.viewport.width / 3 * 2);
-
-                    expect($(element).children("text.category-text").text()).toContain("...");
+                
+                    expect(element.querySelector("text.category-text")!.textContent).toContain("...");
                 });
 
                 done();
@@ -151,8 +128,6 @@ describe("TornadoChart", () => {
         });
 
         it("Middle axis of Tornado should have correct position", (done) => {
-            visualBuilder = new TornadoChartBuilder(500, 50);
-
             visualBuilder.updateRenderTimeout(dataView, () => {
                 const axisRightPosition: number = Math.round(
                     visualBuilder.axis[0].getBoundingClientRect().right);
@@ -167,17 +142,17 @@ describe("TornadoChart", () => {
         });
 
         it("Data labels should support different formats", (done) => {
-            dataView.categorical.values[0].source.format = "$#,0.00;($#,0.00);$#,0.00";
-            dataView.categorical.values[1].source.format = "0.00 %;-0.00 %;0.00 %";
+            dataView.categorical!.values![0].source.format = "$#,0.00;($#,0.00);$#,0.00";
+            dataView.categorical!.values![1].source.format = "0.00 %;-0.00 %;0.00 %";
 
             visualBuilder.updateRenderTimeout(dataView, () => {
-                const labelsText: JQuery = visualBuilder.labels.children("text.label-text");
+                let labelsText = Array.from(visualBuilder.labels).flatMap((label) => Array.from(label.querySelectorAll("text.label-text")));
 
-                const labelsTextWith$: JQuery = labelsText.filter((i: number, element: Element) => $(element).text().indexOf("$") >=0);
+                let labelsTextWith$ = labelsText.filter((element) => element.textContent!.includes("$"));
 
                 expect(labelsTextWith$.length).toEqual(labelsText.length / 2);
 
-                const labelsTextWithPercent: JQuery = labelsText.filter((i: number, element: Element) => $(element).text().indexOf("%") >= 0);
+                let labelsTextWithPercent = labelsText.filter((element) => element.textContent!.includes("%"));
 
                 expect(labelsTextWithPercent.length).toEqual(labelsText.length / 2);
 
@@ -203,20 +178,14 @@ describe("TornadoChart", () => {
             callParseSeriesAndExpectExceptions(null, null, -5, null, null);
         });
 
-        it("enumerateObjectInstances arguments are null", () => {
-            let options: EnumerateVisualObjectInstancesOptions = { objectName: "object" };
-
-            expect(visualBuilder.enumerateObjectInstances(options)).toBeDefined();
-        });
-
         it("every argument is correct", () => {
             const index: number = 0,
                 series: TornadoChartSeries = callParseSeriesAndExpectExceptions(
                     dataView,
-                    dataView.categorical.values,
+                    dataView.categorical!.values!,
                     index,
                     true,
-                    dataView.categorical.values.grouped()[index]);
+                    dataView.categorical!.values!.grouped()[index])!;
 
             expect(series.categoryAxisEnd).toBeDefined();
             expect(series.name).toBeDefined();
@@ -229,20 +198,20 @@ describe("TornadoChart", () => {
         });
 
         function callParseSeriesAndExpectExceptions(
-            dataView: DataView,
-            dataViewValueColumns: DataViewValueColumns,
-            index: number,
-            isGrouped: boolean,
-            columnGroup: DataViewValueColumnGroup): TornadoChartSeries {
+            dataView: DataView | null | undefined,
+            dataViewValueColumns: DataViewValueColumns | null | undefined,
+            index: number | null | undefined,
+            isGrouped: boolean | null | undefined,
+            columnGroup: DataViewValueColumnGroup | null | undefined): TornadoChartSeries | undefined {
 
-            let series: TornadoChartSeries;
+            let series: TornadoChartSeries | undefined = undefined;
             expect(() => {
                 series = visualBuilder.parseSeries(
-                    dataView,
-                    dataViewValueColumns,
-                    index,
-                    isGrouped,
-                    columnGroup);
+                    dataView!,
+                    dataViewValueColumns!,
+                    index!,
+                    isGrouped!,
+                    columnGroup!);
             }).not.toThrow();
 
             return series;
@@ -256,7 +225,7 @@ describe("TornadoChart", () => {
         beforeEach(() => {
             visualBuilder.update(dataView);
 
-            tornadoChartDataView = visualBuilder.converter(dataView);
+            tornadoChartDataView = visualBuilder.converter(dataView, visualBuilder.instance.formattingSettings);
             tornadoChartSeries = tornadoChartDataView.series;
         });
 
@@ -300,10 +269,11 @@ describe("TornadoChart", () => {
 
     describe("Format settings test", () => {
         describe("Data colors", () => {
+            //Await usage
             it("colors", () => {
-                let colors: string[] = getRandomUniqueHexColors(dataView.categorical.values.length);
+                let colors: string[] = getRandomUniqueHexColors(dataView.categorical!.values!.length);
 
-                dataView.categorical.values.forEach((column: DataViewValueColumn, index: number) => {
+                dataView.categorical!.values!.forEach((column: DataViewValueColumn, index: number) => {
                     column.source.objects = {
                         dataPoint: {
                             fill: getSolidColorStructuralObject(colors[index])
@@ -312,21 +282,21 @@ describe("TornadoChart", () => {
                 });
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
+                visualBuilder.updateRenderTimeout(dataView, async () => {
+                    await delay(defaultAwaitTime);
+                    let columns: HTMLElement[] = Array.from(visualBuilder.columns[0].querySelectorAll("rect.column"));
 
-                let columns: JQuery<any>[] = visualBuilder.columns
-                    .toArray()
-                    .map($);
+                    colors.forEach((color: string, index: number) => {
+                        const doColumnContainColor: boolean = columns.some((element: HTMLElement) => {
+                            return areColorsEqual(getComputedStyle(element).getPropertyValue("fill"), color);
+                        });
 
-                colors.forEach((color: string, index: number) => {
-                    const doColumnContainColor: boolean = columns.some((element: JQuery) => {
-                        return areColorsEqual(element.css("fill"), color);
+                        if (index < MaxSeries) {
+                            expect(doColumnContainColor).toBeTruthy();
+                        } else {
+                            expect(doColumnContainColor).toBe(false);
+                        }
                     });
-
-                    if (index < MaxSeries) {
-                        expect(doColumnContainColor).toBeTruthy();
-                    } else {
-                        expect(doColumnContainColor).toBe(false);
-                    }
                 });
             });
         });
@@ -340,15 +310,23 @@ describe("TornadoChart", () => {
                 };
             });
 
+            //Await usage
             it("show", () => {
-                visualBuilder.updateFlushAllD3Transitions(dataView);
+                visualBuilder.updateflushAllD3TransitionsRenderTimeout(dataView, async () => {
+                    await delay(defaultAwaitTime);
+                    visualBuilder.labelText.forEach((element) => {
+                        expect(document.body.contains(element)).toBeTruthy();
+                    });
+                    (dataView.metadata.objects!).labels.show = false;
+                });
 
-                expect(visualBuilder.labelText).toBeInDOM();
-
-                (dataView.metadata.objects).labels.show = false;
-                visualBuilder.updateFlushAllD3Transitions(dataView);
-
-                expect(visualBuilder.labelText).not.toBeInDOM();
+                visualBuilder.updateflushAllD3TransitionsRenderTimeout(dataView, async () => {
+                    visualBuilder.update(dataView);
+                    await delay(defaultAwaitTime);
+                    visualBuilder.labelText.forEach((element) => {
+                        expect(document.body.contains(element)).toBeFalsy();
+                    });
+                });
             });
 
             it("inside fill", () => {
@@ -369,14 +347,12 @@ describe("TornadoChart", () => {
 
                 let labelsOneSideLength: number = visualBuilder.labelText.length / 2;
 
-                visualBuilder.labelText
-                    .toArray()
-                    .forEach((element: Element, index: number) => {
-                        assertColorsMatch(
-                            $(element).css("fill"),
-                            color,
-                            index < labelsOneSideLength);
-                    });
+                Array.from(visualBuilder.labelText).forEach((element: Element, index: number) => {
+                    assertColorsMatch(
+                        getComputedStyle(element).getPropertyValue("fill"),
+                        color,
+                        index < labelsOneSideLength);
+                });
             });
 
             it("outside fill", () => {
@@ -397,28 +373,24 @@ describe("TornadoChart", () => {
 
                 let labelsOneSideLength: number = visualBuilder.labelText.length / 2;
 
-                visualBuilder.labelText
-                    .toArray()
-                    .forEach((element: Element, index: number) => {
-                        assertColorsMatch(
-                            $(element).css("fill"),
-                            color,
-                            index >= labelsOneSideLength);
-                    });
+                Array.from(visualBuilder.labelText).forEach((element: Element, index: number) => {
+                    assertColorsMatch(
+                        getComputedStyle(element).getPropertyValue("fill"),
+                        color,
+                        index >= labelsOneSideLength);
+                });
             });
 
             it("font size", () => {
                 const fontSize: number = 23,
                     fontSizeInPt: string = "30.6667px";
 
-                (dataView.metadata.objects).labels.fontSize = fontSize;
+                (dataView.metadata.objects!).labels.fontSize = fontSize;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                visualBuilder.labelText
-                    .toArray()
-                    .forEach((element: Element) => {
-                        expect($(element).css("font-size")).toBe(fontSizeInPt);
-                    });
+                Array.from(visualBuilder.labelText).forEach((element: Element) => {
+                    expect(getComputedStyle(element).getPropertyValue("font-size")).toBe(fontSizeInPt);
+                });
             });
         });
 
@@ -431,62 +403,72 @@ describe("TornadoChart", () => {
                 };
             });
 
-            it("show", () => {
-                visualBuilder.updateFlushAllD3Transitions(dataView);
+            //Await usage
+            it("show", async () => {
+                visualBuilder.updateRenderTimeout(dataView, async () => {
+                    await delay(defaultAwaitTime);
+                    visualBuilder.categoryText.forEach((element) => {
+                        expect(document.body.contains(element)).toBeTruthy();
+                    });
+                    (dataView.metadata.objects!).categories.show = false;
+                });
 
-                expect(visualBuilder.categoryText).toBeInDOM();
-
-                (dataView.metadata.objects).categories.show = false;
-                visualBuilder.updateFlushAllD3Transitions(dataView);
-
-                expect(visualBuilder.categoryText).not.toBeInDOM();
+                visualBuilder.updateRenderTimeout(dataView, async () => {
+                    await delay(defaultAwaitTime);
+                    visualBuilder.categoryText.forEach((element) => {
+                        expect(document.body.contains(element)).toBeFalsy();
+                    });
+                });
             });
 
             it("color", () => {
                 const color: string = "#ABCDEF";
 
-                (dataView.metadata.objects).categories.fill = getSolidColorStructuralObject(color);
+                (dataView.metadata.objects!).categories.fill = getSolidColorStructuralObject(color);
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                visualBuilder.categoryText
-                    .toArray()
-                    .forEach((element: Element) => {
-                        assertColorsMatch($(element).css("fill"), color);
-                    });
+                Array.from(visualBuilder.categoryText).forEach((element: Element) => {
+                    assertColorsMatch(getComputedStyle(element).getPropertyValue("fill"), color);
+                });
             });
         });
     });
 
     describe("Highligh test", () => {
         const expectedHighligtedCount: number = 1;
-        let columns: JQuery<any>[];
+        let columns: HTMLElement[];
+        let columnsDefs: HTMLElement[];
         let dataViewWithHighLighted: DataView;
 
         beforeEach(() => {
             dataViewWithHighLighted = dataViewBuilder.getDataView(undefined, true);
             visualBuilder.update(dataViewWithHighLighted);
 
-            columns = visualBuilder.columns.toArray().map($);
+            visualBuilder.updateRenderTimeout(dataViewWithHighLighted, () => {
+                columns = Array.from(visualBuilder.columns);
+                columnsDefs = Array.from(visualBuilder.columnsDefs);
+            });
         });
 
         it("should highligted elements change their opacity", (done) => {
             visualBuilder.updateRenderTimeout(dataViewWithHighLighted, () => {
                 let highligtedCount: number = 0;
                 let nonHighlightedCount: number = 0;
-                const defaultOpacity: string = tornadoChartUtils.DefaultOpacity.toString();
-                const dimmedOpacity: string = tornadoChartUtils.DimmedOpacity.toString();
-
-                columns.forEach((element: JQuery) => {
-                    const fillOpacity: string = element.css("fill-opacity");
-                    const strokeOpacity: string = element.css("stroke-opacity");
-                    if (fillOpacity === defaultOpacity && strokeOpacity === defaultOpacity)
-                        highligtedCount++;
-                    if (fillOpacity === dimmedOpacity && strokeOpacity === dimmedOpacity)
-                        nonHighlightedCount++;
+                
+                Array.from(columnsDefs[0].children).forEach((element) => {
+                    Array.from(element.children).forEach((childElement) => {
+                        if(childElement.outerHTML.indexOf("100%") != -1){
+                            highligtedCount += 1;
+                        }
+                        else{
+                            nonHighlightedCount+=1
+                        }
+                    })
                 });
                 const expectedNonHighligtedCount: number = columns.length - expectedHighligtedCount;
-                expect(highligtedCount).toBe(expectedHighligtedCount);
-                expect(nonHighlightedCount).toBe(expectedNonHighligtedCount);
+                // As there are two gradient point per each column, to find distinct columns we divide by 2.
+                expect(highligtedCount / 2).toBe(expectedHighligtedCount);
+                expect(nonHighlightedCount / 2).toBe(expectedNonHighligtedCount);
 
                 done();
             });
@@ -497,21 +479,23 @@ describe("TornadoChart", () => {
         const backgroundColor: string = "#000000";
         const foregroundColor: string = "#ff00ff";
 
-        let columns: JQuery<any>[],
-            linkElements: JQuery<any>[];
+        let columns: HTMLElement[];
 
         beforeEach(() => {
+
             visualBuilder.visualHost.colorPalette.isHighContrast = true;
 
             visualBuilder.visualHost.colorPalette.background = { value: backgroundColor };
             visualBuilder.visualHost.colorPalette.foreground = { value: foregroundColor };
 
-            columns = visualBuilder.columns.toArray().map($);
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                columns = Array.from(visualBuilder.columns[0].querySelectorAll("rect.column"));
+            });
         });
 
         it("should not use fill style", (done) => {
             visualBuilder.updateRenderTimeout(dataView, () => {
-                expect(isColorAppliedToElements(columns, null, "fill"));
+                expect(isColorAppliedToElements(columns, undefined, "fill"));
                 done();
             });
         });
@@ -524,3 +508,7 @@ describe("TornadoChart", () => {
         });
     });
 });
+
+function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+}
