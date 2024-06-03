@@ -32,5 +32,7 @@
   "Visual_HighlightedValueDisplayName": "Wyróżnione",
   "Visual_Label": "Etykieta",
   "Visual_Labels": "Etykiety",
-  "Visual_Position": "Pozycja"
+  "Visual_Position": "Pozycja",
+  "Visual_Short_Description": "Porównywanie względnej ważności zmiennych między dwiema grupami",
+  "Visual_Long_Description": "Wykres tornado to specjalny typ wykresu słupkowego, w którym kategorie danych są ułożone pionowo, a nie prezentowane w standardowy sposób w poziomie, kategorie są natomiast uporządkowane w taki sposób, aby największy pasek znajdował się u góry wykresu, drugi największy pod nim i tak dalej. Nazwa wykresu wynika z tego, że jego końcowy wygląd wizualnie przypomina połowę lub całość tornado.\nWykres tornado to typowe narzędzie służące do przedstawiania wrażliwości wyników na zmiany wybranych zmiennych. Pokazuje, jaki wpływ na dane wyjściowe mają zmiany pojedynczych zmiennych wejściowych, zachowując przy tym początkową (nominalną) wartość innych zmienny wejściowych. Zazwyczaj dla każdej zmiennej wejściowej wybierana jest wartość „niska” lub „wysoka”.\nJest to wizualizacja typu open source. Pobierz kod z serwisu GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
 }

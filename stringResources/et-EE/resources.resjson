@@ -32,5 +32,7 @@
   "Visual_HighlightedValueDisplayName": "Esiletõstetud",
   "Visual_Label": "Silt",
   "Visual_Labels": "Sildid",
-  "Visual_Position": "Paigutus"
+  "Visual_Position": "Paigutus",
+  "Visual_Short_Description": "Muutujate suhtelise olulisuse võrdlemiseks kahe grupi vahel",
+  "Visual_Long_Description": "Tornaadodiagrammid on erilist tüüpi lintdiagrammid, kus andmekategooriad on tavapärase horisontaalse esituse asemel loetletud vertikaalselt ja kategooriad on järjestatud nii, et suurim lint kuvatakse diagrammi ülaosas, suuruselt teine kuvatakse ülevalt teisena jne. Nimi tuleneb sellest, et lõplik diagramm sarnaneb visuaalselt tervele või poolele tornaadole.\nTornaadodiagramm on tavapärane tööriist, mille abil kujutatakse tulemi tundlikkust valitud muutujates tehtud muudatustele. See kuvab mõju väljundile, muutes iga sisendmuutujat eraldi ja hoides kõik teised sisendmuutujad nende algsetel (nimi) väärtustel. Tavaliselt valitakse iga sisendi jaoks väärtus „kõrge” või „madal”.\nSee on avatud lähtekoodiga visuaal. Hankige kood GitHubist: https://github.com/Microsoft/PowerBI-visuals-tornado."
 }

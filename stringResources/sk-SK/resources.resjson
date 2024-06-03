@@ -32,5 +32,7 @@
   "Visual_HighlightedValueDisplayName": "Zvýraznené",
   "Visual_Label": "Označenie",
   "Visual_Labels": "Označenia",
-  "Visual_Position": "Pozícia"
+  "Visual_Position": "Pozícia",
+  "Visual_Short_Description": "Porovnanie relatívnej dôležitosti premenných medzi dvomi skupinami",
+  "Visual_Long_Description": "Grafy typu Tornádo sú špeciálnym typom pruhových grafov, v ktorých sú kategórie údajov zoradené vertikálne namiesto štandardnej horizontálnej prezentácie. Kategórie sú usporiadané tak, aby sa v hornej časti grafu zobrazil najväčší pruh, druhý najväčší pruh sa zobrazil druhý zhora a tak ďalej. Názov tohto typu grafu vychádza z toho, že výsledný graf vizuálne pripomína polovicu tornáda alebo celé tornádo.\nGraf typu Tornádo je bežným nástrojom používaným na zobrazenie citlivosti výsledku zmien vo vybratých premenných. Zobrazuje vplyv na výstup zmeny každej vstupnej premennej, pričom všetky ostatné vstupné premenné si zachovajú svoju počiatočné (nominálne) hodnoty. Zvyčajne pre každý vstup vyberiete hodnotu nízka a vysoká.\nTento vizuál je typu open-source. Kód získate na stránke GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
 }
