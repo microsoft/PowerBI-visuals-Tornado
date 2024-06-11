@@ -42,13 +42,6 @@ import { valueFormatter as vf} from "powerbi-visuals-utils-formattingutils";
 import { TextProperties } from "powerbi-visuals-utils-formattingutils/lib/src/interfaces";
 import IValueFormatter = vf.IValueFormatter;
 
-import {
-    interactivitySelectionService as interactivityService,
-    interactivityBaseService
-} from "powerbi-visuals-utils-interactivityutils";
-import SelectableDataPoint = interactivityService.SelectableDataPoint;
-import IInteractivityService = interactivityBaseService.IInteractivityService;
-
 import { legendInterfaces } from "powerbi-visuals-utils-chartutils";
 import LegendData = legendInterfaces.LegendData;
 
@@ -84,7 +77,7 @@ export interface TornadoChartDataView {
     labelFormatter: TornadoChartLabelFormatter;
 }
 
-export interface TornadoChartPoint extends SelectableDataPoint {
+export interface TornadoChartPoint {
     uniqId: number;
     dx?: number;
     dy?: number;
@@ -103,6 +96,8 @@ export interface TornadoChartPoint extends SelectableDataPoint {
     minValue: number;
     maxValue: number;
     formatString: string;
+    selected: boolean;
+    identity: ISelectionId;
 }
 
 export interface LabelData {
@@ -126,11 +121,12 @@ export interface TextData {
     textProperties: TextProperties;
 }
 
-export interface TornadoBehaviorOptions extends interactivityBaseService.IBehaviorOptions<TornadoChartPoint> {
+export interface TornadoBehaviorOptions {
+    dataPoints: TornadoChartPoint[];
     columns: Selection<any>;
     clearCatcher: Selection<any>;
-    interactivityService: IInteractivityService<TornadoChartPoint>;
     tooltipArgs: TooltipArgsWrapper;
+    legend: Selection<any>;
 }
 
 export interface TooltipCategoryDataItem {

@@ -1,3 +1,8 @@
+## 3.0.4.0
+* Use selectionManager instead of interactivity utils
+* Add context menu to legend and axis labels
+* Add aria-labels
+
 ## 3.0.3.0
 * Fix issue with categoryAxis end type
 * Update packages
