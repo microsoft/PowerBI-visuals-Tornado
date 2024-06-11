@@ -463,7 +463,9 @@ export class TornadoChart implements IVisual {
         const main: Selection<any> = this.main = root.append("g");
         this.columns = main
             .append("g")
-            .classed(TornadoChart.Columns.className, true);
+            .classed(TornadoChart.Columns.className, true)
+            .attr("role", "listbox")
+            .attr("aria-multiselectable", "true");
 
         this.axes = main
             .append("g")
@@ -762,28 +764,17 @@ export class TornadoChart implements IVisual {
 
         columnsSelectionMerged.classed(TornadoChart.Column.className, true);
 
-        // There should be better way to do this
-        // without it, when element selected + scrolled, bug appears (selected element is different)
-        if(!hasSelection)
-        {
-            columnsSelectionMerged
+        columnsSelectionMerged
             .style("stroke", (p: TornadoChartPoint) => p.color)
             .style("fill", (p: TornadoChartPoint) => "url(#gradient-" + p.uniqId + ")")
             .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
             .attr("height", (p: TornadoChartPoint) => p.height)
             .attr("width", (p: TornadoChartPoint) => p.width)
-            .attr("tabindex", 0);
-        }
-        else
-        {
-            columnsSelectionMerged
-            .style("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
-            .style("stroke", (p: TornadoChartPoint) => p.color)
-            .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
-            .attr("height", (p: TornadoChartPoint) => p.height)
-            .attr("width", (p: TornadoChartPoint) => p.width)
-            .attr("tabindex", 0);
-        }
+            .attr("tabindex", 0)
+            .attr("role", "option")
+            .attr("aria-label", (d: TornadoChartPoint) => { 
+                return `${d.tooltipData?.[0].displayName} = ${d.tooltipData?.[0].value}`;
+            });
 
         columnsSelection
             .exit()
@@ -961,7 +952,8 @@ export class TornadoChart implements IVisual {
             .attr("font-weight", labelFontIsBold ? "bold" : "normal")
             .attr("font-style", labelFontIsItalic ? "italic" : "normal")
             .attr("text-decoration", labelFontIsUnderlined? "underline" : "normal")
-            .text((p: TornadoChartPoint) => p.label.value);
+            .text((p: TornadoChartPoint) => p.label.value)
+            .attr("role", "presentation");
 
         labelSelection
             .exit()

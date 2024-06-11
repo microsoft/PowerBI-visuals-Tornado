@@ -149,6 +149,10 @@ export class TornadoWebBehavior {
         const hasSelection: boolean = this.selectionManager.hasSelection();
         this.changeOpacityAttribute("fill-opacity", hasSelection);
         this.changeOpacityAttribute("stroke-opacity", hasSelection);
+
+        this.columns.attr("aria-selected", (dataPoint: TornadoChartPoint) => {
+            return dataPoint.selected;
+        });
     }
 
     private setSelectedToDataPoints(dataPoints: TornadoChartPoint[]): void {
