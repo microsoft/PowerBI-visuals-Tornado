@@ -28,28 +28,41 @@ import {
     Selection as d3Selection 
 } from "d3-selection";
 type Selection<T> = d3Selection<any, T, any, any>;
-
-import {
-    interactivityBaseService
-} from "powerbi-visuals-utils-interactivityutils";
-import ISelectionHandler = interactivityBaseService.ISelectionHandler;
-import IInteractiveBehavior = interactivityBaseService.IInteractiveBehavior;
-import IInteractivityService = interactivityBaseService.IInteractivityService;
-
+import ISelectionManager = powerbi.extensibility.ISelectionManager;
+import ISelectionId = powerbi.visuals.ISelectionId;
 import { TornadoBehaviorOptions, TornadoChartPoint } from "./interfaces";
 import { TornadoChartUtils } from "./tornadoChartUtils";
 import { createTooltipServiceWrapper, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
 
-export class TornadoWebBehavior implements IInteractiveBehavior {
+export class TornadoWebBehavior {
+    private legend: Selection<any>;
     private columns: Selection<any>;
     private clearCatcher: Selection<any>;
-    private interactivityService: IInteractivityService<TornadoChartPoint>;
+    private dataPoints: TornadoChartPoint[];
+    private selectionManager: ISelectionManager;
     private tooltipServiceWrapper: ITooltipServiceWrapper;
 
-    public bindEvents(options: TornadoBehaviorOptions, selectionHandler: ISelectionHandler) {
+    constructor(selectionManager: ISelectionManager){
+        this.selectionManager = selectionManager;
+
+        this.selectionManager.registerOnSelectCallback((ids: ISelectionId[]) => {
+            this.dataPoints.forEach(dataPoint => {
+                ids.forEach(bookmarkSelection => {
+                    if (bookmarkSelection.includes(dataPoint.identity)) {
+                        dataPoint.selected = true;
+                    }
+                });
+            });
+
+            this.renderSelection();
+        });
+    }
+
+    public bindEvents(options: TornadoBehaviorOptions) {
         this.columns = options.columns;
         this.clearCatcher = options.clearCatcher;
-        this.interactivityService = options.interactivityService;
+        this.dataPoints = options.dataPoints;
+        this.legend = options.legend;
         this.tooltipServiceWrapper = createTooltipServiceWrapper(
             options.tooltipArgs.tooltipService,
             options.tooltipArgs.tooltipElement);
@@ -64,59 +77,93 @@ export class TornadoWebBehavior implements IInteractiveBehavior {
         );
 
         this.columns.on("click", (event : PointerEvent, dataPoint: TornadoChartPoint) => {
-            event && selectionHandler.handleSelection(
-                dataPoint,
+            event && this.selectionManager.select(
+                dataPoint.identity,
                 event.ctrlKey || event.metaKey || event.shiftKey);
+            event.stopPropagation();
+            this.renderSelection();
         });
 
         this.columns.on("keydown", (event : KeyboardEvent, dataPoint: TornadoChartPoint) => {
             if(event?.code == "Enter" || event?.code == "Space")
             {
-                selectionHandler.handleSelection(
-                    dataPoint,
+                this.selectionManager.select(
+                    dataPoint.identity,
                     event.ctrlKey || event.metaKey || event.shiftKey);
             }
+            event.stopPropagation();
+            this.renderSelection();
         });
 
         //Handle contextmenu on columns
         this.columns.on("contextmenu", (event: PointerEvent, dataPoint: TornadoChartPoint) => {
-            selectionHandler.handleContextMenu(dataPoint,
+            this.selectionManager.showContextMenu(dataPoint.identity,
                 {
                     x: event.clientX,
                     y: event.clientY
                 }
             );
             event.preventDefault(); 
+            event.stopPropagation();
+            this.renderSelection();
         });
 
         //Handle contextmenu on empty area
         this.clearCatcher.on("contextmenu", (event: PointerEvent) => {
-            selectionHandler.handleContextMenu({"selected" : false},
+            this.selectionManager.showContextMenu({},
             {
                 x: event.clientX,
                 y: event.clientY
             });
             event.preventDefault(); 
+            this.renderSelection();
         });
 
         this.clearCatcher.on("click", () => {
-            selectionHandler.handleClearSelection();
+            this.selectionManager.clear();
+            this.renderSelection();
+        });
+
+        this.legend.on("contextmenu", (event: PointerEvent) => {
+            this.selectionManager.showContextMenu({},
+            {
+                x: event.clientX,
+                y: event.clientY
+            });
+            event.preventDefault(); 
+            this.renderSelection();
+        });
+
+        this.legend.on("click", () => {
+            this.selectionManager.clear();
+            this.renderSelection();
+        });
+    }
+    
+    public hasSelection(): boolean {
+        return this.selectionManager.hasSelection();
+    }
+
+    public renderSelection() {
+        this.setSelectedToDataPoints(this.dataPoints);
+        const hasSelection: boolean = this.selectionManager.hasSelection();
+        this.changeOpacityAttribute("fill-opacity", hasSelection);
+        this.changeOpacityAttribute("stroke-opacity", hasSelection);
+    }
+
+    private setSelectedToDataPoints(dataPoints: TornadoChartPoint[]): void {
+        const selectedIds: ISelectionId[] = <ISelectionId[]>this.selectionManager.getSelectionIds();
+        dataPoints.forEach((dataPoint: TornadoChartPoint) => {
+            dataPoint.selected = selectedIds.some((id: ISelectionId) => id.equals(dataPoint.identity));
         });
     }
 
-    public renderSelection(hasSelection: boolean) {
-        const hasHighlights: boolean = this.interactivityService.hasSelection();
-        this.changeOpacityAttribute("fill-opacity", hasSelection, hasHighlights);
-        this.changeOpacityAttribute("stroke-opacity", hasSelection, hasHighlights);
-    }
-
-    private changeOpacityAttribute(attributeName: string, hasSelection: boolean, hasHighlights: boolean) {
+    private changeOpacityAttribute(attributeName: string, hasSelection: boolean) {
         this.columns.style(attributeName, (d: TornadoChartPoint) => {
             return TornadoChartUtils.getOpacity(
                 d.selected,
                 d.highlight,
-                !d.highlight && hasSelection,
-                !d.selected && hasHighlights);
+                hasSelection);
         });
     }
 }

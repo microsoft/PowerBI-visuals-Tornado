@@ -28,8 +28,8 @@ export class TornadoChartUtils {
     static DimmedOpacity: number = 0.4;
     static DefaultOpacity: number = 1.0;
 
-    static getOpacity(selected: boolean, highlight: boolean, hasSelection: boolean, hasPartialHighlights: boolean): number {
-        if ((hasPartialHighlights && !highlight) || (hasSelection && !selected)) {
+    static getOpacity(selected: boolean, highlight: boolean, hasSelection: boolean): number {
+        if (!highlight && hasSelection && !selected) {
             return TornadoChartUtils.DimmedOpacity;
         }
         return TornadoChartUtils.DefaultOpacity;
