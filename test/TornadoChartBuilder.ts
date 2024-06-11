@@ -75,7 +75,11 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
     public get axis(): NodeListOf<HTMLElement> {
         return this.scrollable[0].querySelectorAll("g.axes > line.axis");
     }
-    
+
+    public get column(): HTMLElement {
+        return this.scrollable[0].querySelector("g.columns");
+    }
+
     public get columns(): NodeListOf<HTMLElement> {
         return this.scrollable[0].querySelectorAll("g.columns rect.column");
     }
@@ -90,6 +94,14 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
     
     public get labelText(): NodeListOf<HTMLElement> {
         return this.labels[0].querySelectorAll("text.label-text");
+    }
+
+    public get selectedColumns(): Element[] {
+        return Array.from(this.columns).filter((element: HTMLElement) => {
+            const appliedOpacity: number = parseFloat(element.style.fillOpacity);
+
+            return appliedOpacity === 1;
+        });
     }
 
     public parseSeries(
