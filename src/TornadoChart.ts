@@ -453,7 +453,7 @@ export class TornadoChart implements IVisual {
 
         this.tooltipArgs = new TooltipArgsWrapper(options.element, options.host.tooltipService);
 
-        this.legend = createLegend(options.element, false, null, true, null);
+        this.legend = createLegend(options.element, false);
 
         const selectionManager = options.host.createSelectionManager();
         this.behavior = new TornadoWebBehavior(selectionManager, this.colorHelper);
