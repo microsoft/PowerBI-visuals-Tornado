@@ -84,8 +84,12 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
         return this.scrollable[0].querySelectorAll("g.columns rect.column");
     }
 
-    public get columnsDefs(): NodeListOf<HTMLElement> {
-        return this.scrollable[0].querySelectorAll("g.columns defs");
+    public get columnsDefs(): HTMLElement {
+        return this.scrollable[0].querySelector("g.columns defs");
+    }
+
+    public get gradients(): NodeListOf<SVGElement> {
+        return this.columnsDefs.querySelectorAll("linearGradient");
     }
     
     public get labels(): NodeListOf<HTMLElement> {
@@ -97,10 +101,11 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
     }
 
     public get selectedColumns(): Element[] {
-        return Array.from(this.columns).filter((element: HTMLElement) => {
-            const appliedOpacity: number = parseFloat(element.style.fillOpacity);
+        return Array.from(this.gradients).filter((element: SVGElement) => {
+            const stopElement: SVGElement = element.querySelector("stop");
+            const appliedOffset: string = stopElement.getAttribute("offset");
 
-            return appliedOpacity === 1;
+            return appliedOffset === "100%";
         });
     }
 

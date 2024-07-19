@@ -437,16 +437,15 @@ describe("TornadoChart", () => {
     describe("Highligh test", () => {
         const expectedHighligtedCount: number = 1;
         let columns: HTMLElement[];
-        let columnsDefs: HTMLElement[];
+        let columnsDefs: HTMLElement;
         let dataViewWithHighLighted: DataView;
 
         beforeEach(() => {
             dataViewWithHighLighted = dataViewBuilder.getDataView(undefined, true);
             visualBuilder.update(dataViewWithHighLighted);
-
             visualBuilder.updateRenderTimeout(dataViewWithHighLighted, () => {
                 columns = Array.from(visualBuilder.columns);
-                columnsDefs = Array.from(visualBuilder.columnsDefs);
+                columnsDefs = visualBuilder.columnsDefs;
             });
         });
 
@@ -454,8 +453,7 @@ describe("TornadoChart", () => {
             visualBuilder.updateRenderTimeout(dataViewWithHighLighted, () => {
                 let highligtedCount: number = 0;
                 let nonHighlightedCount: number = 0;
-                
-                Array.from(columnsDefs[0].children).forEach((element) => {
+                Array.from(columnsDefs.children).forEach((element) => {
                     Array.from(element.children).forEach((childElement) => {
                         if(childElement.outerHTML.indexOf("100%") != -1){
                             highligtedCount += 1;

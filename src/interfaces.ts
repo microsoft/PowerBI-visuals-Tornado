@@ -46,6 +46,7 @@ import { legendInterfaces } from "powerbi-visuals-utils-chartutils";
 import LegendData = legendInterfaces.LegendData;
 
 import ITooltipService = powerbiVisualsApi.extensibility.ITooltipService;
+import { LegendDataPoint } from "powerbi-visuals-utils-chartutils/lib/legend/legendInterfaces";
 
 export interface TornadoChartTextOptions {
     fontFamily?: string;
@@ -122,11 +123,12 @@ export interface TextData {
 }
 
 export interface TornadoBehaviorOptions {
-    dataPoints: TornadoChartPoint[];
-    columns: Selection<any>;
+    columns: Selection<TornadoChartPoint>;
+    legend: Selection<LegendDataPoint>;
     clearCatcher: Selection<any>;
+    legendClearCatcher: Selection<any>;
     tooltipArgs: TooltipArgsWrapper;
-    legend: Selection<any>;
+    gradients: Selection<TornadoChartPoint>;
 }
 
 export interface TooltipCategoryDataItem {

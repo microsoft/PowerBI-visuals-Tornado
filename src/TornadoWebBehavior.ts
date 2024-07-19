@@ -33,36 +33,161 @@ import ISelectionId = powerbi.visuals.ISelectionId;
 import { TornadoBehaviorOptions, TornadoChartPoint } from "./interfaces";
 import { TornadoChartUtils } from "./tornadoChartUtils";
 import { createTooltipServiceWrapper, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
+import { ColorHelper } from "powerbi-visuals-utils-colorutils";
+import { LegendDataPoint } from "powerbi-visuals-utils-chartutils/lib/legend/legendInterfaces";
 
 export class TornadoWebBehavior {
-    private legend: Selection<any>;
-    private columns: Selection<any>;
+    private legendItems: Selection<LegendDataPoint>;
+    private columns: Selection<TornadoChartPoint>;
     private clearCatcher: Selection<any>;
+    private legendClearCatcher: Selection<any>;
     private dataPoints: TornadoChartPoint[];
+    private legendDataPoints: LegendDataPoint[];
+    private legendIcons: Selection<LegendDataPoint>;
+    private gradients: Selection<TornadoChartPoint>;
     private selectionManager: ISelectionManager;
     private tooltipServiceWrapper: ITooltipServiceWrapper;
+    private colorHelper: ColorHelper;
 
-    constructor(selectionManager: ISelectionManager){
+    constructor(selectionManager: ISelectionManager, colorHelper: ColorHelper){
         this.selectionManager = selectionManager;
+        this.colorHelper = colorHelper;
+        this.selectionManager.registerOnSelectCallback(this.onSelectCallback.bind(this));
+    }
 
-        this.selectionManager.registerOnSelectCallback((ids: ISelectionId[]) => {
-            this.dataPoints.forEach(dataPoint => {
-                ids.forEach(bookmarkSelection => {
-                    if (bookmarkSelection.includes(dataPoint.identity)) {
-                        dataPoint.selected = true;
-                    }
-                });
+    private onSelectCallback(selectionIds?: ISelectionId[]){
+        this.applySelectionStateToData(selectionIds);
+        this.renderSelection();
+    }
+
+    private applySelectionStateToData(selectionIds?: ISelectionId[]): void{
+        const selectedIds: ISelectionId[] = <ISelectionId[]>this.selectionManager.getSelectionIds();
+        this.setSelectedToDataPoints(this.dataPoints, selectionIds || selectedIds);
+        this.setSelectedToDataPoints(this.legendDataPoints, selectionIds || selectedIds);
+    }
+
+    private setSelectedToDataPoints(dataPoints: LegendDataPoint[] | TornadoChartPoint[], ids: ISelectionId[]): void{
+        dataPoints.forEach((dataPoint: LegendDataPoint| TornadoChartPoint) => {
+            dataPoint.selected = false;
+            ids.forEach((selectedId: ISelectionId) => {
+                if (selectedId.includes(<ISelectionId>dataPoint.identity)) {
+                    dataPoint.selected = true;
+                }
             });
+        });
+    }
 
-            this.renderSelection();
+    private bindContextMenuEvent(elements: Selection<any>): void {
+        elements.on("contextmenu", (event: PointerEvent, dataPoint: TornadoChartPoint | LegendDataPoint | undefined) => {
+            this.selectionManager.showContextMenu(dataPoint ? dataPoint.identity : {},
+                {
+                    x: event.clientX,
+                    y: event.clientY
+                }
+            );
+            event.preventDefault();
+            event.stopPropagation();
+        });
+    }
+
+    private bindClickEvent(elements: Selection<any>): void {
+        elements.on("click", (event: PointerEvent, dataPoint: TornadoChartPoint | LegendDataPoint | undefined) => {
+            const isMultiSelection: boolean = event.ctrlKey || event.metaKey || event.shiftKey;
+            if (dataPoint){
+                this.selectionManager.select(dataPoint.identity, isMultiSelection);
+                event.stopPropagation();
+            }
+            else {
+                this.selectionManager.clear();
+            }
+            this.onSelectCallback();
+        })
+    }
+
+    private bindKeyboardEvent(elements: Selection<any>): void {
+        elements.on("keydown", (event : KeyboardEvent, dataPoint: TornadoChartPoint | LegendDataPoint) => {
+            if (event.code !== "Enter" && event.code !== "Space") {
+                return;
+            }
+
+            const isMultiSelection: boolean = event.ctrlKey || event.metaKey || event.shiftKey;
+            this.selectionManager.select(dataPoint.identity, isMultiSelection);
+
+            event.stopPropagation();
+            this.onSelectCallback();
+        });
+    }
+
+    public renderSelection(){
+        const legendHasSelection: boolean = this.legendDataPoints.some((dataPoint: LegendDataPoint) => dataPoint.selected);
+        const dataPointHasSelection: boolean = this.dataPoints.some((dataPoint: TornadoChartPoint) => dataPoint.selected);
+        const dataPointHasHighlight: boolean = this.dataPoints.some((dataPoint: TornadoChartPoint) => dataPoint.highlight);
+
+        this.legendIcons.style("fill-opacity", (legendDataPoint: LegendDataPoint) => {
+            return TornadoChartUtils.getLegendFillOpacity(
+                legendDataPoint.selected,
+                legendHasSelection,
+                this.colorHelper.isHighContrast
+            );
+        });
+
+        this.legendIcons.style("fill", (legendDataPoint: LegendDataPoint) => {
+            return TornadoChartUtils.getLegendFill(
+                legendDataPoint.selected,
+                legendHasSelection,
+                legendDataPoint.color,
+                this.colorHelper.isHighContrast
+            );
+        });
+
+        this.columns.attr("aria-selected", (dataPoint: TornadoChartPoint) => {
+            return dataPoint.selected
+        });
+        this.applySelectionStyleAttribute(this.columns, "fill-opacity", dataPointHasSelection);
+        this.applySelectionStyleAttribute(this.columns, "stroke-opacity", dataPointHasSelection);
+        this.applyGradientsForHighlight(dataPointHasSelection, dataPointHasHighlight);
+    }
+
+    private applyGradientsForHighlight(hasSelection: boolean, hasHighlight: boolean) {
+        this.gradients.selectAll("stop").remove();
+        // from left to right
+        // bright color
+        this.gradients.append("stop")
+            .attr("offset", (p: TornadoChartPoint) => ((hasSelection && p.selected) || (!hasSelection && !hasHighlight) ? 100 : p.highlightedValue / p.value * 100) + "%")
+            .attr("stop-color", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
+            .attr("stop-opacity", 1);
+
+        // from right to left
+        // less bright color
+        // but % starts from left to right (so f.e 30% means end point will be at 30% starting from left, but coloring will start from right until reach end point)
+        this.gradients.append("stop")
+            .attr("offset", (p: TornadoChartPoint) => p.highlightedValue / p.value * 100 + "%")
+            .attr("stop-color", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
+            .attr("stop-opacity", 0.4);
+    }
+ 
+    private applySelectionStyleAttribute(elements: Selection<TornadoChartPoint>, attributeName: string, hasSelection: boolean) {
+        elements.style(attributeName, (dataPoint: TornadoChartPoint) => {
+            return TornadoChartUtils.getOpacity(
+                dataPoint.selected,
+                dataPoint.highlight,
+                hasSelection,
+                this.colorHelper.isHighContrast);
         });
     }
 
     public bindEvents(options: TornadoBehaviorOptions) {
         this.columns = options.columns;
+        this.legendItems = options.legend;
+        this.dataPoints = options.columns.data();
+        this.legendDataPoints = options.legend.data();
         this.clearCatcher = options.clearCatcher;
-        this.dataPoints = options.dataPoints;
-        this.legend = options.legend;
+        this.legendClearCatcher = options.legendClearCatcher;
+        this.legendIcons = options.legend.selectAll(".legendIcon");
+        this.gradients = options.gradients;
+
+        this.applySelectionStateToData();
+
         this.tooltipServiceWrapper = createTooltipServiceWrapper(
             options.tooltipArgs.tooltipService,
             options.tooltipArgs.tooltipElement);
@@ -76,98 +201,16 @@ export class TornadoWebBehavior {
                 return tooltipEvent.identity;}
         );
 
-        this.columns.on("click", (event : PointerEvent, dataPoint: TornadoChartPoint) => {
-            event && this.selectionManager.select(
-                dataPoint.identity,
-                event.ctrlKey || event.metaKey || event.shiftKey);
-            event.stopPropagation();
-            this.renderSelection();
-        });
+        this.bindContextMenuEvent(this.columns);
+        this.bindContextMenuEvent(this.legendItems);
+        this.bindContextMenuEvent(this.clearCatcher);
+        this.bindContextMenuEvent(this.legendClearCatcher);
 
-        this.columns.on("keydown", (event : KeyboardEvent, dataPoint: TornadoChartPoint) => {
-            if(event?.code == "Enter" || event?.code == "Space")
-            {
-                this.selectionManager.select(
-                    dataPoint.identity,
-                    event.ctrlKey || event.metaKey || event.shiftKey);
-            }
-            event.stopPropagation();
-            this.renderSelection();
-        });
-
-        //Handle contextmenu on columns
-        this.columns.on("contextmenu", (event: PointerEvent, dataPoint: TornadoChartPoint) => {
-            this.selectionManager.showContextMenu(dataPoint.identity,
-                {
-                    x: event.clientX,
-                    y: event.clientY
-                }
-            );
-            event.preventDefault(); 
-            event.stopPropagation();
-            this.renderSelection();
-        });
-
-        //Handle contextmenu on empty area
-        this.clearCatcher.on("contextmenu", (event: PointerEvent) => {
-            this.selectionManager.showContextMenu({},
-            {
-                x: event.clientX,
-                y: event.clientY
-            });
-            event.preventDefault(); 
-            this.renderSelection();
-        });
-
-        this.clearCatcher.on("click", () => {
-            this.selectionManager.clear();
-            this.renderSelection();
-        });
-
-        this.legend.on("contextmenu", (event: PointerEvent) => {
-            this.selectionManager.showContextMenu({},
-            {
-                x: event.clientX,
-                y: event.clientY
-            });
-            event.preventDefault(); 
-            this.renderSelection();
-        });
-
-        this.legend.on("click", () => {
-            this.selectionManager.clear();
-            this.renderSelection();
-        });
-    }
-    
-    public hasSelection(): boolean {
-        return this.selectionManager.hasSelection();
-    }
-
-    public renderSelection() {
-        this.setSelectedToDataPoints(this.dataPoints);
-        const hasSelection: boolean = this.selectionManager.hasSelection();
-        this.changeOpacityAttribute("fill-opacity", hasSelection);
-        this.changeOpacityAttribute("stroke-opacity", hasSelection);
-
-        this.columns.attr("aria-selected", (dataPoint: TornadoChartPoint) => {
-            return dataPoint.selected;
-        });
-    }
-
-    private setSelectedToDataPoints(dataPoints: TornadoChartPoint[]): void {
-        const selectedIds: ISelectionId[] = <ISelectionId[]>this.selectionManager.getSelectionIds();
-        dataPoints.forEach((dataPoint: TornadoChartPoint) => {
-            dataPoint.selected = selectedIds.some((id: ISelectionId) => id.equals(dataPoint.identity));
-        });
-    }
-
-    private changeOpacityAttribute(attributeName: string, hasSelection: boolean) {
-        this.columns.style(attributeName, (d: TornadoChartPoint) => {
-            return TornadoChartUtils.getOpacity(
-                d.selected,
-                d.highlight,
-                hasSelection);
-        });
+        this.bindClickEvent(this.columns);
+        this.bindClickEvent(this.legendItems);
+        this.bindClickEvent(this.clearCatcher);
+        this.bindClickEvent(this.legendClearCatcher);
+        
+        this.bindKeyboardEvent(this.columns);
     }
 }
