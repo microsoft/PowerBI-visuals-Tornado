@@ -33,7 +33,7 @@ import DataViewValueColumnGroup = powerbiVisualsApi.DataViewValueColumnGroup;
 
 import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
 
-import { assertColorsMatch } from "powerbi-visuals-utils-testutils";
+import { ClickEventType, assertColorsMatch, d3Click, renderTimeout } from "powerbi-visuals-utils-testutils";
 
 import { TornadoData } from "./TornadoData";
 import { TornadoChartBuilder } from "./TornadoChartBuilder";
@@ -437,16 +437,15 @@ describe("TornadoChart", () => {
     describe("Highligh test", () => {
         const expectedHighligtedCount: number = 1;
         let columns: HTMLElement[];
-        let columnsDefs: HTMLElement[];
+        let columnsDefs: HTMLElement;
         let dataViewWithHighLighted: DataView;
 
         beforeEach(() => {
             dataViewWithHighLighted = dataViewBuilder.getDataView(undefined, true);
             visualBuilder.update(dataViewWithHighLighted);
-
             visualBuilder.updateRenderTimeout(dataViewWithHighLighted, () => {
                 columns = Array.from(visualBuilder.columns);
-                columnsDefs = Array.from(visualBuilder.columnsDefs);
+                columnsDefs = visualBuilder.columnsDefs;
             });
         });
 
@@ -454,8 +453,7 @@ describe("TornadoChart", () => {
             visualBuilder.updateRenderTimeout(dataViewWithHighLighted, () => {
                 let highligtedCount: number = 0;
                 let nonHighlightedCount: number = 0;
-                
-                Array.from(columnsDefs[0].children).forEach((element) => {
+                Array.from(columnsDefs.children).forEach((element) => {
                     Array.from(element.children).forEach((childElement) => {
                         if(childElement.outerHTML.indexOf("100%") != -1){
                             highligtedCount += 1;
@@ -506,6 +504,182 @@ describe("TornadoChart", () => {
                 done();
             });
         });
+    });
+
+    describe("Selection tests", () => {
+        it("column can be selected", (done) => {
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                const firstColumn: HTMLElement = visualBuilder.columns[0];
+                d3Click(firstColumn, 0, 0, ClickEventType.Default);
+
+                renderTimeout(() => {
+                    expect(visualBuilder.selectedColumns?.length).toBe(1);
+                    done();
+                });
+            });
+        });
+
+        it("column can be deselected", (done) => {
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                const firstColumn: HTMLElement = visualBuilder.columns[0];
+                d3Click(firstColumn, 0, 0, ClickEventType.Default);
+
+                renderTimeout(() => {
+                    expect(visualBuilder.selectedColumns?.length).toBe(1);
+                    d3Click(firstColumn, 0, 0, ClickEventType.CtrlKey);
+
+                    renderTimeout(() => {
+                        expect(visualBuilder.selectedColumns?.length).toBe(12);
+                        done();
+                    });
+                });
+            });
+        });
+
+        it("multi-selection should work with ctrlKey", (done) => {
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                checkMultiselection(ClickEventType.CtrlKey, done);
+            });
+        });
+
+        it("multi-selection should work with metaKey", (done) => {
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                checkMultiselection(ClickEventType.MetaKey, done);
+            });
+        });
+
+        it("multi-selection should work with shiftKey", (done) => {
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                checkMultiselection(ClickEventType.ShiftKey, done);
+            });
+        });
+
+        function checkMultiselection(eventType: number, done: DoneFn): void {
+            const firstColumn: HTMLElement = visualBuilder.columns[0];
+            const secondColumn: HTMLElement = visualBuilder.columns[1];
+            d3Click(firstColumn, 0, 0, ClickEventType.Default);
+            renderTimeout(() => {
+                expect(visualBuilder.selectedColumns?.length).toBe(1);
+
+                d3Click(secondColumn, 0, 0, eventType);
+
+                renderTimeout(() => {
+                    expect(visualBuilder.selectedColumns?.length).toBe(2);
+                    done();
+                });
+            });
+        }
+    });
+
+    describe("Keyboard navigation and related aria-attributes tests:", () => {
+        it("should have role=listbox and aria-multiselectable attributes correctly set", (done) => {
+            visualBuilder.updateRenderTimeout(dataView, () => {
+                const columnsElement: HTMLElement = visualBuilder.column;
+
+                expect(columnsElement.getAttribute("role")).toBe("listbox");
+                expect(columnsElement.getAttribute("aria-multiselectable")).toBe("true");
+
+                done();
+            });
+        });
+
+        it("should have role=presentation correctly set on text labels", (done) => {
+            visualBuilder.updateRenderTimeout(dataView, () => {
+
+                const labels: SVGElement[] = Array.from(visualBuilder.labels).map((element: HTMLElement) => element.querySelector("text"));
+                for (const label of labels) { 
+                    expect(label.getAttribute("role")).toBe("presentation");
+                }
+
+                done();
+            });
+        });
+
+        it("enter toggles the correct column", () => {
+            const enterEvent = new KeyboardEvent("keydown", { code: "Enter", bubbles: true });
+            checkKeyboardSingleSelection(enterEvent);
+        });
+
+        it("space toggles the correct column", () => {
+            const spaceEvent = new KeyboardEvent("keydown", { code: "Space", bubbles: true });
+            checkKeyboardSingleSelection(spaceEvent);
+        });
+
+        it("multiselection should work with ctrlKey", () => {
+            const enterEventCtrlKey = new KeyboardEvent("keydown", { code: "Enter", bubbles: true, ctrlKey: true });
+            checkKeyboardMultiSelection(enterEventCtrlKey);
+        });
+
+        it("multiselection should work with metaKey", () => {
+            const enterEventMetaKey = new KeyboardEvent("keydown", { code: "Enter", bubbles: true, metaKey: true });
+            checkKeyboardMultiSelection(enterEventMetaKey);
+        });
+
+        it("multiselection should work with shiftKey", () => {
+            const enterEventShiftKey = new KeyboardEvent("keydown", { code: "Enter", bubbles: true, shiftKey: true });
+            checkKeyboardMultiSelection(enterEventShiftKey);
+        });
+
+        it("column can be focused", () => {
+            visualBuilder.updateFlushAllD3Transitions(dataView);
+
+            const columns: HTMLElement[] = Array.from(visualBuilder.columns);
+            const firstColumn: HTMLElement = columns[0];
+
+            columns.forEach((column: HTMLElement) => {
+                expect(column.matches(":focus-visible")).toBeFalse();
+            });
+
+            firstColumn.focus();
+            expect(firstColumn.matches(':focus-visible')).toBeTrue();
+
+            const otherColumns: HTMLElement[] = columns.slice(1);
+            otherColumns.forEach((column: HTMLElement) => {
+                expect(column.matches(":focus-visible")).toBeFalse();
+            });
+
+        });
+
+        function checkKeyboardSingleSelection(keyboardSingleSelectionEvent: KeyboardEvent): void {
+            visualBuilder.updateFlushAllD3Transitions(dataView);
+            const columns: HTMLElement[] = Array.from(visualBuilder.columns);
+            const firstColumn: HTMLElement = columns[0];
+            const secondColumn: HTMLElement = columns[1];
+
+            firstColumn.dispatchEvent(keyboardSingleSelectionEvent);
+            expect(firstColumn.getAttribute("aria-selected")).toBe("true");
+
+            const otherColumns: HTMLElement[] = columns.slice(1);
+            otherColumns.forEach((column: HTMLElement) => {
+                expect(column.getAttribute("aria-selected")).toBe("false");
+            });
+
+            secondColumn.dispatchEvent(keyboardSingleSelectionEvent);
+            expect(secondColumn.getAttribute("aria-selected")).toBe("true");
+
+            columns.splice(1, 1);
+            columns.forEach((column: HTMLElement) => {
+                expect(column.getAttribute("aria-selected")).toBe("false");
+            }
+            );
+        }
+
+        function checkKeyboardMultiSelection(keyboardMultiselectionEvent: KeyboardEvent): void {
+            visualBuilder.updateFlushAllD3Transitions(dataView);
+            const enterEvent = new KeyboardEvent("keydown", { code: "Enter", bubbles: true });
+            const columns: HTMLElement[] = Array.from(visualBuilder.columns);
+            const firstColumn: HTMLElement = columns[0];
+            const secondColumn: HTMLElement = columns[1];
+
+            // select first column
+            firstColumn.dispatchEvent(enterEvent);
+            // multiselect second column
+            secondColumn.dispatchEvent(keyboardMultiselectionEvent);
+
+            expect(firstColumn.getAttribute("aria-selected")).toBe("true");
+            expect(secondColumn.getAttribute("aria-selected")).toBe("true");
+            expect(visualBuilder.selectedColumns?.length).toBe(2);
+        }
     });
 });
 

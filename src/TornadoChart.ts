@@ -58,7 +58,6 @@ import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualC
 
 import IVisual = powerbiVisualsApi.extensibility.visual.IVisual;
 import IVisualHost = powerbiVisualsApi.extensibility.visual.IVisualHost;
-import ISelectionManager = powerbiVisualsApi.extensibility.ISelectionManager;
 import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
 
 import { dataViewObjects } from "powerbi-visuals-utils-dataviewutils";
@@ -73,7 +72,7 @@ import translateAndRotate = manipulation.translateAndRotate;
 
 import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
 
-import { legend as LegendModule, legendInterfaces, legendData, dataLabelUtils, OpacityLegendBehavior } from "powerbi-visuals-utils-chartutils";
+import { legend as LegendModule, legendInterfaces, legendData, dataLabelUtils } from "powerbi-visuals-utils-chartutils";
 import ILegend = legendInterfaces.ILegend;
 import MarkerShape = legendInterfaces.MarkerShape;
 import LegendPosition = legendInterfaces.LegendPosition;
@@ -85,18 +84,6 @@ import LegendDataModule = legendData;
 import { textMeasurementService , valueFormatter } from "powerbi-visuals-utils-formattingutils";
 import { TextProperties } from "powerbi-visuals-utils-formattingutils/lib/src/interfaces";
 import IValueFormatter = valueFormatter.IValueFormatter;
-
-import {
-    interactivitySelectionService as interactivityService,
-    interactivityBaseService
-} from "powerbi-visuals-utils-interactivityutils";
-import appendClearCatcher = interactivityBaseService.appendClearCatcher;
-import SelectableDataPoint = interactivityService.SelectableDataPoint;
-import IInteractiveBehavior = interactivityBaseService.IInteractiveBehavior;
-import IInteractivityService = interactivityBaseService.IInteractivityService;
-import createInteractivitySelectionService = interactivityService.createInteractivitySelectionService;
-
-type IInteractivityServiceSelectable = IInteractivityService<SelectableDataPoint>;
 
 import { ColorHelper } from "powerbi-visuals-utils-colorutils";
 // powerbi.extensibility.utils.formattingModel
@@ -115,13 +102,14 @@ import {
 } from "./interfaces";
 import { TornadoWebBehavior } from "./TornadoWebBehavior";
 import * as tooltipBuilder from "./tooltipBuilder";
-import { TornadoChartUtils } from "./tornadoChartUtils";
 import { TornadoChartSettingsModel, DataLabelSettings, LegendCardSettings, BaseFontControlSettings, FontDefaultOptions} from "./TornadoChartSettingsModel";
 import IVisualEventService = powerbi.extensibility.IVisualEventService;
 
 export class TornadoChart implements IVisual {
     private static ClassName: string = "tornado-chart";
     private static Container: string = "tornadoContainer";
+    private static Legend: ClassAndSelector = createClassAndSelector("legend");
+    private static LegendItemSelector: ClassAndSelector = createClassAndSelector("legendItem");
     private static Columns: ClassAndSelector = createClassAndSelector("columns");
     private static Column: ClassAndSelector = createClassAndSelector("column");
     private static Axes: ClassAndSelector = createClassAndSelector("axes");
@@ -249,10 +237,10 @@ export class TornadoChart implements IVisual {
                 };
                 
                 let highlight: number = NaN;
-                let highlightedValue: number = value;
+                let highlightedValue: number = 0;
                 if (hasHighlights) {
                     highlight = <number>currentSeries.highlights[i];
-                    highlightedValue = highlight != null ? highlight : 0;
+                    highlightedValue = (isNaN(highlight) || highlight === null || highlight === undefined) ?  0 : highlight;
                 }
 
                 dataPoints.push({
@@ -414,15 +402,16 @@ export class TornadoChart implements IVisual {
     private rootContainer: HTMLElement;
     private main: Selection<any>;
     private columns: Selection<any>;
+    private columnsSelection: Selection<any>;
     private axes: Selection<any>;
     private labels: Selection<any>;
     private categories: Selection<any>;
-    private clearCatcher: Selection<any>;
-    private selectionManager: ISelectionManager;
+    private legendSelection: Selection<any>;
+    private legendItems: Selection<any>;
+    private gradients: Selection<any>;
 
     private legend: ILegend;
-    private behavior: IInteractiveBehavior;
-    private interactivityService: IInteractivityServiceSelectable;
+    private behavior: TornadoWebBehavior;
     private hostService: IVisualHost;
     private localizationManager: ILocalizationManager;
     private isScrollVisible: boolean = false;
@@ -461,14 +450,16 @@ export class TornadoChart implements IVisual {
         this.localizationManager = this.hostService.createLocalizationManager();
         this.colors = options.host.colorPalette;
         this.colorHelper = new ColorHelper(this.colors);
-        this.selectionManager = options.host.createSelectionManager();
 
         this.tooltipArgs = new TooltipArgsWrapper(options.element, options.host.tooltipService);
 
-        this.interactivityService = createInteractivitySelectionService(this.hostService);
+        this.legend = createLegend(options.element, false);
 
-        const interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? <IInteractiveBehavior>(new OpacityLegendBehavior()) : null;
-        this.legend = createLegend(options.element, false, this.interactivityService, true, null, interactiveBehavior);
+        const selectionManager = options.host.createSelectionManager();
+        this.behavior = new TornadoWebBehavior(selectionManager, this.colorHelper);
+
+        this.formattingSettingsService = new FormattingSettingsService(this.localizationManager);
+        this.events = options.host.eventService;
 
         this.element = d3Select(options.element);
         this.rootContainer = document.createElement("div");
@@ -480,10 +471,11 @@ export class TornadoChart implements IVisual {
             .classed(TornadoChart.ClassName, true);
 
         const main: Selection<any> = this.main = root.append("g");
-        this.clearCatcher = appendClearCatcher(main);
         this.columns = main
             .append("g")
-            .classed(TornadoChart.Columns.className, true);
+            .classed(TornadoChart.Columns.className, true)
+            .attr("role", "listbox")
+            .attr("aria-multiselectable", "true");
 
         this.axes = main
             .append("g")
@@ -496,10 +488,9 @@ export class TornadoChart implements IVisual {
         this.categories = main
             .append("g")
             .classed(TornadoChart.Categories.className, true);
-
-        this.behavior = new TornadoWebBehavior();
-        this.formattingSettingsService = new FormattingSettingsService(this.localizationManager);
-        this.events = options.host.eventService;
+        
+        this.legendSelection = this.element
+            .select(TornadoChart.Legend.selectorName);
     }
 
     public update(options: VisualUpdateOptions): void {
@@ -621,6 +612,20 @@ export class TornadoChart implements IVisual {
     private render(): void {
         this.renderLegend();
         this.renderWithScrolling();
+        this.bindBehaviorToVisual();
+    }
+
+    private bindBehaviorToVisual(): void {
+        const behaviorOptions: TornadoBehaviorOptions = {
+            columns: this.columnsSelection,
+            clearCatcher: this.root,
+            tooltipArgs: this.tooltipArgs,
+            legend: this.legendItems,
+            legendClearCatcher: this.legendSelection,
+            gradients: this.gradients
+        };
+        this.behavior.bindEvents(behaviorOptions);
+        this.behavior.renderSelection();
     }
 
     private clearData(): void {
@@ -632,19 +637,9 @@ export class TornadoChart implements IVisual {
         this.legend.drawLegend({ dataPoints: [] }, this.viewport);
     }
 
-    public onClearSelection(): void {
-        if (this.interactivityService) {
-            this.interactivityService.clearSelection();
-        }
-    }
-
     private renderWithScrolling(): void {
         if (!this.dataView || !this.formattingSettings) {
             return;
-        }
-
-        if (!this.dataView.hasHighlights) {
-            this.interactivityService.applySelectionStateToData(this.dataView.dataPoints);
         }
 
         this.computeHeightColumn();
@@ -744,8 +739,6 @@ export class TornadoChart implements IVisual {
     }
 
     private renderColumns(columnsData: TornadoChartPoint[]): void {  
-        const hasSelection: boolean = this.interactivityService && this.interactivityService.hasSelection();
-
         const columnsSelection: Selection<any> = this.columns
             .selectAll(TornadoChart.Column.selectorName)
             .data(columnsData);
@@ -754,7 +747,7 @@ export class TornadoChart implements IVisual {
         // otherwise gradients are duplicated
         this.columns.select("defs").remove();
 
-        const gradients = this.columns.append("defs")
+        this.gradients = this.columns.append("defs")
             .selectAll("linearGradient")
             .data(columnsData)
             .enter()
@@ -765,21 +758,6 @@ export class TornadoChart implements IVisual {
             .attr("x2", "100%")
             .attr("y2", "0%");
 
-        // from left to right
-        // bright color
-        gradients.append("stop")
-            .attr("offset", (p: TornadoChartPoint) => (hasSelection && p.selected ? 100 : p.highlightedValue / p.value * 100) + "%")
-            .attr("stop-color", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
-            .attr("stop-opacity", 1);
-
-        // from right to left
-        // less bright color
-        // but % starts from left to right (so f.e 30% means end point will be at 30% starting from left, but coloring will start from right until reach end point)
-        gradients.append("stop")
-            .attr("offset", (p: TornadoChartPoint) => p.highlightedValue / p.value * 100 + "%")
-            .attr("stop-color", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
-            .attr("stop-opacity", 0.5);
-
         const columnsSelectionMerged = columnsSelection
             .enter()
             .append("svg:rect")
@@ -787,58 +765,23 @@ export class TornadoChart implements IVisual {
 
         columnsSelectionMerged.classed(TornadoChart.Column.className, true);
 
-        // There should be better way to do this
-        // without it, when element selected + scrolled, bug appears (selected element is different)
-        if(!hasSelection)
-        {
-            columnsSelectionMerged
+        columnsSelectionMerged
             .style("stroke", (p: TornadoChartPoint) => p.color)
             .style("fill", (p: TornadoChartPoint) => "url(#gradient-" + p.uniqId + ")")
             .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
             .attr("height", (p: TornadoChartPoint) => p.height)
             .attr("width", (p: TornadoChartPoint) => p.width)
-            .attr("tabindex", 0);
-        }
-        else
-        {
-            columnsSelectionMerged
-            .style("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
-            .style("stroke", (p: TornadoChartPoint) => p.color)
-            .style("fill-opacity", (p: TornadoChartPoint) => TornadoChartUtils.getOpacity(
-                p.selected,
-                p.highlight,
-                hasSelection,
-                this.dataView.hasHighlights))
-            .style("stroke-opacity", (p: TornadoChartPoint) => TornadoChartUtils.getOpacity(
-                p.selected,
-                p.highlight,
-                hasSelection,
-                this.dataView.hasHighlights))
-            .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
-            .attr("height", (p: TornadoChartPoint) => p.height)
-            .attr("width", (p: TornadoChartPoint) => p.width)
-            .attr("tabindex", 0);
-        }
+            .attr("tabindex", 0)
+            .attr("role", "option")
+            .attr("aria-label", (d: TornadoChartPoint) => { 
+                return `${d.tooltipData?.[0].displayName} = ${d.tooltipData?.[0].value}`;
+            });
 
         columnsSelection
             .exit()
             .remove();
 
-        const interactivityService = this.interactivityService;
-
-        if (interactivityService) {
-            interactivityService.applySelectionStateToData(columnsData);
-
-            const behaviorOptions: TornadoBehaviorOptions = {
-                columns: columnsSelectionMerged,
-                clearCatcher: this.clearCatcher,
-                interactivityService: this.interactivityService,
-                behavior: this.behavior,
-                dataPoints: columnsData,
-                tooltipArgs: this.tooltipArgs
-            };
-            interactivityService.bind(behaviorOptions);
-        }
+        this.columnsSelection = columnsSelectionMerged;
     }
 
     private getColumnWidth(value: number, minValue: number, maxValue: number, width: number): number {
@@ -1002,7 +945,8 @@ export class TornadoChart implements IVisual {
             .attr("font-weight", labelFontIsBold ? "bold" : "normal")
             .attr("font-style", labelFontIsItalic ? "italic" : "normal")
             .attr("text-decoration", labelFontIsUnderlined? "underline" : "normal")
-            .text((p: TornadoChartPoint) => p.label.value);
+            .text((p: TornadoChartPoint) => p.label.value)
+            .attr("role", "presentation");
 
         labelSelection
             .exit()
@@ -1113,7 +1057,9 @@ export class TornadoChart implements IVisual {
             }
 
             this.legend.drawLegend(legendData, { ...this.viewport });
-            this.element.selectAll("g#legendGroup text")
+            this.legendItems = this.legendSelection.selectAll(TornadoChart.LegendItemSelector.selectorName);
+
+            this.legendSelection.selectAll("text")
                 .style("font-weight",  () => this.formattingSettings.legendCardSettings.font.bold.value ? "bold" : "normal")
                 .style("font-style",  () => this.formattingSettings.legendCardSettings.font.italic.value ? "italic" : "normal")
                 .style("text-decoration", () => this.formattingSettings.legendCardSettings.font.underline.value ? "underline" : "none");
