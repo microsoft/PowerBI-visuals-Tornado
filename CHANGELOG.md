@@ -1,3 +1,4 @@
+
 ## 3.0.4.0
 * Use selectionManager instead of interactivity utils
 * Add interactivity to legend
