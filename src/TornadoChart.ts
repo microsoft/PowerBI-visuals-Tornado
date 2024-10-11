@@ -26,17 +26,22 @@
 
 import "./../style/tornadoChart.less";
 
-import "core-js/stable";
-import * as d3 from "d3";
-import powerbiVisualsApi from "powerbi-visuals-api";
-const getEvent = () => require("d3-selection").event;
+import {
+    select as d3Select,
+    Selection as d3Selection 
+} from "d3-selection";
 
-type Selection<T> = d3.Selection<any, T, any, any>;
+import { min, max } from "d3-array";
+
+import powerbiVisualsApi from "powerbi-visuals-api";
+
+type Selection<T> = d3Selection<any, T, any, any>;
 
 import DataView = powerbiVisualsApi.DataView;
 import IViewport = powerbiVisualsApi.IViewport;
 import DataViewObject = powerbiVisualsApi.DataViewObject;
 import DataViewObjects = powerbiVisualsApi.DataViewObjects;
+import DataViewObjectPropertyIdentifier = powerbiVisualsApi.DataViewObjectPropertyIdentifier;
 import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
 import DataViewCategorical = powerbiVisualsApi.DataViewCategorical;
 import DataViewValueColumns = powerbiVisualsApi.DataViewValueColumns;
@@ -45,9 +50,6 @@ import DataViewMetadataColumn = powerbiVisualsApi.DataViewMetadataColumn;
 import DataViewCategoryColumn = powerbiVisualsApi.DataViewCategoryColumn;
 import DataViewValueColumnGroup = powerbiVisualsApi.DataViewValueColumnGroup;
 import PrimitiveValue = powerbiVisualsApi.PrimitiveValue;
-import EnumerateVisualObjectInstancesOptions = powerbiVisualsApi.EnumerateVisualObjectInstancesOptions;
-import VisualObjectInstanceEnumeration = powerbiVisualsApi.VisualObjectInstanceEnumeration;
-import VisualObjectInstance = powerbiVisualsApi.VisualObjectInstance;
 
 import IColorPalette = powerbiVisualsApi.extensibility.IColorPalette;
 import ILocalizationManager = powerbiVisualsApi.extensibility.ILocalizationManager;
@@ -56,10 +58,9 @@ import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualC
 
 import IVisual = powerbiVisualsApi.extensibility.visual.IVisual;
 import IVisualHost = powerbiVisualsApi.extensibility.visual.IVisualHost;
-import ISelectionManager = powerbiVisualsApi.extensibility.ISelectionManager;
 import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
 
-import { dataViewObject, dataViewObjects } from "powerbi-visuals-utils-dataviewutils";
+import { dataViewObjects } from "powerbi-visuals-utils-dataviewutils";
 
 import * as SVGUtil from "powerbi-visuals-utils-svgutils";
 import manipulation = SVGUtil.manipulation;
@@ -71,62 +72,44 @@ import translateAndRotate = manipulation.translateAndRotate;
 
 import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
 
-import { legend as LegendModule, legendInterfaces, legendData, legendPosition, dataLabelUtils, OpacityLegendBehavior, dataLabelInterfaces } from "powerbi-visuals-utils-chartutils";
+import { legend as LegendModule, legendInterfaces, legendData, dataLabelUtils } from "powerbi-visuals-utils-chartutils";
 import ILegend = legendInterfaces.ILegend;
 import MarkerShape = legendInterfaces.MarkerShape;
 import LegendPosition = legendInterfaces.LegendPosition;
 import LegendData = legendInterfaces.LegendData;
-import legendProps = legendInterfaces.legendProps;
 import createLegend = LegendModule.createLegend;
 import LegendDataPoint = legendInterfaces.LegendDataPoint;
 import LegendDataModule = legendData;
-import VisualDataLabelsSettings = dataLabelInterfaces.VisualDataLabelsSettings;
 
-import { textMeasurementService as tms, valueFormatter } from "powerbi-visuals-utils-formattingutils";
-import TextProperties = tms.TextProperties;
+import { textMeasurementService , valueFormatter } from "powerbi-visuals-utils-formattingutils";
+import { TextProperties } from "powerbi-visuals-utils-formattingutils/lib/src/interfaces";
 import IValueFormatter = valueFormatter.IValueFormatter;
-import textMeasurementService = tms.textMeasurementService;
-
-import {
-    interactivitySelectionService as interactivityService,
-    interactivityBaseService
-} from "powerbi-visuals-utils-interactivityutils";
-import appendClearCatcher = interactivityBaseService.appendClearCatcher;
-import SelectableDataPoint = interactivityService.SelectableDataPoint;
-import IInteractiveBehavior = interactivityBaseService.IInteractiveBehavior;
-import IInteractivityService = interactivityBaseService.IInteractivityService;
-import createInteractivitySelectionService = interactivityService.createInteractivitySelectionService;
-
-type IInteractivityServiceSelectable = IInteractivityService<SelectableDataPoint>;
 
 import { ColorHelper } from "powerbi-visuals-utils-colorutils";
-import { createTooltipServiceWrapper, TooltipEventArgs, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
+// powerbi.extensibility.utils.formattingModel
+import { FormattingSettingsService } from "powerbi-visuals-utils-formattingmodel";
 
 import {
-    TornadoChartSettings,
+    TornadoChartLabelFormatter,
     TornadoChartSeries,
     TornadoBehaviorOptions,
     TornadoChartDataView,
     TornadoChartPoint,
-    TornadoChartTextOptions,
     LineData,
     LabelData,
-    TextData
+    TextData,
+    TooltipArgsWrapper
 } from "./interfaces";
-import { TornadoChartScrolling } from "./TornadoChartScrolling";
-import { tornadoChartProperties } from "./tornadoChartProperties";
 import { TornadoWebBehavior } from "./TornadoWebBehavior";
 import * as tooltipBuilder from "./tooltipBuilder";
-import { tornadoChartUtils } from "./tornadoChartUtils";
-
-const VisualizationText = {
-    Legend: "VisualLegend",
-    Labels: "Visual_Labels",
-    Categories: "Visual_Categories"
-};
+import { TornadoChartSettingsModel, DataLabelSettings, LegendCardSettings, BaseFontControlSettings, FontDefaultOptions} from "./TornadoChartSettingsModel";
+import IVisualEventService = powerbi.extensibility.IVisualEventService;
 
 export class TornadoChart implements IVisual {
     private static ClassName: string = "tornado-chart";
+    private static Container: string = "tornadoContainer";
+    private static Legend: ClassAndSelector = createClassAndSelector("legend");
+    private static LegendItemSelector: ClassAndSelector = createClassAndSelector("legendItem");
     private static Columns: ClassAndSelector = createClassAndSelector("columns");
     private static Column: ClassAndSelector = createClassAndSelector("column");
     private static Axes: ClassAndSelector = createClassAndSelector("axes");
@@ -139,37 +122,34 @@ export class TornadoChart implements IVisual {
     private static Category: ClassAndSelector = createClassAndSelector("category");
     private static CategoryTitle: ClassAndSelector = createClassAndSelector("category-title");
     private static CategoryText: ClassAndSelector = createClassAndSelector("category-text");
-    private static Legend: ClassAndSelector = createClassAndSelector("legendGroup");
     private static MaxSeries: number = 2;
     private static MaxPrecision: number = 17; // max number of decimals in float
     private static LabelPadding: number = 2.5;
     private static CategoryMinHeight: number = 25;
-    private static DefaultFontSize: number = 9;
-    private static DefaultLegendFontSize: number = 8;
     private static HighlightedShapeFactor: number = 1;
     private static CategoryLabelMargin: number = 10;
-
+    private static DefaultLabelSettingsDisplayUnits = 1;
+    private static DefaultLabelSettingsLabelPrecision = null;
     private static MaxAngle: number = 180;
     private static MinAngle: number = 0;
 
     public static ScrollBarWidth = 22;
     public static DefaultLabelsWidth = 3;
 
-    private static DefaultTornadoChartSettings: TornadoChartSettings = {
-        labelOutsideFillColor: dataLabelUtils.defaultLabelColor,
-        labelSettings: {
-            show: true,
-            precision: null,
-            fontSize: TornadoChart.DefaultFontSize,
-            displayUnits: 1,
-            labelColor: dataLabelUtils.defaultInsideLabelColor,
-        },
-        showCategories: true,
-        showLegend: true,
-        legendFontSize: TornadoChart.DefaultLegendFontSize,
-        legendColor: LegendDataModule.DefaultLegendLabelFillColor,
-        categoriesFillColor: "#777"
+    public static Properties = {
+        dataPoint: {
+            fill: <DataViewObjectPropertyIdentifier>{ objectName: "dataPoint", propertyName: "fill" }
+        }
     };
+
+    private formattingSettingsService: FormattingSettingsService;
+    public formattingSettings: TornadoChartSettingsModel;
+    private tooltipArgs: TooltipArgsWrapper;
+    private events: IVisualEventService;
+
+    public getFormattingModel(): powerbi.visuals.FormattingModel {
+        return this.formattingSettingsService.buildFormattingModel(this.formattingSettings);
+    }
 
     private static buildIdentitySelection(
         hostService: IVisualHost,
@@ -186,52 +166,52 @@ export class TornadoChart implements IVisual {
             .createSelectionId();
     }
 
-    public static CONVERTER( 
+    public static converter( 
         dataView: DataView,
         hostService: IVisualHost,
-        textOptions: TornadoChartTextOptions,
         colors: IColorPalette,
-        localizationManager: ILocalizationManager
+        localizationManager: ILocalizationManager,
+        formattingSettings?: TornadoChartSettingsModel
     ): TornadoChartDataView {
-        let categorical: DataViewCategorical = dataView.categorical;
-        let categories: DataViewCategoryColumn[] = categorical.categories || [];
-        let values: DataViewValueColumns = categorical.values;
-        let category: DataViewCategoryColumn = categories[0];
-        let maxValue: number = d3.max(<number[]>values[0].values);
-        let minValue: number = Math.min(d3.min(<number[]>values[0].values), 0);
+        const categorical: DataViewCategorical = dataView.categorical;
+        const categories: DataViewCategoryColumn[] = categorical.categories || [];
+        const values: DataViewValueColumns = categorical.values;
+        const category: DataViewCategoryColumn = categories[0];
+        let maxValue: number = max(<number[]>values[0].values);
+        let minValue: number = Math.min(min(<number[]>values[0].values), 0);
         if (values.length >= TornadoChart.MaxSeries) {
-            minValue = d3.min([minValue, d3.min(<number[]>values[1].values)]);
-            maxValue = d3.max([maxValue, d3.max(<number[]>values[1].values)]);
+            minValue = min([minValue, min(<number[]>values[1].values)]);
+            maxValue = max([maxValue, max(<number[]>values[1].values)]);
         }
-        let settings: TornadoChartSettings = TornadoChart.parseSettings(dataView.metadata.objects, maxValue, colors);
-        let hasDynamicSeries: boolean = !!values.source;
-        let hasHighlights: boolean = values.length > 0 && values.some(value => value.highlights && value.highlights.some(_ => _));
-        let labelHeight: number = textMeasurementService.estimateSvgTextHeight({
+        const labelFormatter = TornadoChart.prepareFormatter(maxValue, formattingSettings.dataLabelsSettings);
+        const hasDynamicSeries: boolean = !!values.source;
+        const hasHighlights: boolean = values.length > 0 && values.some(value => value.highlights && value.highlights.some(_ => _));
+        const labelHeight: number = textMeasurementService.estimateSvgTextHeight({
             fontFamily: dataLabelUtils.StandardFontFamily,
-            fontSize: PixelConverter.fromPoint(settings.labelSettings.fontSize),
+            fontSize: PixelConverter.fromPoint(formattingSettings?.dataLabelsSettings.font.fontSize.value)
         });
-        let series: TornadoChartSeries[] = [];
-        let dataPoints: TornadoChartPoint[] = [];
-        let highlightedDataPoints: TornadoChartPoint[] = [];
-        let categorySourceFormatter: IValueFormatter = valueFormatter.create({
+        const series: TornadoChartSeries[] = [];
+        const dataPoints: TornadoChartPoint[] = [];
+        const categorySourceFormatter: IValueFormatter = valueFormatter.create({
             format: valueFormatter.getFormatStringByColumn(category.source)
         });
-        let categoriesLabels: TextData[] = category.values.map(value => TornadoChart.getTextData(categorySourceFormatter.format(value), textOptions, true));
-        let groupedValues: DataViewValueColumnGroup[] = values.grouped ? values.grouped() : null;
+        const categoriesLabels: TextData[] = category.values.map(value => TornadoChart.getTextData(categorySourceFormatter.format(value), formattingSettings.categoryCardSettings.font, true, false));
+        const groupedValues: DataViewValueColumnGroup[] = values.grouped ? values.grouped() : null;
+        let uniqId = 0;
 
         for (let seriesIndex = 0; seriesIndex < Math.min(values.length, TornadoChart.MaxSeries); seriesIndex++) {
-            let columnGroup: DataViewValueColumnGroup = groupedValues && groupedValues.length > seriesIndex
+            const columnGroup: DataViewValueColumnGroup = groupedValues && groupedValues.length > seriesIndex
                 && groupedValues[seriesIndex].values ? groupedValues[seriesIndex] : null;
-            let parsedSeries: TornadoChartSeries = TornadoChart.PARSE_SERIES(dataView, values, hostService, seriesIndex, hasDynamicSeries, columnGroup, colors);
-            let currentSeries: DataViewValueColumn = values[seriesIndex];
-            let measureName: string = currentSeries.source.queryName;
+            const parsedSeries: TornadoChartSeries = TornadoChart.parseSeries(dataView, values, hostService, seriesIndex, hasDynamicSeries, columnGroup, colors);
+            const currentSeries: DataViewValueColumn = values[seriesIndex];
+            const measureName: string = currentSeries.source.queryName;
 
             series.push(parsedSeries);
 
             for (let i: number = 0; i < category.values.length; i++) {
-                let value: number = currentSeries.values[i] == null || isNaN(<number>currentSeries.values[i]) ? 0 : <number>currentSeries.values[i];
-                let identity: ISelectionId = TornadoChart.buildIdentitySelection(hostService, category, i, values, columnGroup, measureName);
-                let formattedCategoryValue: string = categoriesLabels[i].text;
+                const value: number = currentSeries.values[i] == null || isNaN(<number>currentSeries.values[i]) ? 0 : <number>currentSeries.values[i];
+                const identity: ISelectionId = TornadoChart.buildIdentitySelection(hostService, category, i, values, columnGroup, measureName);
+                const formattedCategoryValue: string = categoriesLabels[i].text;
 
                 const buildTooltip = (highlightedValue) => tooltipBuilder.createTooltipInfo(
                         categorical,
@@ -242,10 +222,10 @@ export class TornadoChart implements IVisual {
                         highlightedValue || null);
 
                 // Limit maximum value with what the user choose
-                let currentMaxValue = parsedSeries.categoryAxisEnd ? parsedSeries.categoryAxisEnd : maxValue;
-                let formatString: string = dataView.categorical.values[seriesIndex].source.format;
-                let highlight: number = null;
+                const currentMaxValue = parsedSeries.categoryAxisEnd ? parsedSeries.categoryAxisEnd : maxValue;
+                const formatString: string = dataView.categorical.values[seriesIndex].source.format;
                 const dataPointCommon = {
+                    uniqId: uniqId,
                     value,
                     minValue,
                     maxValue: currentMaxValue,
@@ -255,34 +235,30 @@ export class TornadoChart implements IVisual {
                     identity,
                     categoryIndex: i,
                 };
-
+                
+                let highlight: number = NaN;
+                let highlightedValue: number = 0;
                 if (hasHighlights) {
                     highlight = <number>currentSeries.highlights[i];
-                    let highlightedValue: number = highlight != null ? highlight : value;
-
-                    highlightedDataPoints.push({
-                        ...dataPointCommon,
-                        value: highlightedValue,
-                        tooltipData: buildTooltip(highlightedValue),
-                        highlight: !!highlight,
-                    });
+                    highlightedValue = (isNaN(highlight) || highlight === null || highlight === undefined) ?  0 : highlight;
                 }
 
                 dataPoints.push({
                     ...dataPointCommon,
-                    tooltipData: buildTooltip(null),
+                    highlightedValue: highlightedValue,
+                    tooltipData: buildTooltip(hasHighlights ? highlightedValue : null),
                     highlight: hasHighlights && !!highlight,
                 });
+                uniqId += 1;
             }
         }
 
         return {
             categories: categoriesLabels,
             series: series,
-            settings: settings,
+            labelFormatter: labelFormatter,
             legend: TornadoChart.getLegendData(series, hasDynamicSeries),
             dataPoints: dataPoints,
-            highlightedDataPoints: highlightedDataPoints,
             maxLabelsWidth: Math.max(...categoriesLabels.map(x => x.width)),
             hasDynamicSeries: hasDynamicSeries,
             hasHighlights: hasHighlights,
@@ -292,7 +268,7 @@ export class TornadoChart implements IVisual {
         };
     }
 
-    public static PARSE_SERIES(
+    public static parseSeries(
         dataView: DataView,
         dataViewValueColumns: DataViewValueColumns,
         hostService: IVisualHost,
@@ -305,12 +281,11 @@ export class TornadoChart implements IVisual {
             return;
         }
 
-        let dataViewValueColumn: DataViewValueColumn = dataViewValueColumns ? dataViewValueColumns[index] : null,
+        const dataViewValueColumn: DataViewValueColumn = dataViewValueColumns ? dataViewValueColumns[index] : null,
             source: DataViewMetadataColumn = dataViewValueColumn ? dataViewValueColumn.source : null,
-            identity: any = columnGroup ? columnGroup.identity : null,
             queryName: string = source ? source.queryName : null;
 
-        let selectionId: ISelectionId = hostService.createSelectionIdBuilder()
+        const selectionId: ISelectionId = hostService.createSelectionIdBuilder()
             .withSeries(dataViewValueColumns, columnGroup)
             .withMeasure(queryName)
             .createSelectionId();
@@ -321,8 +296,9 @@ export class TornadoChart implements IVisual {
         }
 
         let objects: DataViewObjects,
-            categoryAxisObject: DataViewObject | DataViewObjectWithId[],
-            displayName: PrimitiveValue = source ? sourceGroupName
+        categoryAxisObject: DataViewObject | DataViewObjectWithId[];
+
+        const displayName: PrimitiveValue = source ? sourceGroupName
                 ? sourceGroupName : source.displayName
                 : null;
 
@@ -330,18 +306,23 @@ export class TornadoChart implements IVisual {
             categoryAxisObject = columnGroup.objects ? columnGroup.objects["categoryAxis"] : null;
             objects = columnGroup.objects;
         } else if (source && source.objects) {
-            objects = source.objects;
             categoryAxisObject = objects ? objects["categoryAxis"] : null;
+            objects = source.objects;
         } else if (dataView && dataView.metadata && dataView.metadata.objects) {
             objects = dataView.metadata.objects;
         }
 
-        let fillColor: string = TornadoChart.getColor(
-            tornadoChartProperties.dataPoint.fill,
+        const fillColor: string = TornadoChart.getColor(
+            TornadoChart.Properties.dataPoint.fill,
             ["purple", "teal"][index],
             objects, colors);
 
         let categoryAxisEnd: number = categoryAxisObject ? categoryAxisObject["end"] : null;
+        if(!categoryAxisEnd){
+            if(objects?.categoryAxis?.end){
+                categoryAxisEnd = objects.categoryAxis.end as number;
+            }
+        }
 
         return <TornadoChartSeries>{
             fill: fillColor,
@@ -352,7 +333,7 @@ export class TornadoChart implements IVisual {
     }
 
     private static getColor(properties: any, defaultColor: string, objects: DataViewObjects, colors: IColorPalette, convertToHighContrastMode: boolean = true): string {
-        let colorHelper: ColorHelper = new ColorHelper(colors, properties, defaultColor);
+        const colorHelper: ColorHelper = new ColorHelper(colors, properties, defaultColor);
 
         if (colorHelper.isHighContrast && convertToHighContrastMode)
             return colorHelper.getColorForMeasure(objects, "", "foreground");
@@ -362,25 +343,27 @@ export class TornadoChart implements IVisual {
 
     private static getTextData(
         text: string,
-        textOptions: TornadoChartTextOptions,
+        formattingOptions: BaseFontControlSettings,
         measureWidth: boolean = false,
         measureHeight: boolean = false,
-        overrideFontSize?: number): TextData {
+        useDefaultTextProperties: boolean = false): TextData {
 
         let width: number = 0,
-            height: number = 0,
-            fontSize: string,
-            textProperties: TextProperties;
+            height: number = 0;
 
         text = text || "";
 
-        fontSize = overrideFontSize
-            ? PixelConverter.fromPoint(overrideFontSize)
-            : PixelConverter.fromPoint(textOptions.fontSize);
+        const fontSize: string = useDefaultTextProperties 
+            ? PixelConverter.fromPoint(FontDefaultOptions.DefaultFontSizePt)
+            : PixelConverter.fromPoint(formattingOptions.fontSize.value);
 
-        textProperties = {
+        const fontFamily: string = useDefaultTextProperties 
+            ? FontDefaultOptions.DefaultFontFamily
+            : formattingOptions.fontFamily.value;
+
+        const textProperties = {
             text: text,
-            fontFamily: textOptions.fontFamily,
+            fontFamily: fontFamily,
             fontSize: fontSize
         };
 
@@ -402,7 +385,6 @@ export class TornadoChart implements IVisual {
 
     public colors: IColorPalette;
     public colorHelper: ColorHelper;
-    public textOptions: TornadoChartTextOptions = {};
 
     private columnPadding: number = 5;
     private leftLabelMargin: number = 4;
@@ -415,36 +397,46 @@ export class TornadoChart implements IVisual {
         left: 10
     };
 
+    private element: Selection<any>;
     private root: Selection<any>;
+    private rootContainer: HTMLElement;
     private main: Selection<any>;
     private columns: Selection<any>;
+    private columnsSelection: Selection<any>;
     private axes: Selection<any>;
     private labels: Selection<any>;
     private categories: Selection<any>;
-    private clearCatcher: Selection<any>;
-    private selectionManager: ISelectionManager;
+    private legendSelection: Selection<any>;
+    private legendItems: Selection<any>;
+    private gradients: Selection<any>;
 
     private legend: ILegend;
-    private behavior: IInteractiveBehavior;
-    private interactivityService: IInteractivityServiceSelectable;
+    private behavior: TornadoWebBehavior;
     private hostService: IVisualHost;
     private localizationManager: ILocalizationManager;
-    private scrolling: TornadoChartScrolling;
+    private isScrollVisible: boolean = false;
 
     private viewport: IViewport;
     private dataView: TornadoChartDataView;
     private heightColumn: number = 0;
-    private tooltipServiceWrapper: ITooltipServiceWrapper;
+
+    private get viewportWidth(): number {
+        return this.viewport.width - (TornadoChart.getScrollBarWidth(this.rootContainer) * +this.isScrollVisible);
+    }
 
     private get allLabelsWidth(): number {
-        let labelsWidth: number = this.dataView.settings.showCategories
-            ? Math.min(this.dataView.maxLabelsWidth, this.scrolling.scrollViewport.width / 2)
+        const labelsWidth: number = this.formattingSettings.categoryCardSettings.show.value
+            ? Math.min(this.dataView.maxLabelsWidth, this.viewportWidth / 3)
             : TornadoChart.DefaultLabelsWidth;
         return labelsWidth + TornadoChart.CategoryLabelMargin;
     }
 
     private get allColumnsWidth(): number {
-        return this.scrolling.scrollViewport.width - this.allLabelsWidth;
+        return this.viewportWidth - this.allLabelsWidth;
+    }
+
+    private static getScrollBarWidth(element: HTMLElement): number{
+        return element.offsetWidth - element.clientWidth;
     }
 
     private get columnWidth(): number {
@@ -454,45 +446,36 @@ export class TornadoChart implements IVisual {
     }
 
     constructor(options: VisualConstructorOptions) {
-        let fontSize: string;
         this.hostService = options.host;
         this.localizationManager = this.hostService.createLocalizationManager();
         this.colors = options.host.colorPalette;
         this.colorHelper = new ColorHelper(this.colors);
-        this.selectionManager = options.host.createSelectionManager();
 
-        this.tooltipServiceWrapper = createTooltipServiceWrapper(
-            options.host.tooltipService,
-            options.element);
+        this.tooltipArgs = new TooltipArgsWrapper(options.element, options.host.tooltipService);
 
-        this.interactivityService = createInteractivitySelectionService(this.hostService);
+        this.legend = createLegend(options.element, false);
 
-        let interactiveBehavior: IInteractiveBehavior = this.colorHelper.isHighContrast ? <IInteractiveBehavior>(new OpacityLegendBehavior()) : null;
-        this.legend = createLegend(options.element, false, this.interactivityService, true, null, interactiveBehavior);
+        const selectionManager = options.host.createSelectionManager();
+        this.behavior = new TornadoWebBehavior(selectionManager, this.colorHelper);
 
-        let root: Selection<any> = this.root = d3.select(options.element)
-            .append("svg");
+        this.formattingSettingsService = new FormattingSettingsService(this.localizationManager);
+        this.events = options.host.eventService;
 
-        root
+        this.element = d3Select(options.element);
+        this.rootContainer = document.createElement("div");
+        this.rootContainer.classList.add(TornadoChart.Container);
+        options.element.append(this.rootContainer);
+
+        const root: Selection<any> = this.root = d3Select(this.rootContainer)
+            .append("svg")
             .classed(TornadoChart.ClassName, true);
 
-        fontSize = root.style("font-size");
-
-        this.textOptions.fontSize = Number(fontSize.slice(0, fontSize.length - 2));
-        this.textOptions.fontFamily = root.style("font-family");
-
-        this.scrolling = new TornadoChartScrolling(
-            () => root,
-            () => this.viewport,
-            () => this.margin,
-            () => this.dataView.categories.length * TornadoChart.CategoryMinHeight,
-            true);
-
-        let main: Selection<any> = this.main = root.append("g");
-        this.clearCatcher = appendClearCatcher(main);
+        const main: Selection<any> = this.main = root.append("g");
         this.columns = main
             .append("g")
-            .classed(TornadoChart.Columns.className, true);
+            .classed(TornadoChart.Columns.className, true)
+            .attr("role", "listbox")
+            .attr("aria-multiselectable", "true");
 
         this.axes = main
             .append("g")
@@ -505,8 +488,9 @@ export class TornadoChart implements IVisual {
         this.categories = main
             .append("g")
             .classed(TornadoChart.Categories.className, true);
-
-        this.behavior = new TornadoWebBehavior();
+        
+        this.legendSelection = this.element
+            .select(TornadoChart.Legend.selectorName);
     }
 
     public update(options: VisualUpdateOptions): void {
@@ -524,30 +508,33 @@ export class TornadoChart implements IVisual {
             this.clearData();
             return;
         }
+        this.events.renderingStarted(options);
 
         this.viewport = {
             height: Math.max(0, options.viewport.height - this.margin.top - this.margin.bottom),
             width: Math.max(0, options.viewport.width - this.margin.left - this.margin.right)
         };
 
-        this.dataView = TornadoChart.CONVERTER(this.validateDataView(options.dataViews[0]), this.hostService, this.textOptions, this.colors, this.localizationManager);
-        if (!this.dataView || this.scrolling.scrollViewport.height < TornadoChart.CategoryMinHeight) {
+        const dataView: DataView = this.validateDataView(options.dataViews[0]);
+        if(dataView){
+            this.formattingSettings = this.formattingSettingsService.populateFormattingSettingsModel(TornadoChartSettingsModel, dataView);
+            this.formattingSettings.setLocalizedOptions(this.localizationManager);
+        }
+
+        this.dataView = TornadoChart.converter(dataView, this.hostService, this.colors, this.localizationManager, this.formattingSettings);
+        if (!this.dataView || this.viewport.height < TornadoChart.CategoryMinHeight) {
             this.clearData();
+            this.events.renderingFinished(options);
             return;
         }
-        
-        this.root.on("contextmenu", () => {
-            const mouseEvent: MouseEvent = getEvent();
-            const eventTarget: EventTarget = mouseEvent.target;
-            let dataPoint: any = d3.select(<d3.BaseType>eventTarget).datum();
-            this.selectionManager.showContextMenu(dataPoint ? dataPoint.selectionId : {}, {
-                x: mouseEvent.clientX,
-                y: mouseEvent.clientY
-            });
-            mouseEvent.preventDefault();
-        });
 
+        //Populate slices for DataColors and CategoryAxisCard 
+        this.formattingSettings.populateDataColorSlice(this.dataView.series);
+        this.formattingSettings.populateCategoryAxisSlice(this.dataView.series);
+        this.formattingSettings.setVisibilityOfLegendCardSettings(this.dataView.legend);
+        
         this.render();
+        this.events.renderingFinished(options);
     }
 
     private validateDataView(dataView: DataView): DataView {
@@ -558,15 +545,15 @@ export class TornadoChart implements IVisual {
     }
 
     private updateElements(): void {
-        let translateX: number = 0,
-            position: string = dataViewObject.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left);
+        let translateX: number = 0;
+        const position: string = this.formattingSettings.categoryCardSettings.positionDropdown.value.value.toString();
         if (position === "Left") {
             translateX = this.allLabelsWidth;
         }
-        let elementsTranslate: string = translate(translateX, 0);
+        const elementsTranslate: string = translate(translateX, 0);
 
         this.root
-            .attr("height", this.viewport.height + this.margin.top + this.margin.bottom)
+            .attr("height", TornadoChart.calculateRootHeight(this.dataView.dataPoints))
             .attr("width", this.viewport.width + this.margin.left + this.margin.right);
 
         this.columns
@@ -579,86 +566,28 @@ export class TornadoChart implements IVisual {
             .attr("transform", elementsTranslate);
     }
 
-    private static parseSettings(objects: DataViewObjects, value: number, colors: IColorPalette): TornadoChartSettings {
-        let precision: number = TornadoChart.getPrecision(objects);
+    private static calculateRootHeight(dataPoints: TornadoChartPoint[]): number{
+        const length: number = dataPoints.length;
+        return dataPoints[length - 1].dy + dataPoints[length - 1].height;
+    }
 
-        let displayUnits: number = dataViewObjects.getValue<number>(
-            objects,
-            tornadoChartProperties.labels.labelDisplayUnits,
-            TornadoChart.DefaultTornadoChartSettings.labelSettings.displayUnits);
+    private static prepareFormatter(value: number, labelsSettings: DataLabelSettings): TornadoChartLabelFormatter {
+        const precision: number = TornadoChart.getPrecision(labelsSettings);
 
-        let labelSettings: VisualDataLabelsSettings = TornadoChart.DefaultTornadoChartSettings.labelSettings;
-
-        let getLabelValueFormatter = (formatString: string) => valueFormatter.create({
+        const displayUnits: number = +labelsSettings.labelDisplayUnits.value;
+        const getLabelValueFormatter = (formatString: string) => valueFormatter.create({
             format: formatString,
             precision: precision,
             value: (displayUnits === 0) && (value != null) ? value : displayUnits,
         });
 
         return {
-            labelOutsideFillColor: TornadoChart.getColor(
-                tornadoChartProperties.labels.outsideFill,
-                TornadoChart.DefaultTornadoChartSettings.labelOutsideFillColor,
-                objects,
-                colors),
-
-            labelSettings: {
-                show: dataViewObjects.getValue<boolean>(
-                    objects,
-                    tornadoChartProperties.labels.show,
-                    labelSettings.show),
-                precision: precision,
-                fontSize: dataViewObjects.getValue<number>(
-                    objects,
-                    tornadoChartProperties.labels.fontSize,
-                    labelSettings.fontSize),
-                displayUnits: displayUnits,
-                labelColor: TornadoChart.getColor(
-                    tornadoChartProperties.labels.insideFill,
-                    labelSettings.labelColor,
-                    objects,
-                    colors),
-            },
-            showCategories: dataViewObjects.getValue<boolean>(
-                objects,
-                tornadoChartProperties.categories.show,
-                TornadoChart.DefaultTornadoChartSettings.showCategories),
-            showLegend: dataViewObjects.getValue<boolean>(
-                objects,
-                tornadoChartProperties.legend.show,
-                TornadoChart.DefaultTornadoChartSettings.showLegend),
-            legendFontSize: dataViewObjects.getValue<number>(
-                objects,
-                tornadoChartProperties.legend.fontSize,
-                TornadoChart.DefaultTornadoChartSettings.legendFontSize),
-            legendColor: TornadoChart.getColor(
-                tornadoChartProperties.legend.labelColor,
-                TornadoChart.DefaultTornadoChartSettings.legendColor,
-                objects,
-                colors),
-            categoriesFillColor: TornadoChart.getColor(
-                tornadoChartProperties.categories.fill,
-                TornadoChart.DefaultTornadoChartSettings.categoriesFillColor,
-                objects,
-                colors),
-            categoriesFontSize: dataViewObjects.getValue<number>(
-                objects,
-                tornadoChartProperties.categories.fontSize,
-                TornadoChart.DefaultTornadoChartSettings.legendFontSize),
-            categoriesPosition: dataViewObject.getValue<string>(
-                objects,
-                "position",
-                legendPosition.left),
             getLabelValueFormatter: getLabelValueFormatter
         };
     }
 
-    private static getPrecision(objects: DataViewObjects): number {
-        let precision: number = dataViewObjects.getValue<number>(
-            objects,
-            tornadoChartProperties.labels.labelPrecision,
-            TornadoChart.DefaultTornadoChartSettings.labelSettings.precision);
-
+    private static getPrecision(labelsSettings: DataLabelSettings): number {
+        const precision: number = labelsSettings.labelPrecision.value;
         return Math.min(Math.max(0, precision), TornadoChart.MaxPrecision);
     }
 
@@ -681,9 +610,22 @@ export class TornadoChart implements IVisual {
     }
 
     private render(): void {
-        this.updateElements();
         this.renderLegend();
-        this.scrolling.renderY(this.dataView, this.renderWithScrolling.bind(this));
+        this.renderWithScrolling();
+        this.bindBehaviorToVisual();
+    }
+
+    private bindBehaviorToVisual(): void {
+        const behaviorOptions: TornadoBehaviorOptions = {
+            columns: this.columnsSelection,
+            clearCatcher: this.root,
+            tooltipArgs: this.tooltipArgs,
+            legend: this.legendItems,
+            legendClearCatcher: this.legendSelection,
+            gradients: this.gradients
+        };
+        this.behavior.bindEvents(behaviorOptions);
+        this.behavior.renderSelection();
     }
 
     private clearData(): void {
@@ -693,48 +635,12 @@ export class TornadoChart implements IVisual {
         this.categories.selectAll("*").remove();
         this.legend.reset();
         this.legend.drawLegend({ dataPoints: [] }, this.viewport);
-        this.scrolling.clearData();
     }
 
-    public onClearSelection(): void {
-        if (this.interactivityService) {
-            this.interactivityService.clearSelection();
-        }
-    }
-
-    private renderWithScrolling(tornadoChartDataView: TornadoChartDataView, scrollStart: number, scrollEnd: number): void {
-        if (!this.dataView || !this.dataView.settings) {
+    private renderWithScrolling(): void {
+        if (!this.dataView || !this.formattingSettings) {
             return;
         }
-        let categoriesLength: number = tornadoChartDataView.categories.length;
-        let startIndex: number = scrollStart * categoriesLength;
-        let endIndex: number = scrollEnd * categoriesLength;
-
-        let startIndexRound: number = Math.floor(startIndex);
-        let endIndexRound: number = Math.floor(endIndex);
-
-        let maxValues: number = Math.floor(this.scrolling.scrollViewport.height / TornadoChart.CategoryMinHeight);
-
-        if (scrollEnd - scrollStart < 1 && maxValues < endIndexRound - startIndexRound) {
-            if (startIndex - startIndexRound > endIndex - endIndexRound) {
-                startIndexRound++;
-            }
-            else {
-                endIndex--;
-            }
-        }
-
-        if (!this.dataView.hasHighlights) {
-            this.interactivityService.applySelectionStateToData(tornadoChartDataView.dataPoints);
-            this.interactivityService.applySelectionStateToData(tornadoChartDataView.highlightedDataPoints);
-        }
-
-        // Filter data according to the visible visual area
-        tornadoChartDataView.categories = tornadoChartDataView.categories.slice(startIndexRound, endIndexRound);
-        tornadoChartDataView.dataPoints = tornadoChartDataView.dataPoints.filter((d: TornadoChartPoint) => d.categoryIndex >= startIndexRound && d.categoryIndex < endIndexRound);
-        tornadoChartDataView.highlightedDataPoints = tornadoChartDataView.highlightedDataPoints.filter((d: TornadoChartPoint) => d.categoryIndex >= startIndexRound && d.categoryIndex < endIndexRound);
-
-        this.dataView = tornadoChartDataView;
 
         this.computeHeightColumn();
         this.renderMiddleSection();
@@ -743,10 +649,8 @@ export class TornadoChart implements IVisual {
     }
 
     private updateViewport(): void {
-        let legendMargins: IViewport = this.legend.getMargins(),
-            legendPosition: LegendPosition;
-
-        legendPosition = LegendPosition[<string>this.dataView.legendObjectProperties[legendProps.position]];
+        const legendMargins: IViewport = this.legend.getMargins(),
+            legendPosition: LegendPosition = LegendPosition[this.formattingSettings.legendCardSettings.positionDropdown.value.value];
 
         switch (legendPosition) {
             case LegendPosition.Top:
@@ -769,50 +673,59 @@ export class TornadoChart implements IVisual {
     }
 
     private computeHeightColumn(): void {
-        let length: number = this.dataView.categories.length;
-        this.heightColumn = (this.scrolling.scrollViewport.height - ((length - 1) * this.columnPadding)) / length;
+        const length: number = this.dataView.categories.length;
+
+        const numberOfDisplayedRows: number = Math.floor(this.viewport.height / TornadoChart.CategoryMinHeight) > length
+            ? length
+            : Math.floor(this.viewport.height / TornadoChart.CategoryMinHeight);
+
+        this.heightColumn = numberOfDisplayedRows > 0 
+            ? (this.viewport.height - (numberOfDisplayedRows - 1) * this.columnPadding) / (numberOfDisplayedRows)
+            : 0;
+
+        this.isScrollVisible = numberOfDisplayedRows < length;
+        this.rootContainer.style.overflowY = this.isScrollVisible ? "scroll" : "hidden";
     }
 
     private renderMiddleSection(): void {
-        let tornadoChartDataView: TornadoChartDataView = this.dataView;
+        const tornadoChartDataView: TornadoChartDataView = this.dataView;
         this.calculateDataPoints(tornadoChartDataView.dataPoints);
-        this.calculateDataPoints(tornadoChartDataView.highlightedDataPoints);
-        let dataPointsWithHighlights: TornadoChartPoint[] = this.dataView.hasHighlights ? tornadoChartDataView.highlightedDataPoints : tornadoChartDataView.dataPoints;
-        this.renderColumns(dataPointsWithHighlights, tornadoChartDataView.series.length === 2);
-        this.renderLabels(this.dataView.hasHighlights ? tornadoChartDataView.highlightedDataPoints : tornadoChartDataView.dataPoints, tornadoChartDataView.settings.labelSettings);
+        this.updateElements();
+        this.renderColumns(tornadoChartDataView.dataPoints);
+        this.renderLabels(tornadoChartDataView.dataPoints, this.formattingSettings.dataLabelsSettings);
     }
 
     /**
      * Calculate the width, dx value and label info for every data point
      */
     private calculateDataPoints(dataPoints: TornadoChartPoint[]): void {
-        let categoriesLength: number = this.dataView.categories.length;
-        let settings: TornadoChartSettings = this.dataView.settings;
-        let heightColumn: number = Math.max(this.heightColumn, 0);
-        let py: number = heightColumn / 2;
-        let pyHighlighted: number = heightColumn * TornadoChart.HighlightedShapeFactor / 2;
-        let maxSeries: boolean = this.dataView.series.length === TornadoChart.MaxSeries;
+        const categoriesLength: number = this.dataView.categories.length;
+        const labelFormatter: TornadoChartLabelFormatter = this.dataView.labelFormatter;
+        const heightColumn: number = Math.max(this.heightColumn, 0);
+        const py: number = heightColumn / 2;
+        const pyHighlighted: number = heightColumn * TornadoChart.HighlightedShapeFactor / 2;
+        const maxSeries: boolean = this.dataView.series.length === TornadoChart.MaxSeries;
 
         for (let i: number = 0; i < dataPoints.length; i++) {
-            let dataPoint: TornadoChartPoint = dataPoints[i];
+            const dataPoint: TornadoChartPoint = dataPoints[i];
 
-            let shiftToMiddle: boolean = i < categoriesLength && maxSeries;
-            let shiftToRight: boolean = i > categoriesLength - 1;
-            let widthOfColumn: number = this.getColumnWidth(dataPoint.value, dataPoint.minValue, dataPoint.maxValue, this.columnWidth);
+            const shiftToMiddle: boolean = i < categoriesLength && maxSeries;
+            const shiftToRight: boolean = i > categoriesLength - 1;
+            const widthOfColumn: number = this.getColumnWidth(dataPoint.value, dataPoint.minValue, dataPoint.maxValue, this.columnWidth);
             let dx: number = (this.columnWidth - widthOfColumn) * Number(shiftToMiddle) + this.columnWidth * Number(shiftToRight)/* - scrollBarWidth*/;
             dx = Math.max(dx, 0);
 
-            let highlighted: boolean = this.dataView.hasHighlights && dataPoint.highlight;
-            let highlightOffset: number = highlighted ? heightColumn * (1 - TornadoChart.HighlightedShapeFactor) / 2 : 0;
-            let dy: number = (heightColumn + this.columnPadding) * (i % categoriesLength) + highlightOffset;
+            const highlighted: boolean = this.dataView.hasHighlights && dataPoint.highlight;
+            const highlightOffset: number = highlighted ? heightColumn * (1 - TornadoChart.HighlightedShapeFactor) / 2 : 0;
+            const dy: number = (heightColumn + this.columnPadding) * (i % categoriesLength) + highlightOffset;
 
-            let label: LabelData = this.getLabelData(
+            const label: LabelData = this.getLabelData(
                 dataPoint.value,
                 dx,
                 widthOfColumn,
                 shiftToMiddle,
                 dataPoint.formatString,
-                settings);
+                labelFormatter);
 
             dataPoint.dx = dx;
             dataPoint.dy = dy;
@@ -825,14 +738,27 @@ export class TornadoChart implements IVisual {
         }
     }
 
-    private renderColumns(columnsData: TornadoChartPoint[], selectSecondSeries: boolean = false): void {
-        let hasSelection: boolean = this.interactivityService && this.interactivityService.hasSelection();
-
-        let columnsSelection: Selection<any> = this.columns
+    private renderColumns(columnsData: TornadoChartPoint[]): void {  
+        const columnsSelection: Selection<any> = this.columns
             .selectAll(TornadoChart.Column.selectorName)
             .data(columnsData);
 
-        let columnsSelectionMerged = columnsSelection
+        // defs should only contain required gradients,
+        // otherwise gradients are duplicated
+        this.columns.select("defs").remove();
+
+        this.gradients = this.columns.append("defs")
+            .selectAll("linearGradient")
+            .data(columnsData)
+            .enter()
+            .append("linearGradient")
+            .attr("id", (p: TornadoChartPoint) => "gradient-" + p.uniqId) // Use the index of the column as the id
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "100%")
+            .attr("y2", "0%");
+
+        const columnsSelectionMerged = columnsSelection
             .enter()
             .append("svg:rect")
             .merge(columnsSelection);
@@ -840,59 +766,29 @@ export class TornadoChart implements IVisual {
         columnsSelectionMerged.classed(TornadoChart.Column.className, true);
 
         columnsSelectionMerged
-            .style("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
             .style("stroke", (p: TornadoChartPoint) => p.color)
-            .style("fill-opacity", (p: TornadoChartPoint) => tornadoChartUtils.getOpacity(
-                p.selected,
-                p.highlight,
-                hasSelection,
-                this.dataView.hasHighlights))
-            .style("stroke-opacity", (p: TornadoChartPoint) => tornadoChartUtils.getOpacity(
-                p.selected,
-                p.highlight,
-                hasSelection,
-                this.dataView.hasHighlights))
+            .style("fill", (p: TornadoChartPoint) => "url(#gradient-" + p.uniqId + ")")
             .attr("transform", (p: TornadoChartPoint) => translateAndRotate(p.dx, p.dy, p.px, p.py, p.angle))
             .attr("height", (p: TornadoChartPoint) => p.height)
-            .attr("width", (p: TornadoChartPoint) => p.width);
+            .attr("width", (p: TornadoChartPoint) => p.width)
+            .attr("tabindex", 0)
+            .attr("role", "option")
+            .attr("aria-label", (d: TornadoChartPoint) => { 
+                return `${d.tooltipData?.[0].displayName} = ${d.tooltipData?.[0].value}`;
+            });
 
         columnsSelection
             .exit()
             .remove();
 
-        let interactivityService = this.interactivityService;
-
-        if (interactivityService) {
-            interactivityService.applySelectionStateToData(columnsData);
-
-            let behaviorOptions: TornadoBehaviorOptions = {
-                columns: columnsSelectionMerged,
-                clearCatcher: this.clearCatcher,
-                interactivityService: this.interactivityService,
-                behavior: this.behavior,
-                dataPoints: columnsData
-            };
-            interactivityService.bind(behaviorOptions);
-        }
-
-        this.renderTooltip(columnsSelectionMerged);
-    }
-
-    private renderTooltip(selection: Selection<any>): void {
-        this.tooltipServiceWrapper.addTooltip(
-            selection,
-            (tooltipEvent: TooltipEventArgs<TornadoChartPoint>) => {
-                return (<TornadoChartPoint>tooltipEvent.data).tooltipData;
-            },
-            null,
-            true);
+        this.columnsSelection = columnsSelectionMerged;
     }
 
     private getColumnWidth(value: number, minValue: number, maxValue: number, width: number): number {
         if (minValue === maxValue) {
             return width;
         }
-        let columnWidth = width * (value - minValue) / (maxValue - minValue);
+        const columnWidth = width * (value - minValue) / (maxValue - minValue);
 
         // In case the user specifies a custom category axis end we limit the
         // column width to the maximum available width
@@ -905,26 +801,25 @@ export class TornadoChart implements IVisual {
         columnWidth: number,
         isColumnPositionLeft: boolean,
         formatStringProp: string,
-        settings?: TornadoChartSettings): LabelData {
+        labelFormatter: TornadoChartLabelFormatter): LabelData {
+
+        const fontSize: number = this.formattingSettings.dataLabelsSettings.font.fontSize.value;
 
         let dx: number,
-            tornadoChartSettings: TornadoChartSettings = settings ? settings : this.dataView.settings,
-            labelSettings: VisualDataLabelsSettings = tornadoChartSettings.labelSettings,
-            fontSize: number = labelSettings.fontSize,
-            color: string = labelSettings.labelColor;
+            color: string = this.formattingSettings.dataLabelsSettings.insideFill.value.value;
 
-        let maxOutsideLabelWidth: number = isColumnPositionLeft
+        const maxOutsideLabelWidth: number = isColumnPositionLeft
             ? dxColumn - this.leftLabelMargin
             : this.allColumnsWidth - (dxColumn + columnWidth + this.leftLabelMargin);
-        let maxLabelWidth: number = Math.max(maxOutsideLabelWidth, columnWidth - this.leftLabelMargin);
+        const maxLabelWidth: number = Math.max(maxOutsideLabelWidth, columnWidth - this.leftLabelMargin);
 
-        let textProperties: TextProperties = {
-            fontFamily: dataLabelUtils.StandardFontFamily,
+        const textProperties: TextProperties = {
+            fontFamily: this.formattingSettings.dataLabelsSettings.font.fontFamily.value,
             fontSize: PixelConverter.fromPoint(fontSize),
-            text: tornadoChartSettings.getLabelValueFormatter(formatStringProp).format(value)
+            text: labelFormatter.getLabelValueFormatter(formatStringProp).format(value)
         };
-        let valueAfterValueFormatter: string = textMeasurementService.getTailoredTextOrDefault(textProperties, maxLabelWidth);
-        let textDataAfterValueFormatter: TextData = TornadoChart.getTextData(valueAfterValueFormatter, this.textOptions, true, false, fontSize);
+        const valueAfterValueFormatter: string = textMeasurementService.getTailoredTextOrDefault(textProperties, maxLabelWidth);
+        const textDataAfterValueFormatter: TextData = TornadoChart.getTextData(valueAfterValueFormatter, this.formattingSettings.dataLabelsSettings.font, true, false);
 
         if (columnWidth > textDataAfterValueFormatter.width + TornadoChart.LabelPadding) {
             dx = dxColumn + columnWidth / 2 - textDataAfterValueFormatter.width / 2;
@@ -934,7 +829,7 @@ export class TornadoChart implements IVisual {
             } else {
                 dx = dxColumn + columnWidth + this.leftLabelMargin;
             }
-            color = tornadoChartSettings.labelOutsideFillColor;
+            color = this.formattingSettings.dataLabelsSettings.outsideFill.value.value;
         }
 
         return {
@@ -946,9 +841,7 @@ export class TornadoChart implements IVisual {
     }
 
     private renderAxes(): void {
-        let linesData: LineData[],
-            axesSelection: Selection<any>,
-            axesElements: Selection<any> = this.main
+        const axesElements: Selection<any> = this.main
                 .select(TornadoChart.Axes.selectorName)
                 .selectAll(TornadoChart.Axis.selectorName);
 
@@ -957,11 +850,10 @@ export class TornadoChart implements IVisual {
             return;
         }
 
-        linesData = this.generateAxesData();
+        const linesData: LineData[] = this.generateAxesData();
+        const axesSelection: Selection<any> = axesElements.data(linesData);
 
-        axesSelection = axesElements.data(linesData);
-
-        let axesSelectionMerged = axesSelection
+        const axesSelectionMerged = axesSelection
             .enter()
             .append("svg:line")
             .merge(axesSelection);
@@ -982,13 +874,9 @@ export class TornadoChart implements IVisual {
     }
 
     private generateAxesData(): LineData[] {
-        let x: number,
-            y1: number,
-            y2: number;
-
-        x = this.allColumnsWidth / 2;
-        y1 = 0;
-        y2 = this.scrolling.scrollViewport.height;
+        const x: number = this.allColumnsWidth / 2,
+            y1: number = 0,
+            y2: number = TornadoChart.calculateRootHeight(this.dataView.dataPoints);
 
         return [{
             x1: x,
@@ -998,24 +886,30 @@ export class TornadoChart implements IVisual {
         }];
     }
 
-    private renderLabels(dataPoints: TornadoChartPoint[], labelsSettings: VisualDataLabelsSettings): void {
-        let labelSelectionMerged: Selection<TornadoChartPoint>,
-            labelSelection: Selection<TornadoChartPoint> = this.main
+    private renderLabels(dataPoints: TornadoChartPoint[], labelsSettings: DataLabelSettings): void {
+        const labelSelection: Selection<TornadoChartPoint> = this.main
                 .select(TornadoChart.Labels.selectorName)
                 .selectAll(TornadoChart.Label.selectorName)
                 .data(dataPoints.filter((p: TornadoChartPoint) => p.label.dx >= 0));
+        const formattingSettings: TornadoChartSettingsModel = this.formattingSettings;
 
         // Check if labels can be displayed
-        if (!labelsSettings.show || this.dataView.labelHeight >= this.heightColumn) {
+        if (!labelsSettings.show.value || this.dataView.labelHeight >= this.heightColumn) {
             this.labels.selectAll("*").remove();
             return;
         }
 
-        let fontSizeInPx: string = PixelConverter.fromPoint(labelsSettings.fontSize);
-        let labelYOffset: number = this.heightColumn / 2 + this.dataView.labelHeight / 2 - this.InnerTextHeightDelta;
-        let categoriesLength: number = this.dataView.categories.length;
+        const fontSizeInPx: string = PixelConverter.fromPoint(labelsSettings.font.fontSize.value);
+        const labelYOffset: number = this.heightColumn / 2 + this.dataView.labelHeight / 2 - this.InnerTextHeightDelta;
+        const categoriesLength: number = this.dataView.categories.length;
 
-        labelSelectionMerged = labelSelection
+        const labelFontFamily : string = formattingSettings.dataLabelsSettings.font.fontFamily.value;
+
+        const labelFontIsBold : boolean = formattingSettings.dataLabelsSettings.font.bold.value,
+            labelFontIsItalic : boolean = formattingSettings.dataLabelsSettings.font.italic.value,
+            labelFontIsUnderlined : boolean = formattingSettings.dataLabelsSettings.font.underline.value;
+
+        const labelSelectionMerged: Selection<TornadoChartPoint> = labelSelection
             .enter()
             .append("g")
             .merge(labelSelection);
@@ -1039,15 +933,20 @@ export class TornadoChart implements IVisual {
 
         labelSelectionMerged
             .attr("transform", (p: TornadoChartPoint, index: number) => {
-                let dy: number = (this.heightColumn + this.columnPadding) * (index % categoriesLength);
+                const dy: number = (this.heightColumn + this.columnPadding) * (index % categoriesLength);
                 return translate(p.label.dx, dy + labelYOffset);
             });
 
         labelSelectionMerged
             .select(TornadoChart.LabelText.selectorName)
-            .attr("fill", (p: TornadoChartPoint) => p.label.color)
+            .attr("fill", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getHighContrastColor("foreground", p.color) : p.label.color)
             .attr("font-size", fontSizeInPx)
-            .text((p: TornadoChartPoint) => p.label.value);
+            .attr("font-family", labelFontFamily)
+            .attr("font-weight", labelFontIsBold ? "bold" : "normal")
+            .attr("font-style", labelFontIsItalic ? "italic" : "normal")
+            .attr("text-decoration", labelFontIsUnderlined? "underline" : "normal")
+            .text((p: TornadoChartPoint) => p.label.value)
+            .attr("role", "presentation");
 
         labelSelection
             .exit()
@@ -1055,23 +954,28 @@ export class TornadoChart implements IVisual {
     }
 
     private renderCategories(): void {
-        let settings: TornadoChartSettings = this.dataView.settings,
-            color: string = settings.categoriesFillColor,
-            fontSizeInPx: string = PixelConverter.fromPoint(settings.categoriesFontSize),
-            position: string = dataViewObject.getValue(this.dataView.categoriesObjectProperties, "position", legendPosition.left),
-            categoriesSelectionMerged: Selection<any>,
-            categoriesSelection: Selection<any>,
+        const formattingSettings: TornadoChartSettingsModel = this.formattingSettings,
+            color: string = formattingSettings.categoryCardSettings.fill.value.value,
+            fontSizeInPx: string = PixelConverter.fromPoint( formattingSettings.categoryCardSettings.font.fontSize.value),
+            position: string = this.formattingSettings.categoryCardSettings.positionDropdown.value.value.toString(),
+
             categoryElements: Selection<any> = this.main
                 .select(TornadoChart.Categories.selectorName)
                 .selectAll(TornadoChart.Category.selectorName);
+        
+        const categoryFontFamily : string = formattingSettings.categoryCardSettings.font.fontFamily.value;
 
-        if (!settings.showCategories) {
+        const categoryFontIsBold : boolean = formattingSettings.categoryCardSettings.font.bold.value,
+            categoryFontIsItalic : boolean = formattingSettings.categoryCardSettings.font.italic.value,
+            categoryFontIsUnderlined : boolean = formattingSettings.categoryCardSettings.font.underline.value;
+
+        if (!formattingSettings.categoryCardSettings.show.value) {
             categoryElements.remove();
             return;
         }
-        categoriesSelection = categoryElements.data(this.dataView.categories);
+        const categoriesSelection: Selection<any> = categoryElements.data(this.dataView.categories);
 
-        categoriesSelectionMerged = categoriesSelection
+        const categoriesSelectionMerged: Selection<any> = categoriesSelection
             .enter()
             .append("g")
             .merge(categoriesSelection);
@@ -1087,14 +991,13 @@ export class TornadoChart implements IVisual {
         let xShift: number = 0;
 
         if (position === "Right") {
-            let width: number = this.viewport.width + this.margin.left + this.margin.right;
-            xShift = width - this.allLabelsWidth;
+            xShift = this.viewportWidth - this.allLabelsWidth + TornadoChart.CategoryLabelMargin;
         }
 
         categoriesSelectionMerged
             .attr("transform", (text: string, index: number) => {
-                let shift: number = (this.heightColumn + this.columnPadding) * index + this.heightColumn / 2,
-                    textData: TextData = TornadoChart.getTextData(text, this.textOptions, false, true);
+                let shift: number = (this.heightColumn + this.columnPadding) * index + this.heightColumn / 2;
+                const textData: TextData = TornadoChart.getTextData(text, this.formattingSettings.categoryCardSettings.font, false, true, true);
 
                 shift = shift + textData.height / 2 - this.InnerTextHeightDelta;
 
@@ -1108,11 +1011,16 @@ export class TornadoChart implements IVisual {
 
         categoriesSelectionMerged
             .select(TornadoChart.CategoryText.selectorName)
-            .attr("fill", color)
+            .attr("fill", this.colorHelper.isHighContrast ? this.colorHelper.getHighContrastColor("foreground", color) : color)
             .attr("font-size", fontSizeInPx)
-            .text((data: TextData) => this.dataView.settings.showCategories
+            .attr("font-family", categoryFontFamily)
+            .attr("font-weight", categoryFontIsBold ? "bold" : "normal")
+            .attr("font-style", categoryFontIsItalic ? "italic" : "normal")
+            .attr("text-decoration", categoryFontIsUnderlined? "underline" : "normal")
+            .attr("dy", "0.25em")
+            .text((data: TextData) => formattingSettings.categoryCardSettings.show.value
                 ? textMeasurementService.getTailoredTextOrDefault(
-                    TornadoChart.getTextData(data.text, this.textOptions).textProperties, this.allLabelsWidth)
+                    TornadoChart.getTextData(data.text, this.formattingSettings.categoryCardSettings.font, false, true).textProperties, this.allLabelsWidth)
                 : "");
 
         categoriesSelection
@@ -1121,41 +1029,42 @@ export class TornadoChart implements IVisual {
     }
 
     private renderLegend(): void {
-        let settings: TornadoChartSettings = this.dataView.settings;
-        if (settings.showLegend) {
+        const formattingSettings: TornadoChartSettingsModel = this.formattingSettings;
+        if (formattingSettings.legendCardSettings.show.value) {
 
-            let legend: LegendData = this.dataView.legend;
+            const legend: LegendData = this.dataView.legend;
             if (!legend) {
                 return;
             }
-            let legendData: LegendData = {
+
+            const legendLabelsColor: string = formattingSettings.legendCardSettings.labelColor.value.value;
+            const legendData: LegendData = {
                 title: legend.title,
                 dataPoints: legend.dataPoints,
-                fontSize: settings.legendFontSize,
-                labelColor: settings.legendColor
+                fontSize: formattingSettings.legendCardSettings.font.fontSize.value,
+                fontFamily: formattingSettings.legendCardSettings.font.fontFamily.value,
+                labelColor: this.colorHelper.isHighContrast ? this.colorHelper.getHighContrastColor("foreground", legendLabelsColor) : legendLabelsColor
             };
 
             if (this.dataView.legendObjectProperties) {
-                let position: string;
                 LegendDataModule.update(legendData, this.dataView.legendObjectProperties);
 
-                position = <string>this.dataView.legendObjectProperties[legendProps.position];
+                const position = this.formattingSettings.legendCardSettings.positionDropdown.value.value;
 
                 if (position) {
                     this.legend.changeOrientation(LegendPosition[position]);
                 }
             }
 
-            // Draw the legend on a viewport with the original height and width
-            let viewport: IViewport = {
-                height: this.viewport.height + this.margin.top + this.margin.bottom,
-                width: this.viewport.width + this.margin.left + this.margin.right,
-            };
-
             this.legend.drawLegend(legendData, { ...this.viewport });
-            LegendModule.positionChartArea(this.root, this.legend);
+            this.legendItems = this.legendSelection.selectAll(TornadoChart.LegendItemSelector.selectorName);
 
-            if (legendData.dataPoints.length > 0 && settings.showLegend) {
+            this.legendSelection.selectAll("text")
+                .style("font-weight",  () => this.formattingSettings.legendCardSettings.font.bold.value ? "bold" : "normal")
+                .style("font-style",  () => this.formattingSettings.legendCardSettings.font.italic.value ? "italic" : "normal")
+                .style("text-decoration", () => this.formattingSettings.legendCardSettings.font.underline.value ? "underline" : "none");
+
+            if (legendData.dataPoints.length > 0 && formattingSettings.legendCardSettings.show.value) {
                 this.updateViewport();
             }
         }
@@ -1163,168 +1072,39 @@ export class TornadoChart implements IVisual {
             this.legend.reset();
             this.legend.drawLegend({ dataPoints: [] }, this.viewport);
         }
+        TornadoChart.SetPositionsDependingOnLegend(this.rootContainer, formattingSettings.legendCardSettings, this.legend);
     }
 
-    public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
-        let settings: TornadoChartSettings;
+    public static SetPositionsDependingOnLegend(chartArea: HTMLElement, legendSettings: LegendCardSettings, legend: ILegend): void{
+        const legendMargin: IViewport = legend.getMargins();
 
-        if (!this.dataView ||
-            !this.dataView.settings) {
-            return [];
+        if (!legendSettings.topLevelSlice.value){
+            chartArea.style.inset = `0px 0px 20px 0px`;
+            return;
         }
 
-        settings = this.dataView.settings;
-
-        switch (options.objectName) {
-            case "dataPoint": {
-                return this.enumerateDataPoint();
+        switch (legendSettings.positionDropdown.value.value){
+            case LegendPosition[LegendPosition.Top]:
+            case LegendPosition[LegendPosition.TopCenter]: {
+                chartArea.style.inset = `${legendMargin.height}px 0px 20px 0px`;
+                break;
             }
-            case "categoryAxis": {
-                return this.enumerateCategoryAxis();
+            case LegendPosition[LegendPosition.Bottom]:
+            case LegendPosition[LegendPosition.BottomCenter]: {
+                chartArea.style.inset = `0px 0px ${legendMargin.height + 20}px 0px`;
+                break;
             }
-            case "labels": {
-                return this.enumerateLabels(settings);
+            case LegendPosition[LegendPosition.Right]:
+            case LegendPosition[LegendPosition.RightCenter]: {
+                chartArea.style.inset = `0px 0px 20px 0px`;
+                break;
             }
-            case "legend": {
-                if (!this.dataView.hasDynamicSeries) {
-                    return [];
-                }
-
-                return this.enumerateLegend(settings);
-            }
-            case "categories": {
-                return this.enumerateCategories(settings);
-            }
-            default: {
-                return [];
+            case LegendPosition[LegendPosition.Left]:
+            case LegendPosition[LegendPosition.LeftCenter]: {
+                chartArea.style.inset = `0px 0px 20px ${legendMargin.width}px`;
+                break;
             }
         }
-    }
-
-    private enumerateDataPoint(): VisualObjectInstance[] {
-        if (!this.dataView ||
-            !this.dataView.series) {
-            return [];
-        }
-
-        let instances: VisualObjectInstance[] = [];
-
-        for (let series of this.dataView.series) {
-            instances.push({
-                objectName: "dataPoint",
-                displayName: series.name,
-                selector: ColorHelper.normalizeSelector(
-                    (<ISelectionId>series.selectionId).getSelector(),
-                    false),
-                properties: {
-                    fill: { solid: { color: series.fill } }
-                }
-            });
-        }
-
-        return instances;
-    }
-
-    private enumerateCategoryAxis(): VisualObjectInstance[] {
-        if (!this.dataView || !this.dataView.series) {
-            return [];
-        }
-
-        let series: TornadoChartSeries[] = this.dataView.series;
-        let instances: VisualObjectInstance[] = [];
-
-        for (let series of this.dataView.series) {
-            instances.push({
-                objectName: "categoryAxis",
-                displayName: series.name,
-                selector: ColorHelper.normalizeSelector(
-                    (<ISelectionId>series.selectionId).getSelector(),
-                    false),
-                properties: {
-                    end: series.categoryAxisEnd,
-                }
-            });
-        }
-
-        return instances;
-    }
-
-    private enumerateLabels(settings: TornadoChartSettings): VisualObjectInstance[] {
-        let labelSettings: VisualDataLabelsSettings = settings.labelSettings,
-            labels: VisualObjectInstance[] = [{
-                objectName: "labels",
-                displayName: this.localizationManager.getDisplayName(VisualizationText.Labels),
-                selector: null,
-                properties: {
-                    show: labelSettings.show,
-                    fontSize: labelSettings.fontSize,
-                    labelPrecision: labelSettings.precision,
-                    labelDisplayUnits: labelSettings.displayUnits,
-                    insideFill: labelSettings.labelColor,
-                    outsideFill: settings.labelOutsideFillColor
-                }
-            }];
-
-        return labels;
-    }
-
-    private enumerateCategories(settings: TornadoChartSettings): VisualObjectInstance[] {
-        let position: string = dataViewObject.getValue<string>(
-            this.dataView.categoriesObjectProperties,
-            legendProps.position,
-            legendPosition.left
-        );
-
-        return [{
-            objectName: "categories",
-            displayName: this.localizationManager.getDisplayName(VisualizationText.Categories),
-            selector: null,
-            properties: {
-                show: settings.showCategories,
-                fill: settings.categoriesFillColor,
-                fontSize: settings.categoriesFontSize,
-                position,
-            }
-        }];
-    }
-
-    private enumerateLegend(settings: TornadoChartSettings): VisualObjectInstance[] {
-
-        let showTitle: boolean = true,
-            titleText: string = "",
-            legend: VisualObjectInstance[],
-            position: string;
-
-        showTitle = dataViewObject.getValue<boolean>(
-            this.dataView.legendObjectProperties,
-            legendProps.showTitle,
-            showTitle);
-
-        titleText = dataViewObject.getValue<string>(
-            this.dataView.legendObjectProperties,
-            legendProps.titleText,
-            titleText);
-
-        position = dataViewObject.getValue<string>(
-            this.dataView.legendObjectProperties,
-            legendProps.position,
-            legendPosition.top);
-
-        legend = [{
-            objectName: "legend",
-            displayName: this.localizationManager.getDisplayName(VisualizationText.Legend),
-            selector: null,
-            properties: {
-                show: settings.showLegend,
-                position: position,
-                showTitle: showTitle,
-                titleText: titleText,
-                fontSize: settings.legendFontSize,
-                labelColor: settings.legendColor,
-            }
-        }];
-
-        return legend;
     }
 
     public destroy(): void {

@@ -24,14 +24,40 @@
  *  THE SOFTWARE.
  */
 
-export module tornadoChartUtils {
-    export const DimmedOpacity: number = 0.4;
-    export const DefaultOpacity: number = 1.0;
+export class TornadoChartUtils {
+    static DimmedOpacity: number = 0.4;
+    static DefaultOpacity: number = 1.0;
+    static DimmedColor: string = "#A6A6A6";
 
-    export function getOpacity(selected: boolean, highlight: boolean, hasSelection: boolean, hasPartialHighlights: boolean): number {
-        if ((hasPartialHighlights && !highlight) || (hasSelection && !selected)) {
-            return DimmedOpacity;
+    static getOpacity(selected: boolean, highlight: boolean, hasSelection: boolean, isHCM: boolean): number {
+        if (!highlight && hasSelection && !selected && isHCM) {
+            return TornadoChartUtils.DimmedOpacity;
         }
-        return DefaultOpacity;
+        return TornadoChartUtils.DefaultOpacity;
+    }
+
+    static getLegendFillOpacity(
+        selected: boolean,
+        hasSelection: boolean,
+        isHCM: boolean): number {
+    
+        if ((hasSelection && !selected) && isHCM) {
+            return TornadoChartUtils.DimmedOpacity;
+        }
+    
+        return TornadoChartUtils.DefaultOpacity;
+    }
+    
+    static getLegendFill(
+        selected: boolean,
+        hasSelection: boolean,
+        defaultColor: string,
+        isHCM: boolean): string {
+    
+        if ((hasSelection && !selected) && !isHCM) {
+            return TornadoChartUtils.DimmedColor;
+        }
+    
+        return defaultColor;
     }
 }

@@ -34,6 +34,7 @@ import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
 import { TornadoChart as VisualClass } from "../src/TornadoChart";
 import { TornadoChartSeries, TornadoChartDataView } from "../src/interfaces";
 import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualConstructorOptions;
+import { TornadoChartSettingsModel } from "../src/TornadoChartSettingsModel";
 
 export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
     constructor(width: number, height: number) {
@@ -44,54 +45,68 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
         return new VisualClass(options);
     }
 
-    public get mainElement(): JQuery {
-        return this.element.children("svg.tornado-chart");
+    public get instance(): VisualClass {
+        return this.visual;
     }
 
-    public get scrollable(): JQuery {
-        return this.element
-            .children("svg.tornado-chart")
-            .children("g");
+    public get mainElement(): SVGElement {
+        return this.element.querySelector("svg.tornado-chart")!;
+    }
+    
+    public get scrollable(): NodeListOf<HTMLElement> {
+        return this.element.querySelectorAll("svg.tornado-chart g");
+    }
+    public get scrollbar(): NodeListOf<HTMLElement> {
+        return this.mainElement.querySelectorAll("g.y.brush");
+    }
+    
+    public get scrollbarRect(): NodeListOf<HTMLElement> {
+        return this.scrollbar[0].querySelectorAll("rect.selection");
+    }
+    
+    public get categories(): NodeListOf<HTMLElement> {
+        return this.scrollable[0].querySelectorAll("g.categories g.category");
+    }
+    
+    public get categoryText(): NodeListOf<HTMLElement> {
+        return this.categories[0].querySelectorAll("text.category-text");
+    }
+    
+    public get axis(): NodeListOf<HTMLElement> {
+        return this.scrollable[0].querySelectorAll("g.axes > line.axis");
     }
 
-    public get scrollbar(): JQuery {
-        return this.mainElement.children("g.y.brush");
+    public get column(): HTMLElement {
+        return this.scrollable[0].querySelector("g.columns");
     }
 
-    public get scrollbarRect(): JQuery {
-        return this.scrollbar.children("rect.selection");
+    public get columns(): NodeListOf<HTMLElement> {
+        return this.scrollable[0].querySelectorAll("g.columns rect.column");
     }
 
-    public get categories(): JQuery {
-        return this.scrollable
-            .children("g.categories")
-            .children("g.category");
+    public get columnsDefs(): HTMLElement {
+        return this.scrollable[0].querySelector("g.columns defs");
     }
 
-    public get categoryText(): JQuery {
-        return this.categories.children("text.category-text");
+    public get gradients(): NodeListOf<SVGElement> {
+        return this.columnsDefs.querySelectorAll("linearGradient");
+    }
+    
+    public get labels(): NodeListOf<HTMLElement> {
+        return this.scrollable[0].querySelectorAll("g.labels > g.label");
+    }
+    
+    public get labelText(): NodeListOf<HTMLElement> {
+        return this.labels[0].querySelectorAll("text.label-text");
     }
 
-    public get axis(): JQuery {
-        return this.scrollable
-            .children("g.axes")
-            .children("line.axis");
-    }
+    public get selectedColumns(): Element[] {
+        return Array.from(this.gradients).filter((element: SVGElement) => {
+            const stopElement: SVGElement = element.querySelector("stop");
+            const appliedOffset: string = stopElement.getAttribute("offset");
 
-    public get columns(): JQuery {
-        return this.scrollable
-            .children("g.columns")
-            .children("rect.column");
-    }
-
-    public get labels(): JQuery {
-        return this.scrollable
-            .children("g.labels")
-            .children("g.label");
-    }
-
-    public get labelText(): JQuery {
-        return this.labels.children("text.label-text");
+            return appliedOffset === "100%";
+        });
     }
 
     public parseSeries(
@@ -101,7 +116,7 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
         isGrouped: boolean,
         columnGroup: DataViewValueColumnGroup): TornadoChartSeries {
 
-        return VisualClass.PARSE_SERIES(
+        return VisualClass.parseSeries(
             dataView,
             dataViewValueColumns,
             this.visualHost,
@@ -111,13 +126,13 @@ export class TornadoChartBuilder extends VisualBuilderBase<VisualClass> {
             this.visual.colors);
     }
 
-    public converter(dataView: DataView): TornadoChartDataView {
-        return VisualClass.CONVERTER(
+    public converter(dataView: DataView, formattingSettings: TornadoChartSettingsModel): TornadoChartDataView {
+        return VisualClass.converter(
             dataView,
             this.visualHost,
-            this.visual.textOptions,
             this.visual.colors,
-            this.visualHost.createLocalizationManager()
+            this.visualHost.createLocalizationManager(),
+            formattingSettings
         );
     }
 }
