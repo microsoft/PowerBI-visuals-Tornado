@@ -1029,27 +1029,27 @@ export class TornadoChart implements IVisual {
     }
 
     private renderLegend(): void {
-        const formattingSettings: TornadoChartSettingsModel = this.formattingSettings;
-        if (formattingSettings.legendCardSettings.show.value) {
+        const legendSettings: LegendCardSettings = this.formattingSettings.legendCardSettings;
+        if (legendSettings.show.value) {
 
             const legend: LegendData = this.dataView.legend;
             if (!legend) {
                 return;
             }
 
-            const legendLabelsColor: string = formattingSettings.legendCardSettings.labelColor.value.value;
+            const legendLabelsColor: string = legendSettings.labelColor.value.value;
             const legendData: LegendData = {
                 title: legend.title,
                 dataPoints: legend.dataPoints,
-                fontSize: formattingSettings.legendCardSettings.font.fontSize.value,
-                fontFamily: formattingSettings.legendCardSettings.font.fontFamily.value,
+                fontSize: legendSettings.font.fontSize.value,
+                fontFamily: legendSettings.font.fontFamily.value,
                 labelColor: this.colorHelper.isHighContrast ? this.colorHelper.getHighContrastColor("foreground", legendLabelsColor) : legendLabelsColor
             };
 
             if (this.dataView.legendObjectProperties) {
                 LegendDataModule.update(legendData, this.dataView.legendObjectProperties);
 
-                const position = this.formattingSettings.legendCardSettings.positionDropdown.value.value;
+                const position = legendSettings.positionDropdown.value.value;
 
                 if (position) {
                     this.legend.changeOrientation(LegendPosition[position]);
@@ -1057,14 +1057,8 @@ export class TornadoChart implements IVisual {
             }
 
             this.legend.drawLegend(legendData, { ...this.viewport });
-            this.legendItems = this.legendSelection.selectAll(TornadoChart.LegendItemSelector.selectorName);
 
-            this.legendSelection.selectAll("text")
-                .style("font-weight",  () => this.formattingSettings.legendCardSettings.font.bold.value ? "bold" : "normal")
-                .style("font-style",  () => this.formattingSettings.legendCardSettings.font.italic.value ? "italic" : "normal")
-                .style("text-decoration", () => this.formattingSettings.legendCardSettings.font.underline.value ? "underline" : "none");
-
-            if (legendData.dataPoints.length > 0 && formattingSettings.legendCardSettings.show.value) {
+            if (legendData.dataPoints.length > 0 && legendSettings.show.value) {
                 this.updateViewport();
             }
         }
@@ -1072,7 +1066,15 @@ export class TornadoChart implements IVisual {
             this.legend.reset();
             this.legend.drawLegend({ dataPoints: [] }, this.viewport);
         }
-        TornadoChart.SetPositionsDependingOnLegend(this.rootContainer, formattingSettings.legendCardSettings, this.legend);
+
+        this.legendItems = this.legendSelection.selectAll(TornadoChart.LegendItemSelector.selectorName);
+
+        this.legendSelection.selectAll("text")
+            .style("font-weight",  () => legendSettings.font.bold.value ? "bold" : "normal")
+            .style("font-style",  () => legendSettings.font.italic.value ? "italic" : "normal")
+            .style("text-decoration", () => legendSettings.font.underline.value ? "underline" : "none");
+
+        TornadoChart.SetPositionsDependingOnLegend(this.rootContainer, legendSettings, this.legend);
     }
 
     public static SetPositionsDependingOnLegend(chartArea: HTMLElement, legendSettings: LegendCardSettings, legend: ILegend): void{

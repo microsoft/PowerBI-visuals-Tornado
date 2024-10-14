@@ -1,4 +1,7 @@
 
+## 3.0.5.0
+* Fix bug with empty columns gradient when legend is disabled
+
 ## 3.0.4.0
 * Use selectionManager instead of interactivity utils
 * Add interactivity to legend
