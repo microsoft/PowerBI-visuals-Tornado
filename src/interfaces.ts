@@ -129,6 +129,7 @@ export interface TornadoBehaviorOptions {
     legendClearCatcher: Selection<any>;
     tooltipArgs: TooltipArgsWrapper;
     gradients: Selection<TornadoChartPoint>;
+    isFormatMode: boolean;
 }
 
 export interface TooltipCategoryDataItem {

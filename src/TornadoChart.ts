@@ -50,15 +50,19 @@ import DataViewMetadataColumn = powerbiVisualsApi.DataViewMetadataColumn;
 import DataViewCategoryColumn = powerbiVisualsApi.DataViewCategoryColumn;
 import DataViewValueColumnGroup = powerbiVisualsApi.DataViewValueColumnGroup;
 import PrimitiveValue = powerbiVisualsApi.PrimitiveValue;
+import VisualUpdateType = powerbiVisualsApi.VisualUpdateType;
 
 import IColorPalette = powerbiVisualsApi.extensibility.IColorPalette;
 import ILocalizationManager = powerbiVisualsApi.extensibility.ILocalizationManager;
-import VisualUpdateOptions = powerbiVisualsApi.extensibility.visual.VisualUpdateOptions;
-import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualConstructorOptions;
+import IVisualEventService = powerbi.extensibility.IVisualEventService;
 
 import IVisual = powerbiVisualsApi.extensibility.visual.IVisual;
 import IVisualHost = powerbiVisualsApi.extensibility.visual.IVisualHost;
+import VisualUpdateOptions = powerbiVisualsApi.extensibility.visual.VisualUpdateOptions;
+import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualConstructorOptions;
+
 import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
+import CustomVisualSubSelection = powerbi.visuals.CustomVisualSubSelection;
 
 import { dataViewObjects } from "powerbi-visuals-utils-dataviewutils";
 
@@ -103,7 +107,7 @@ import {
 import { TornadoWebBehavior } from "./TornadoWebBehavior";
 import * as tooltipBuilder from "./tooltipBuilder";
 import { TornadoChartSettingsModel, DataLabelSettings, LegendCardSettings, BaseFontControlSettings, FontDefaultOptions} from "./TornadoChartSettingsModel";
-import IVisualEventService = powerbi.extensibility.IVisualEventService;
+import { TornadoOnObjectService } from "./onObject/TornadoOnObjectService";
 
 export class TornadoChart implements IVisual {
     private static ClassName: string = "tornado-chart";
@@ -142,10 +146,12 @@ export class TornadoChart implements IVisual {
         }
     };
 
-    private formattingSettingsService: FormattingSettingsService;
-    public formattingSettings: TornadoChartSettingsModel;
     private tooltipArgs: TooltipArgsWrapper;
     private events: IVisualEventService;
+
+    private formattingSettingsService: FormattingSettingsService;
+    public formattingSettings: TornadoChartSettingsModel;
+    public visualOnObjectFormatting: TornadoOnObjectService;
 
     public getFormattingModel(): powerbi.visuals.FormattingModel {
         return this.formattingSettingsService.buildFormattingModel(this.formattingSettings);
@@ -447,6 +453,7 @@ export class TornadoChart implements IVisual {
 
     constructor(options: VisualConstructorOptions) {
         this.hostService = options.host;
+        this.events = options.host.eventService;
         this.localizationManager = this.hostService.createLocalizationManager();
         this.colors = options.host.colorPalette;
         this.colorHelper = new ColorHelper(this.colors);
@@ -459,7 +466,7 @@ export class TornadoChart implements IVisual {
         this.behavior = new TornadoWebBehavior(selectionManager, this.colorHelper);
 
         this.formattingSettingsService = new FormattingSettingsService(this.localizationManager);
-        this.events = options.host.eventService;
+        this.visualOnObjectFormatting = new TornadoOnObjectService(options.element, options.host, this.localizationManager);
 
         this.element = d3Select(options.element);
         this.rootContainer = document.createElement("div");
@@ -533,7 +540,8 @@ export class TornadoChart implements IVisual {
         this.formattingSettings.populateCategoryAxisSlice(this.dataView.series);
         this.formattingSettings.setVisibilityOfLegendCardSettings(this.dataView.legend);
         
-        this.render();
+        this.render(options.formatMode);
+        this.applyOnObjectFormatting(options.formatMode, options.type, options.subSelections);
         this.events.renderingFinished(options);
     }
 
@@ -609,20 +617,33 @@ export class TornadoChart implements IVisual {
         };
     }
 
-    private render(): void {
+    private render(isFormatMode: boolean): void {
         this.renderLegend();
         this.renderWithScrolling();
-        this.bindBehaviorToVisual();
+        this.bindBehaviorToVisual(isFormatMode);
     }
 
-    private bindBehaviorToVisual(): void {
+    private applyOnObjectFormatting(isFormatMode: boolean, updateType: VisualUpdateType, subSelections?: CustomVisualSubSelection[]): void{
+        this.visualOnObjectFormatting.setFormatMode(isFormatMode);
+
+        const shouldUpdateSubSelection = updateType & (powerbi.VisualUpdateType.Data
+            | powerbi.VisualUpdateType.Resize
+            | powerbi.VisualUpdateType.FormattingSubSelectionChange);
+
+        if (isFormatMode && shouldUpdateSubSelection) {
+            this.visualOnObjectFormatting.updateOutlinesFromSubSelections(subSelections, true);
+        }
+    }
+
+    private bindBehaviorToVisual(isFormatMode: boolean): void {
         const behaviorOptions: TornadoBehaviorOptions = {
             columns: this.columnsSelection,
             clearCatcher: this.root,
             tooltipArgs: this.tooltipArgs,
             legend: this.legendItems,
             legendClearCatcher: this.legendSelection,
-            gradients: this.gradients
+            gradients: this.gradients,
+            isFormatMode,
         };
         this.behavior.bindEvents(behaviorOptions);
         this.behavior.renderSelection();
