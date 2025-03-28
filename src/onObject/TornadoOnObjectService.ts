@@ -13,6 +13,9 @@ import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
 import { select as d3Select } from "d3-selection";
 import { HtmlSubSelectionHelper, SubSelectableObjectNameAttribute } from "powerbi-visuals-utils-onobjectutils";
 
+import { TornadoObjectNames } from "../TornadoChartSettingsModel";
+import { SubSelectionStylesService, SubSelectionShortcutsService } from "./helperServices";
+
 export class TornadoOnObjectService implements VisualOnObjectFormatting {
     private localizationManager: ILocalizationManager;
     private htmlSubSelectionHelper: HtmlSubSelectionHelper;
@@ -43,7 +46,8 @@ export class TornadoOnObjectService implements VisualOnObjectFormatting {
         const visualObject = subSelections[0]?.customVisualObjects[0];
         if (visualObject) {
             switch (visualObject.objectName) {
-                default: return undefined;
+                case TornadoObjectNames.Legend:
+                    return SubSelectionStylesService.GetLegendStyles();
             }
         }
     }
@@ -52,7 +56,10 @@ export class TornadoOnObjectService implements VisualOnObjectFormatting {
         const visualObject = subSelections[0]?.customVisualObjects[0];
         if (visualObject) {
             switch (visualObject.objectName) {
-                default: return undefined;
+                case TornadoObjectNames.Legend:
+                    return SubSelectionShortcutsService.GetLegendShortcuts(this.localizationManager);
+                case TornadoObjectNames.LegendTitle:
+                    return SubSelectionShortcutsService.GetLegendTitleShortcuts(this.localizationManager);
             }
         }
     }

@@ -7,11 +7,17 @@ import LegendPosition = legendInterfaces.LegendPosition;
 import { TornadoChartSeries } from "./interfaces"
 
 import Card = formattingSettings.SimpleCard;
+import CompositeCard = formattingSettings.CompositeCard;
 import Model = formattingSettings.Model;
 
 import IEnumMember = powerbi.IEnumMember;
 import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
 import { LegendData } from "powerbi-visuals-utils-chartutils/lib/legend/legendInterfaces";
+
+export const enum TornadoObjectNames {
+    Legend = "legend",
+    LegendTitle = "legendTitle",
+}
 
 class DataColorCardSettings extends Card {
     fill = new formattingSettings.ColorPicker({
@@ -114,53 +120,136 @@ const positionOptions : IEnumMemberWithDisplayNameKey[] = [
     {value : LegendPosition[LegendPosition.RightCenter], displayName : "Right Center", key: "Visual_Legend_Position_Right_Center"}, 
 ];
 
-export class LegendCardSettings extends Card {
-    show = new formattingSettings.ToggleSwitch({
-        name: "show",
-        displayName: "Show",
-        displayNameKey: "Visual_Show",
-        value: true,
-    });
-    
-    topLevelSlice? = this.show;
+class BaseFontCardSettings extends formattingSettings.FontControl {
+    private static fontFamilyName: string = "fontFamily";
+    private static fontSizeName: string = "fontSize";
+    private static boldName: string = "fontBold";
+    private static italicName: string = "fontItalic";
+    private static underlineName: string = "fontUnderline";
+    private static fontName: string = "font";
+    public static defaultFontFamily: string = "wf_standard-font, helvetica, arial, sans-serif";
+    public static minFontSize: number = 8;
+    public static maxFontSize: number = 60;
+    constructor(defaultFontSize: number, settingName: string = ""){
+        super(
+            new formattingSettings.FontControl({
+                name: BaseFontCardSettings.fontName + settingName,
+                displayNameKey: "Visual_FontControl",
+                fontFamily: new formattingSettings.FontPicker({
+                    name: BaseFontCardSettings.fontFamilyName + settingName,
+                    value: BaseFontCardSettings.defaultFontFamily
+                }),
+                fontSize: new formattingSettings.NumUpDown({
+                    name: BaseFontCardSettings.fontSizeName + settingName,
+                    displayNameKey: "Visual_FontSize",
+                    value: defaultFontSize,
+                    options: {
+                        minValue: {
+                            type: powerbi.visuals.ValidatorType.Min,
+                            value: BaseFontCardSettings.minFontSize
+                        },
+                        maxValue: {
+                            type: powerbi.visuals.ValidatorType.Max,
+                            value: BaseFontCardSettings.maxFontSize
+                        }
+                    }
+                }),
+                bold: new formattingSettings.ToggleSwitch({
+                    name: BaseFontCardSettings.boldName + settingName,
+                    value: false
+                }),
+                italic: new formattingSettings.ToggleSwitch({
+                    name: BaseFontCardSettings.italicName + settingName,
+                    value: false
+                }),
+                underline: new formattingSettings.ToggleSwitch({
+                    name: BaseFontCardSettings.underlineName + settingName,
+                    value: false
+                })
+            })
+        );
+    }
+}
 
-    positionDropdown = new formattingSettings.ItemDropdown({
+class LegendOptionsGroup extends Card {
+    public defaultPosition: IEnumMember = positionOptions[0];
+
+    public position = new formattingSettings.ItemDropdown({
+        name: "position",
+        displayNameKey: "Visual_Position",
         items: positionOptions,
-        value: positionOptions[0],
-        displayName: "Position",
-        displayNameKey: "Visual_Legend_Position",
-        name: "position"
+        value: this.defaultPosition,
     });
 
-    showTitle = new formattingSettings.ToggleSwitch({
-        name: "showTitle",
-        displayName: "Title",
-        displayNameKey: "Visual_Title",
-        value: true,
-    });
+    name: string = "legendOptions";
+    displayName: string = "Options";
+    displayNameKey: string = "Visual_Options";
+    slices = [this.position];
+}
 
-    font: formattingSettings.FontControl = new BaseFontControlSettings(8);
+class LegendTextGroup extends Card {
+    public defaultLabelColor: string = "#000000";
+    public defaultFontSize: number = 8;
 
-    titleText = new formattingSettings.TextInput({
-        placeholder: "",
-        value: "",
-        displayName: "Legend Name",
-        displayNameKey: "Visual_Legend_Name",
-        name: "titleText"
-    });
-
-    labelColor = new formattingSettings.ColorPicker({
+    public labelColor = new formattingSettings.ColorPicker({
         name: "labelColor",
-        displayName: "Color",
-        displayNameKey: "Visual_Legend_Color",
-        value: { value: "#666666" }
+        displayNameKey: "Visual_LabelColor",
+        value: { value: this.defaultLabelColor },
     });
 
-    name: string = "legend";
-    visible?: boolean = false;
-    displayName: string = "Legend";
-    displayNameKey: string = "Visual_Legend";
-    slices = [this.positionDropdown, this.showTitle, this.titleText, this.font, this.labelColor];
+    public font = new BaseFontCardSettings(this.defaultFontSize);
+
+    name: string = "legendText";
+    displayName: string = "Text";
+    displayNameKey: string = "Visual_Text";
+    slices = [this.font, this.labelColor];
+}
+
+class LegendTitleGroup extends Card {
+    public defaultShowTitle: boolean = false;
+    public defaultTitleText: string = "Legend";
+
+    public showTitle = new formattingSettings.ToggleSwitch({
+        name: "showTitle",
+        displayNameKey: "Visual_ShowTitle",
+        value: this.defaultShowTitle,
+    });
+
+    topLevelSlice = this.showTitle;
+
+    public titleText = new formattingSettings.TextInput({
+        name: "titleText",
+        displayNameKey: "Visual_TitleText",
+        value: this.defaultTitleText,
+        placeholder: "Title text",
+    });
+
+    name: string = TornadoObjectNames.LegendTitle;
+    displayName: string = "Title";
+    displayNameKey: string = "Visual_Title";
+    slices = [this.titleText];
+}
+
+export class LegendCardSettings extends CompositeCard {
+    public defaultShow: boolean = true;
+
+    public name: string = "legend";
+    public displayNameKey: string = "Visual_Legend";
+    public analyticsPane: boolean = false;
+
+    public show = new formattingSettings.ToggleSwitch({
+        name: "show",
+        displayNameKey: "Visual_LegendShow",
+        value: this.defaultShow,
+    });
+
+    public topLevelSlice: formattingSettings.ToggleSwitch = this.show;
+
+    public options: LegendOptionsGroup = new LegendOptionsGroup();
+    public text: LegendTextGroup = new LegendTextGroup();
+    public title: LegendTitleGroup = new LegendTitleGroup();
+
+    public groups = [this.options, this.text, this.title];
 }
 
 const categoryPositionOptions : IEnumMemberWithDisplayNameKey[] = [
@@ -251,19 +340,18 @@ export class CategoryCardSettings extends Card {
 
 
 export class TornadoChartSettingsModel extends Model {
-    dataColorsCardSettings = new DataColorCardSettings();
-    categoryAxisCardSettings = new CategoryAxisCardSettings();
-    dataLabelsSettings = new DataLabelSettings();
-    legendCardSettings = new LegendCardSettings();
-    categoryCardSettings = new CategoryCardSettings();
-
+    dataColors = new DataColorCardSettings();
+    categoryAxis = new CategoryAxisCardSettings();
+    dataLabels = new DataLabelSettings();
+    legend = new LegendCardSettings();
+    category = new CategoryCardSettings();
 
     cards = [
-        this.dataColorsCardSettings,
-        this.categoryAxisCardSettings,
-        this.dataLabelsSettings,
-        this.legendCardSettings,
-        this.categoryCardSettings
+        this.dataColors,
+        this.categoryAxis,
+        this.dataLabels,
+        this.legend,
+        this.category
     ];
 
     setLocalizedOptions(localizationManager: ILocalizationManager) {
@@ -278,13 +366,13 @@ export class TornadoChartSettingsModel extends Model {
     }
 
     public setVisibilityOfLegendCardSettings(legend: LegendData){
-        this.legendCardSettings.visible = legend.dataPoints.length > 0;
+        this.legend.visible = legend.dataPoints.length > 0;
     }
     
     public populateDataColorSlice(dataPoints: TornadoChartSeries[]){
-        this.dataColorsCardSettings.slices = [];
+        this.dataColors.slices = [];
         for (const dataPoint of dataPoints) {
-            this.dataColorsCardSettings.slices.push(
+            this.dataColors.slices.push(
                 new formattingSettings.ColorPicker(
                 {
                     name: "fill",
@@ -299,9 +387,9 @@ export class TornadoChartSettingsModel extends Model {
     }
 
     public populateCategoryAxisSlice(dataPoints: TornadoChartSeries[]){
-        this.categoryAxisCardSettings.slices = [];
+        this.categoryAxis.slices = [];
         for (const dataPoint of dataPoints) {
-            this.categoryAxisCardSettings.slices.push(
+            this.categoryAxis.slices.push(
                 new formattingSettings.NumUpDown({
                     name: "end",
                     displayName: dataPoint.name,
