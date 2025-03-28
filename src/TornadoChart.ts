@@ -63,6 +63,7 @@ import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualC
 
 import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
 import CustomVisualSubSelection = powerbi.visuals.CustomVisualSubSelection;
+import SubSelectionStylesType = powerbi.visuals.SubSelectionStylesType;
 
 import { dataViewObjects } from "powerbi-visuals-utils-dataviewutils";
 
@@ -257,6 +258,7 @@ export class TornadoChart implements IVisual {
                     highlightedValue: highlightedValue,
                     tooltipData: buildTooltip(hasHighlights ? highlightedValue : null),
                     highlight: hasHighlights && !!highlight,
+                    parentIdentity: parsedSeries.selectionId
                 });
                 uniqId += 1;
             }
@@ -667,7 +669,7 @@ export class TornadoChart implements IVisual {
         }
 
         this.computeHeightColumn();
-        this.renderMiddleSection();
+        this.renderMiddleSection(isFormatMode);
         this.renderAxes();
         this.renderCategories(isFormatMode);
     }
@@ -711,11 +713,11 @@ export class TornadoChart implements IVisual {
         this.rootContainer.style.overflowY = this.isScrollVisible ? "scroll" : "hidden";
     }
 
-    private renderMiddleSection(): void {
+    private renderMiddleSection(isFormatMode: boolean): void {
         const tornadoChartDataView: TornadoChartDataView = this.dataView;
         this.calculateDataPoints(tornadoChartDataView.dataPoints);
         this.updateElements();
-        this.renderColumns(tornadoChartDataView.dataPoints);
+        this.renderColumns(tornadoChartDataView.dataPoints, isFormatMode);
         this.renderLabels(tornadoChartDataView.dataPoints, this.formattingSettings.dataLabels);
     }
 
@@ -762,7 +764,7 @@ export class TornadoChart implements IVisual {
         }
     }
 
-    private renderColumns(columnsData: TornadoChartPoint[]): void {  
+    private renderColumns(columnsData: TornadoChartPoint[], isFormatMode: boolean): void {  
         const columnsSelection: Selection<any> = this.columns
             .selectAll(TornadoChart.Column.selectorName)
             .data(columnsData);
@@ -806,6 +808,22 @@ export class TornadoChart implements IVisual {
             .remove();
 
         this.columnsSelection = columnsSelectionMerged;
+
+        this.applyOnObjectStylesToColumns(columnsSelectionMerged, isFormatMode);
+    }
+
+    private applyOnObjectStylesToColumns(pathSelection: any, isFormatMode: boolean): void {
+        const getSeriesName = (dataPoint: TornadoChartPoint) => {
+            const legendTooltip = dataPoint.tooltipData.find(x => x.displayName === "Legend");
+            const displayName = this.localizationManager.getDisplayName("Visual_Group");
+            return legendTooltip?.value ? `"${legendTooltip.value}" ${displayName}` : displayName;
+        };
+
+        pathSelection
+            .attr(SubSelectableObjectNameAttribute, TornadoObjectNames.DataPoint)
+            .attr(SubSelectableDisplayNameAttribute, getSeriesName)
+            .attr(SubSelectableTypeAttribute, SubSelectionStylesType.Shape)
+            .classed(HtmlSubSelectableClass, isFormatMode);
     }
 
     private getColumnWidth(value: number, minValue: number, maxValue: number, width: number): number {

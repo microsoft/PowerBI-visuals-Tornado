@@ -41,5 +41,6 @@
 	"Visual_OnObject_Delete": "Delete",
 	"Visual_OnObject_FormatTitle": "Format legend title",
     "Visual_OnObject_FormatCategories": "Format categories",
-    "Visual_Categories": "Categories"
+    "Visual_Categories": "Categories",
+    "Visual_OnObject_FormatDataColors": "Format data colors"
 }

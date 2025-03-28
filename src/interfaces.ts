@@ -99,6 +99,7 @@ export interface TornadoChartPoint {
     formatString: string;
     selected: boolean;
     identity: ISelectionId;
+    parentIdentity: ISelectionId;
 }
 
 export interface LabelData {

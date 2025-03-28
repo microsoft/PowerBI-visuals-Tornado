@@ -8,7 +8,7 @@ import VisualShortcutType = powerbi.visuals.VisualShortcutType;
 
 import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
 
-import { categoriesReferences, legendReferences } from "./references";
+import { categoriesReferences, dataPointReferences, legendReferences } from "./references";
 import { IFontReference } from "./interfaces";
 
 export class SubSelectionStylesService {
@@ -61,6 +61,20 @@ export class SubSelectionStylesService {
     public static GetCategoriesStyles(): SubSelectionStyles {
         return SubSelectionStylesService.GetSubselectionStylesForText(categoriesReferences);
     }
+
+    public static GetDataPointStyles(subSelections: CustomVisualSubSelection[], localizationManager: ILocalizationManager): SubSelectionStyles {
+        const selector = subSelections[0].customVisualObjects[0].selectionId?.getSelector();
+        return {
+            type: SubSelectionStylesType.Shape,
+            fill: {
+                reference: {
+                    ...dataPointReferences.fill,
+                    selector
+                },
+                label: localizationManager.getDisplayName("Visual_Fill")
+            },
+        };
+    }
 }
 
 export class SubSelectionShortcutsService {
@@ -104,6 +118,7 @@ export class SubSelectionShortcutsService {
             }
         ];
     }
+
     public static GetLegendTitleShortcuts(localizationManager: ILocalizationManager): VisualSubSelectionShortcuts {
         return [
             {
@@ -128,6 +143,7 @@ export class SubSelectionShortcutsService {
             }
         ];
     }
+
     public static GetCategoriesShortcuts(localizationManager: ILocalizationManager): VisualSubSelectionShortcuts{
         return [
             {
@@ -160,6 +176,24 @@ export class SubSelectionShortcutsService {
                 type: VisualShortcutType.Navigate,
                 destinationInfo: { cardUid: categoriesReferences.cardUid },
                 label: localizationManager.getDisplayName("Visual_OnObject_FormatCategories")
+            }
+        ];
+    }
+
+    public static GetDataPointShortcuts(subSelections: CustomVisualSubSelection[], localizationManager: ILocalizationManager): VisualSubSelectionShortcuts {
+        const selector = subSelections[0].customVisualObjects[0].selectionId?.getSelector();
+        return [
+            {
+                type: VisualShortcutType.Reset,
+                relatedResetFormattingIds: [{
+                    ...dataPointReferences.fill,
+                    selector
+                }],
+            },
+            {
+                type: VisualShortcutType.Navigate,
+                destinationInfo: { cardUid: dataPointReferences.cardUid },
+                label: localizationManager.getDisplayName("Visual_OnObject_FormatDataColors")
             }
         ];
     }

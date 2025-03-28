@@ -18,6 +18,7 @@ export const enum TornadoObjectNames {
     Legend = "legend",
     LegendTitle = "legendTitle",
     Categories = "categories",
+    DataPoint = "dataPoint",
 }
 
 class DataColorCardSettings extends Card {
@@ -28,7 +29,7 @@ class DataColorCardSettings extends Card {
         value: { value: "#000000" }
     });
 
-    name: string = "dataPoint";
+    name: string = TornadoObjectNames.DataPoint;
     displayName: string = "Data colors";
     displayNameKey: string = "Visual_DataColors";
     description: string = "Display data color options";
@@ -336,7 +337,7 @@ export class CategoryCardSettings extends Card {
     name: string = TornadoObjectNames.Categories;
     displayName: string = "Group";
     displayNameKey: string = "Visual_Group";
-    slices = [this.fill, this.font, this.positionDropdown];
+    slices = [this.positionDropdown, this.font, this.fill];
 }
 
 
@@ -373,14 +374,13 @@ export class TornadoChartSettingsModel extends Model {
     public populateDataColorSlice(dataPoints: TornadoChartSeries[]){
         this.dataColors.slices = [];
         for (const dataPoint of dataPoints) {
+            console.log(dataPoint.selectionId);
             this.dataColors.slices.push(
                 new formattingSettings.ColorPicker(
                 {
                     name: "fill",
                     displayName: dataPoint.name,
-                    selector: ColorHelper.normalizeSelector(
-                            dataPoint.selectionId.getSelector(),
-                            false),
+                    selector: dataPoint.selectionId.getSelector(),
                     value: { value: dataPoint.fill }
                 })
             );

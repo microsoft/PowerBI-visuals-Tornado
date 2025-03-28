@@ -1,5 +1,6 @@
 import powerbi from "powerbi-visuals-api";
 
+import ISelectionId = powerbi.visuals.ISelectionId;
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 
 import CustomVisualSubSelection = powerbi.visuals.CustomVisualSubSelection;
@@ -15,6 +16,8 @@ import { HtmlSubSelectionHelper, SubSelectableObjectNameAttribute } from "powerb
 
 import { TornadoObjectNames } from "../TornadoChartSettingsModel";
 import { SubSelectionStylesService, SubSelectionShortcutsService } from "./helperServices";
+import { TornadoChartPoint } from "../interfaces";
+import { ColorHelper } from "powerbi-visuals-utils-colorutils";
 
 export class TornadoOnObjectService implements VisualOnObjectFormatting {
     private localizationManager: ILocalizationManager;
@@ -50,6 +53,8 @@ export class TornadoOnObjectService implements VisualOnObjectFormatting {
                     return SubSelectionStylesService.GetLegendStyles();
                 case TornadoObjectNames.Categories:
                     return SubSelectionStylesService.GetCategoriesStyles();
+                case TornadoObjectNames.DataPoint:
+                    return SubSelectionStylesService.GetDataPointStyles(subSelections, this.localizationManager);
             }
         }
     }
@@ -64,14 +69,19 @@ export class TornadoOnObjectService implements VisualOnObjectFormatting {
                     return SubSelectionShortcutsService.GetLegendTitleShortcuts(this.localizationManager);
                 case TornadoObjectNames.Categories:
                     return SubSelectionShortcutsService.GetCategoriesShortcuts(this.localizationManager);
+                case TornadoObjectNames.DataPoint:
+                    return SubSelectionShortcutsService.GetDataPointShortcuts(subSelections, this.localizationManager);
             }
         }
     }
 
-    public selectionIdCallback(e: Element): powerbi.visuals.ISelectionId {
+    public selectionIdCallback(e: Element): ISelectionId {
         const elementType: string = d3Select(e).attr(SubSelectableObjectNameAttribute);
 
         switch (elementType) {
+            case TornadoObjectNames.DataPoint:
+                const datum = d3Select<Element, TornadoChartPoint>(e).datum();
+                return datum.parentIdentity;
             default:
                 return undefined;
         }

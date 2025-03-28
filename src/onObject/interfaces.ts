@@ -23,3 +23,7 @@ export interface ICategoriesReference extends IFontReference {
     show: FormattingId;
     position: FormattingId;
 }
+
+export interface IDataPointReference extends GroupFormattingModelReference {
+    fill: FormattingId;
+}
