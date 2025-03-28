@@ -8,7 +8,7 @@ import VisualShortcutType = powerbi.visuals.VisualShortcutType;
 
 import ILocalizationManager = powerbi.extensibility.ILocalizationManager;
 
-import { legendReferences } from "./references";
+import { categoriesReferences, legendReferences } from "./references";
 import { IFontReference } from "./interfaces";
 
 export class SubSelectionStylesService {
@@ -56,6 +56,10 @@ export class SubSelectionStylesService {
 
     public static GetLegendStyles(): SubSelectionStyles {
         return SubSelectionStylesService.GetSubselectionStylesForText(legendReferences);
+    }
+
+    public static GetCategoriesStyles(): SubSelectionStyles {
+        return SubSelectionStylesService.GetSubselectionStylesForText(categoriesReferences);
     }
 }
 
@@ -121,6 +125,41 @@ export class SubSelectionShortcutsService {
                 type: VisualShortcutType.Navigate,
                 destinationInfo: { cardUid: legendReferences.cardUid, groupUid: "legendTitle-group" },
                 label: localizationManager.getDisplayName("Visual_OnObject_FormatTitle")
+            }
+        ];
+    }
+    public static GetCategoriesShortcuts(localizationManager: ILocalizationManager): VisualSubSelectionShortcuts{
+        return [
+            {
+                type: VisualShortcutType.Picker,
+                ...categoriesReferences.position,
+                label: localizationManager.getDisplayName("Visual_Position")
+            },
+            {
+                type: VisualShortcutType.Toggle,
+                ...categoriesReferences.show,
+                disabledLabel: localizationManager.getDisplayName("Visual_OnObject_Delete")
+            },
+            {
+                type: VisualShortcutType.Divider,
+            },
+            {
+                type: VisualShortcutType.Reset,
+                relatedResetFormattingIds: [
+                    categoriesReferences.bold,
+                    categoriesReferences.fontFamily,
+                    categoriesReferences.fontSize,
+                    categoriesReferences.italic,
+                    categoriesReferences.underline,
+                    categoriesReferences.color,
+                    categoriesReferences.position,
+                    categoriesReferences.show
+                ]
+            },
+            {
+                type: VisualShortcutType.Navigate,
+                destinationInfo: { cardUid: categoriesReferences.cardUid },
+                label: localizationManager.getDisplayName("Visual_OnObject_FormatCategories")
             }
         ];
     }

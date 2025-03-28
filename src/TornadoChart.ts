@@ -622,7 +622,7 @@ export class TornadoChart implements IVisual {
 
     private render(isFormatMode: boolean): void {
         this.renderLegend(isFormatMode);
-        this.renderWithScrolling();
+        this.renderWithScrolling(isFormatMode);
         this.bindBehaviorToVisual(isFormatMode);
     }
 
@@ -661,7 +661,7 @@ export class TornadoChart implements IVisual {
         this.legend.drawLegend({ dataPoints: [] }, this.viewport);
     }
 
-    private renderWithScrolling(): void {
+    private renderWithScrolling(isFormatMode: boolean): void {
         if (!this.dataView || !this.formattingSettings) {
             return;
         }
@@ -669,7 +669,7 @@ export class TornadoChart implements IVisual {
         this.computeHeightColumn();
         this.renderMiddleSection();
         this.renderAxes();
-        this.renderCategories();
+        this.renderCategories(isFormatMode);
     }
 
     private updateViewport(): void {
@@ -977,7 +977,7 @@ export class TornadoChart implements IVisual {
             .remove();
     }
 
-    private renderCategories(): void {
+    private renderCategories(isFormatMode: boolean): void {
         const formattingSettings: TornadoChartSettingsModel = this.formattingSettings,
             color: string = formattingSettings.category.fill.value.value,
             fontSizeInPx: string = PixelConverter.fromPoint( formattingSettings.category.font.fontSize.value),
@@ -1050,6 +1050,15 @@ export class TornadoChart implements IVisual {
         categoriesSelection
             .exit()
             .remove();
+
+        this.applyOnObjectStylesToCategories(categoriesSelection, isFormatMode);
+    }
+
+    private applyOnObjectStylesToCategories(selection: Selection<any>, isFormatMode: boolean): void {
+        selection
+            .classed(HtmlSubSelectableClass, isFormatMode)
+            .attr(SubSelectableObjectNameAttribute, TornadoObjectNames.Categories)
+            .attr(SubSelectableDisplayNameAttribute, this.localizationManager.getDisplayName("Visual_Categories"));
     }
 
     private renderLegend(isFormatMode: boolean): void {

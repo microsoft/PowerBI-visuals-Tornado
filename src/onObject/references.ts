@@ -2,7 +2,7 @@ import powerbi from "powerbi-visuals-api";
 import SubSelectableDirectEdit = powerbi.visuals.SubSelectableDirectEdit;
 import SubSelectableDirectEditStyle = powerbi.visuals.SubSelectableDirectEditStyle;
 
-import { IFontReference, ILegendReference } from "./interfaces";
+import { ICategoriesReference, IFontReference, ILegendReference } from "./interfaces";
 import { TornadoObjectNames } from "../TornadoChartSettingsModel";
 
 export const TitleEdit: SubSelectableDirectEdit = {
@@ -15,37 +15,37 @@ export const TitleEdit: SubSelectableDirectEdit = {
 
 export const titleEditSubSelection = JSON.stringify(TitleEdit);
 
-const createBaseFontReference = (objectName: string, settingName: string = ""): IFontReference => {
+const createBaseFontReference = (objectName: string, colorName: string): IFontReference => {
     return {
         fontFamily: {
             objectName: objectName,
-            propertyName: "fontFamily" + settingName
+            propertyName: "fontFamily"
         },
         bold: {
             objectName: objectName,
-            propertyName: "fontBold" + settingName
+            propertyName: "fontBold"
         },
         italic: {
             objectName: objectName,
-            propertyName: "fontItalic" + settingName
+            propertyName: "fontItalic"
         },
         underline: {
             objectName: objectName,
-            propertyName: "fontUnderline" + settingName
+            propertyName: "fontUnderline"
         },
         fontSize: {
             objectName: objectName,
-            propertyName: "fontSize" + settingName
+            propertyName: "fontSize"
         },
         color: {
             objectName: objectName,
-            propertyName: "labelColor"
+            propertyName: colorName
         }
     }
 }
 
 export const legendReferences: ILegendReference = {
-    ...createBaseFontReference(TornadoObjectNames.Legend),
+    ...createBaseFontReference(TornadoObjectNames.Legend, "labelColor"),
     cardUid: "Visual-legend-card",
     groupUid: "legendOptions-group",
     show: {
@@ -62,6 +62,20 @@ export const legendReferences: ILegendReference = {
     },
     position: {
         objectName: TornadoObjectNames.Legend,
+        propertyName: "position"
+    }
+}
+
+export const categoriesReferences: ICategoriesReference = {
+    ...createBaseFontReference(TornadoObjectNames.Categories, "fill"),
+    cardUid: "Visual-categories-card",
+    groupUid: "categories-group",
+    show: {
+        objectName: TornadoObjectNames.Categories,
+        propertyName: "show"
+    },
+    position: {
+        objectName: TornadoObjectNames.Categories,
         propertyName: "position"
     }
 }

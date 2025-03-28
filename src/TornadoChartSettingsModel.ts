@@ -17,6 +17,7 @@ import { LegendData } from "powerbi-visuals-utils-chartutils/lib/legend/legendIn
 export const enum TornadoObjectNames {
     Legend = "legend",
     LegendTitle = "legendTitle",
+    Categories = "categories",
 }
 
 class DataColorCardSettings extends Card {
@@ -332,7 +333,7 @@ export class CategoryCardSettings extends Card {
         displayNameKey: "Visual_Position"
     });
 
-    name: string = "categories";
+    name: string = TornadoObjectNames.Categories;
     displayName: string = "Group";
     displayNameKey: string = "Visual_Group";
     slices = [this.fill, this.font, this.positionDropdown];

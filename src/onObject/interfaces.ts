@@ -18,3 +18,8 @@ export interface ILegendReference extends IFontReference {
     position: FormattingId;
     titleText: FormattingId;
 }
+
+export interface ICategoriesReference extends IFontReference {
+    show: FormattingId;
+    position: FormattingId;
+}

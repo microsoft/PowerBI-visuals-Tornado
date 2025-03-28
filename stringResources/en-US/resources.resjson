@@ -39,5 +39,7 @@
     "Visual_OnObject_FormatLegend": "Format legend",
 	"Visual_OnObject_AddTitle": "Add legend title",
 	"Visual_OnObject_Delete": "Delete",
-	"Visual_OnObject_FormatTitle": "Format legend title"
+	"Visual_OnObject_FormatTitle": "Format legend title",
+    "Visual_OnObject_FormatCategories": "Format categories",
+    "Visual_Categories": "Categories"
 }

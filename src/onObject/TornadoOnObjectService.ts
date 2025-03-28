@@ -48,6 +48,8 @@ export class TornadoOnObjectService implements VisualOnObjectFormatting {
             switch (visualObject.objectName) {
                 case TornadoObjectNames.Legend:
                     return SubSelectionStylesService.GetLegendStyles();
+                case TornadoObjectNames.Categories:
+                    return SubSelectionStylesService.GetCategoriesStyles();
             }
         }
     }
@@ -60,6 +62,8 @@ export class TornadoOnObjectService implements VisualOnObjectFormatting {
                     return SubSelectionShortcutsService.GetLegendShortcuts(this.localizationManager);
                 case TornadoObjectNames.LegendTitle:
                     return SubSelectionShortcutsService.GetLegendTitleShortcuts(this.localizationManager);
+                case TornadoObjectNames.Categories:
+                    return SubSelectionShortcutsService.GetCategoriesShortcuts(this.localizationManager);
             }
         }
     }
