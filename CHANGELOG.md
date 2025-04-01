@@ -1,4 +1,12 @@
 
+## 3.1.0.0
+
+### New features
+* Added on-Object formatting API
+
+### Other
+* Updated dependencies
+
 ## 3.0.5.0
 * Fix bug with empty columns gradient when legend is disabled
 
