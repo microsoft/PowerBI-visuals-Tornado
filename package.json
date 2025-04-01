@@ -35,7 +35,7 @@
     "karma-sourcemap-loader": "0.4.0",
     "karma-typescript": "5.5.4",
     "karma-typescript-preprocessor": "0.4.0",
-    "karma-webpack": "5.0.1",
+    "karma-webpack": "5.0.0",
     "less": "^4.2.2",
     "less-loader": "^12.2.0",
     "playwright-chromium": "^1.51.1",
