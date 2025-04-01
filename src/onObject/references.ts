@@ -2,7 +2,7 @@ import powerbi from "powerbi-visuals-api";
 import SubSelectableDirectEdit = powerbi.visuals.SubSelectableDirectEdit;
 import SubSelectableDirectEditStyle = powerbi.visuals.SubSelectableDirectEditStyle;
 
-import { ICategoriesReference, IDataPointReference, IFontReference, ILegendReference } from "./interfaces";
+import { ICategoriesReference, IDataPointReference, IFontReference, ILabelsReference, ILegendReference } from "./interfaces";
 import { TornadoObjectNames } from "../TornadoChartSettingsModel";
 
 export const TitleEdit: SubSelectableDirectEdit = {
@@ -86,5 +86,31 @@ export const dataPointReferences: IDataPointReference = {
     fill: {
         objectName: TornadoObjectNames.DataPoint,
         propertyName: "fill"
+    }
+}
+
+export const labelsReference: ILabelsReference = {
+    ...createBaseFontReference(TornadoObjectNames.Labels, "insideFill"),
+    cardUid: "Visual-labels-card",
+    groupUid: "labels-group",
+    show: {
+        objectName: TornadoObjectNames.Labels,
+        propertyName: "show"
+    },
+    precision: {
+        objectName: TornadoObjectNames.Labels,
+        propertyName: "labelPrecision"
+    },
+    displayUnits: {
+        objectName: TornadoObjectNames.Labels,
+        propertyName: "labelDisplayUnits"
+    },
+    insideFill: {
+        objectName: TornadoObjectNames.Labels,
+        propertyName: "insideFill"
+    },
+    outsideFill: {
+        objectName: TornadoObjectNames.Labels,
+        propertyName: "outsideFill"
     }
 }

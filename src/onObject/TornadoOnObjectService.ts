@@ -5,7 +5,6 @@ import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 
 import CustomVisualSubSelection = powerbi.visuals.CustomVisualSubSelection;
 import SubSelectionStyles = powerbi.visuals.SubSelectionStyles;
-import SubSelectionShortcutsKey = powerbi.visuals.SubSelectionShortcutsKey;
 import VisualSubSelectionShortcuts = powerbi.visuals.VisualSubSelectionShortcuts;
 import SubSelectionStylesType = powerbi.visuals.SubSelectionStylesType;
 import VisualOnObjectFormatting = powerbi.extensibility.visual.VisualOnObjectFormatting;
@@ -17,7 +16,6 @@ import { HtmlSubSelectionHelper, SubSelectableObjectNameAttribute } from "powerb
 import { TornadoObjectNames } from "../TornadoChartSettingsModel";
 import { SubSelectionStylesService, SubSelectionShortcutsService } from "./helperServices";
 import { TornadoChartPoint } from "../interfaces";
-import { ColorHelper } from "powerbi-visuals-utils-colorutils";
 
 export class TornadoOnObjectService implements VisualOnObjectFormatting {
     private localizationManager: ILocalizationManager;
@@ -55,6 +53,8 @@ export class TornadoOnObjectService implements VisualOnObjectFormatting {
                     return SubSelectionStylesService.GetCategoriesStyles();
                 case TornadoObjectNames.DataPoint:
                     return SubSelectionStylesService.GetDataPointStyles(subSelections, this.localizationManager);
+                case TornadoObjectNames.Labels:
+                    return SubSelectionStylesService.GetLabelsStyles();
             }
         }
     }
@@ -71,6 +71,8 @@ export class TornadoOnObjectService implements VisualOnObjectFormatting {
                     return SubSelectionShortcutsService.GetCategoriesShortcuts(this.localizationManager);
                 case TornadoObjectNames.DataPoint:
                     return SubSelectionShortcutsService.GetDataPointShortcuts(subSelections, this.localizationManager);
+                case TornadoObjectNames.Labels:
+                    return SubSelectionShortcutsService.GetLabelsShortcuts(this.localizationManager);
             }
         }
     }

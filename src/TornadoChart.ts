@@ -718,7 +718,7 @@ export class TornadoChart implements IVisual {
         this.calculateDataPoints(tornadoChartDataView.dataPoints);
         this.updateElements();
         this.renderColumns(tornadoChartDataView.dataPoints, isFormatMode);
-        this.renderLabels(tornadoChartDataView.dataPoints, this.formattingSettings.dataLabels);
+        this.renderLabels(tornadoChartDataView.dataPoints, this.formattingSettings.dataLabels, isFormatMode);
     }
 
     /**
@@ -928,7 +928,7 @@ export class TornadoChart implements IVisual {
         }];
     }
 
-    private renderLabels(dataPoints: TornadoChartPoint[], labelsSettings: DataLabelSettings): void {
+    private renderLabels(dataPoints: TornadoChartPoint[], labelsSettings: DataLabelSettings, isFormatMode: boolean): void {
         const labelSelection: Selection<TornadoChartPoint> = this.main
                 .select(TornadoChart.Labels.selectorName)
                 .selectAll(TornadoChart.Label.selectorName)
@@ -993,6 +993,16 @@ export class TornadoChart implements IVisual {
         labelSelection
             .exit()
             .remove();
+
+        this.applyOnObjectStylesToLabels(labelSelection, isFormatMode);
+    }
+
+    private applyOnObjectStylesToLabels(labelSelection: Selection<TornadoChartPoint>, isFormatMode: boolean): void {
+        labelSelection
+            .classed(HtmlSubSelectableClass, isFormatMode)
+            .attr("pointer-events", "auto")
+            .attr(SubSelectableObjectNameAttribute, TornadoObjectNames.Labels)
+            .attr(SubSelectableDisplayNameAttribute, this.localizationManager.getDisplayName("Visual_Labels"));
     }
 
     private renderCategories(isFormatMode: boolean): void {

@@ -19,6 +19,7 @@ export const enum TornadoObjectNames {
     LegendTitle = "legendTitle",
     Categories = "categories",
     DataPoint = "dataPoint",
+    Labels = "labels",
 }
 
 class DataColorCardSettings extends Card {

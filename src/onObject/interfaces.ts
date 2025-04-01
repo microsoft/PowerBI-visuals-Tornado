@@ -27,3 +27,11 @@ export interface ICategoriesReference extends IFontReference {
 export interface IDataPointReference extends GroupFormattingModelReference {
     fill: FormattingId;
 }
+
+export interface ILabelsReference extends IFontReference {
+    show: FormattingId;
+    precision: FormattingId;
+    displayUnits: FormattingId;
+    insideFill: FormattingId;
+    outsideFill: FormattingId;
+}
