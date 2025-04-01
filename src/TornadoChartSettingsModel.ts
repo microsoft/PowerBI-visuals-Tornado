@@ -375,7 +375,6 @@ export class TornadoChartSettingsModel extends Model {
     public populateDataColorSlice(dataPoints: TornadoChartSeries[]){
         this.dataColors.slices = [];
         for (const dataPoint of dataPoints) {
-            console.log(dataPoint.selectionId);
             this.dataColors.slices.push(
                 new formattingSettings.ColorPicker(
                 {
