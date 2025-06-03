@@ -10,6 +10,7 @@ export interface IFontReference extends GroupFormattingModelReference {
     underline: FormattingId;
     fontSize: FormattingId;
     color: FormattingId;
+    show: FormattingId;
 }
 
 export interface ILegendReference extends IFontReference {

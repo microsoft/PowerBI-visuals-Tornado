@@ -40,7 +40,11 @@ const createBaseFontReference = (objectName: string, colorName: string): IFontRe
         color: {
             objectName: objectName,
             propertyName: colorName
-        }
+        },
+        show: {
+            objectName: objectName,
+            propertyName: "show"
+        },
     }
 }
 
@@ -48,10 +52,6 @@ export const legendReferences: ILegendReference = {
     ...createBaseFontReference(TornadoObjectNames.Legend, "labelColor"),
     cardUid: "Visual-legend-card",
     groupUid: "legendOptions-group",
-    show: {
-        objectName: TornadoObjectNames.Legend,
-        propertyName: "show"
-    },
     showTitle: {
         objectName: TornadoObjectNames.Legend,
         propertyName: "showTitle"
@@ -70,10 +70,6 @@ export const categoriesReferences: ICategoriesReference = {
     ...createBaseFontReference(TornadoObjectNames.Categories, "fill"),
     cardUid: "Visual-categories-card",
     groupUid: "categories-group",
-    show: {
-        objectName: TornadoObjectNames.Categories,
-        propertyName: "show"
-    },
     position: {
         objectName: TornadoObjectNames.Categories,
         propertyName: "position"
@@ -93,10 +89,6 @@ export const labelsReference: ILabelsReference = {
     ...createBaseFontReference(TornadoObjectNames.Labels, "insideFill"),
     cardUid: "Visual-labels-card",
     groupUid: "labels-group",
-    show: {
-        objectName: TornadoObjectNames.Labels,
-        propertyName: "show"
-    },
     precision: {
         objectName: TornadoObjectNames.Labels,
         propertyName: "labelPrecision"
