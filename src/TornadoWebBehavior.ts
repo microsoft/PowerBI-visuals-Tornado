@@ -30,7 +30,7 @@ import {
 type Selection<T> = d3Selection<any, T, any, any>;
 import ISelectionManager = powerbi.extensibility.ISelectionManager;
 import ISelectionId = powerbi.visuals.ISelectionId;
-import { TornadoBehaviorOptions, TornadoChartPoint } from "./interfaces";
+import { TooltipArgsWrapper, TornadoBehaviorOptions, TornadoChartPoint } from "./interfaces";
 import { TornadoChartUtils } from "./tornadoChartUtils";
 import { createTooltipServiceWrapper, ITooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
 import { ColorHelper } from "powerbi-visuals-utils-colorutils";
@@ -186,11 +186,37 @@ export class TornadoWebBehavior {
         this.legendIcons = options.legend.selectAll(".legendIcon");
         this.gradients = options.gradients;
 
+        this.applyOnObjectFormatMode(options.isFormatMode, options.tooltipArgs);
+    }
+
+    private applyOnObjectFormatMode(isFormatMode: boolean, tooltipArgs: TooltipArgsWrapper){
+        if (isFormatMode){
+            // remove event listeners which are irrelevant for format mode.
+            this.removeEventListeners();
+            this.selectionManager.clear();
+        } else {
+            this.addEventListeners(tooltipArgs);
+        }
+    }
+
+    private removeEventListeners(): void {
+        this.columns.on("click", null);
+        this.columns.on("contextmenu", null);
+        this.columns.on("keydown", null);
+        this.clearCatcher.on("click", null);
+        this.clearCatcher.on("contextmenu", null);
+        this.legendClearCatcher.on("click", null);
+        this.legendClearCatcher.on("contextmenu", null);
+        this.legendItems.on("click", null);
+        this.legendItems.on("contextmenu", null);
+    }
+
+    private addEventListeners(tooltipArgs: TooltipArgsWrapper): void {
         this.applySelectionStateToData();
 
         this.tooltipServiceWrapper = createTooltipServiceWrapper(
-            options.tooltipArgs.tooltipService,
-            options.tooltipArgs.tooltipElement);
+            tooltipArgs.tooltipService,
+            tooltipArgs.tooltipElement);
         
         this.tooltipServiceWrapper.addTooltip(
             this.columns,

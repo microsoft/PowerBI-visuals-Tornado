@@ -292,5 +292,7 @@
             "default": true
         }
     },
-    "supportsKeyboardFocus": true
+    "supportsKeyboardFocus": true,
+    "supportsOnObjectFormatting": true,
+    "enablePointerEventsFormatMode": true
 }

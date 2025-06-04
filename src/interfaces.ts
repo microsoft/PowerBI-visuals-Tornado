@@ -99,6 +99,7 @@ export interface TornadoChartPoint {
     formatString: string;
     selected: boolean;
     identity: ISelectionId;
+    parentIdentity: ISelectionId;
 }
 
 export interface LabelData {
@@ -129,6 +130,7 @@ export interface TornadoBehaviorOptions {
     legendClearCatcher: Selection<any>;
     tooltipArgs: TooltipArgsWrapper;
     gradients: Selection<TornadoChartPoint>;
+    isFormatMode: boolean;
 }
 
 export interface TooltipCategoryDataItem {
