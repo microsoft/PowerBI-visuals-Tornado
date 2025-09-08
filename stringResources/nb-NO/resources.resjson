@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Midtstilt til venstre",
   "Visual_Legend_Position_Right_Center": "Midtstilt til høyre",
   "Visual_Title": "Tittel",
+  "Visual_TitleText": "Title text",
   "Visual_Legend_Name": "Navn på forklaring",
   "Visual_Legend_Color": "Farge",
   "Visual_Group": "Gruppe",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Merkelapper",
   "Visual_Position": "Plassering",
   "Visual_Short_Description": "Sammenligner variablers relative viktighet mellom to grupper",
-  "Visual_Long_Description": "Tornadodiagrammer er en spesiell type stolpediagram hvor datakategoriene plasseres loddrett i stedet for den vanlige vannrette presentasjonen, og kategoriene er organisert slik at den største stolpen vises øverst i diagrammet, den nest største vises nest øverst og så videre. Navnet kommer av at det endelige diagrammet ligner en halv eller en hel tornado.\nEt tornadodiagram brukes ofte til å gjengi hvor følsomt et resultat er for endringer i utvalgte variabler. Det viser effekten på utdataene når man varierer en og en inndatavariabel om gangen og lar alle de andre inndatavariablene beholde sine nominelle verdier (startverdiene). Vanligvis velger du en \\\"lav\\\" og en \\\"høy\\\" verdi for hver inndata.\nDette er et visualobjekt med åpen kildekode. Hent koden fra GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Tornadodiagrammer er en spesiell type stolpediagram hvor datakategoriene plasseres loddrett i stedet for den vanlige vannrette presentasjonen, og kategoriene er organisert slik at den største stolpen vises øverst i diagrammet, den nest største vises nest øverst og så videre. Navnet kommer av at det endelige diagrammet ligner en halv eller en hel tornado.\nEt tornadodiagram brukes ofte til å gjengi hvor følsomt et resultat er for endringer i utvalgte variabler. Det viser effekten på utdataene når man varierer en og en inndatavariabel om gangen og lar alle de andre inndatavariablene beholde sine nominelle verdier (startverdiene). Vanligvis velger du en \\\"lav\\\" og en \\\"høy\\\" verdi for hver inndata.\nDette er et visualobjekt med åpen kildekode. Hent koden fra GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Format legend",
+  "Visual_OnObject_AddTitle": "Add legend title",
+  "Visual_OnObject_Delete": "Delete",
+  "Visual_OnObject_FormatTitle": "Format legend title",
+  "Visual_OnObject_FormatCategories": "Format categories",
+  "Visual_Categories": "Categories",
+  "Visual_OnObject_FormatDataColors": "Format data colors",
+  "Visual_OnObject_FormatLabels": "Format labels"
 }

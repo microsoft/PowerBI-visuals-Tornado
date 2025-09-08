@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Levo centralno",
   "Visual_Legend_Position_Right_Center": "Desno centar",
   "Visual_Title": "Naslov",
+  "Visual_TitleText": "Title text",
   "Visual_Legend_Name": "Ime legende",
   "Visual_Legend_Color": "Boja",
   "Visual_Group": "Grupa",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Oznake",
   "Visual_Position": "Pozicija",
   "Visual_Short_Description": "Poređenje relativne važnosti promenljivih između dve grupe",
-  "Visual_Long_Description": "Tornado grafikoni predstavljaju specijalni tip trakastog grafikona u kom su kategorije podataka navedene vertikalno umesto standardnog horizontalnog predstavljanja i kategorije su poređane tako da se najveća traka prikazuje na vrhu grafikona, druga najveća se prikazuje odmah ispod vrha i tako dalje. Oni se tako zovu zato što konačni grafikon vizuelno podseća na polovinu potpunog tornada.\nTornado grafikon se uobičajena alatka koja se koristi za prikazivanje osetljivosti rezultata na promene u izabranim promenljivim. On prikazuje efekat na rezultat izmene jedne po jedne ulazne promenljive, uz zadržavanje svih ostalih ulaznih promenljivih na početnim (nominalnim) vrednostima. Obično ćete izabrati „nisku“ ili „visoku“ vrednost za svaki unos.\nOvo je open source vizuelni element. Preuzmite kôd iz usluge GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Tornado grafikoni predstavljaju specijalni tip trakastog grafikona u kom su kategorije podataka navedene vertikalno umesto standardnog horizontalnog predstavljanja i kategorije su poređane tako da se najveća traka prikazuje na vrhu grafikona, druga najveća se prikazuje odmah ispod vrha i tako dalje. Oni se tako zovu zato što konačni grafikon vizuelno podseća na polovinu potpunog tornada.\nTornado grafikon se uobičajena alatka koja se koristi za prikazivanje osetljivosti rezultata na promene u izabranim promenljivim. On prikazuje efekat na rezultat izmene jedne po jedne ulazne promenljive, uz zadržavanje svih ostalih ulaznih promenljivih na početnim (nominalnim) vrednostima. Obično ćete izabrati „nisku“ ili „visoku“ vrednost za svaki unos.\nOvo je open source vizuelni element. Preuzmite kôd iz usluge GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Format legend",
+  "Visual_OnObject_AddTitle": "Add legend title",
+  "Visual_OnObject_Delete": "Delete",
+  "Visual_OnObject_FormatTitle": "Format legend title",
+  "Visual_OnObject_FormatCategories": "Format categories",
+  "Visual_Categories": "Categories",
+  "Visual_OnObject_FormatDataColors": "Format data colors",
+  "Visual_OnObject_FormatLabels": "Format labels"
 }

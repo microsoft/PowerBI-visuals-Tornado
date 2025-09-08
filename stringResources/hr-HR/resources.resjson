@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Centrirano lijevo",
   "Visual_Legend_Position_Right_Center": "Desno u sredini",
   "Visual_Title": "Naslov",
+  "Visual_TitleText": "Title text",
   "Visual_Legend_Name": "Naziv legende",
   "Visual_Legend_Color": "Boja",
   "Visual_Group": "Grupa",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Oznake",
   "Visual_Position": "Položaj",
   "Visual_Short_Description": "Usporedba relativne važnosti varijabli između dviju grupa",
-  "Visual_Long_Description": "Tornado grafikoni posebna su vrsta trakastog grafikona kod koje su kategorije podataka navedene okomito umjesto klasičnog vodoravnog prikaza. Uz to, kategorije su poredane tako da se najveća traka nalazi na vrhu grafikona, druga po veličini ispod nje itd. Tako su nazvani jer konačni grafikon vizualno podsjeća na polovicu tornada ili cijeli tornado.\nTornado grafikon uobičajeni je alat za prikaz osjetljivosti rezultata na promjene u odabranim varijablama. On prikazuje učinak na izlaz promjene jedne po jedne ulazne varijable uz sve ostale ulazne varijable na svojim početnim (nominalnim) vrijednostima. Obično birate \\\"nisku\\\" i \\\"visoku\\\" vrijednost za svaki unos.\nTo je vizual otvorenog koda. Kod preuzmite sa servisa GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Tornado grafikoni posebna su vrsta trakastog grafikona kod koje su kategorije podataka navedene okomito umjesto klasičnog vodoravnog prikaza. Uz to, kategorije su poredane tako da se najveća traka nalazi na vrhu grafikona, druga po veličini ispod nje itd. Tako su nazvani jer konačni grafikon vizualno podsjeća na polovicu tornada ili cijeli tornado.\nTornado grafikon uobičajeni je alat za prikaz osjetljivosti rezultata na promjene u odabranim varijablama. On prikazuje učinak na izlaz promjene jedne po jedne ulazne varijable uz sve ostale ulazne varijable na svojim početnim (nominalnim) vrijednostima. Obično birate \\\"nisku\\\" i \\\"visoku\\\" vrijednost za svaki unos.\nTo je vizual otvorenog koda. Kod preuzmite sa servisa GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Format legend",
+  "Visual_OnObject_AddTitle": "Add legend title",
+  "Visual_OnObject_Delete": "Delete",
+  "Visual_OnObject_FormatTitle": "Format legend title",
+  "Visual_OnObject_FormatCategories": "Format categories",
+  "Visual_Categories": "Categories",
+  "Visual_OnObject_FormatDataColors": "Format data colors",
+  "Visual_OnObject_FormatLabels": "Format labels"
 }
