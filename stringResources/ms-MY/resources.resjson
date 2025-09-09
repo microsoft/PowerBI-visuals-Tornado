@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Tengah Kiri",
   "Visual_Legend_Position_Right_Center": "Kanan tengah",
   "Visual_Title": "Tajuk",
+  "Visual_TitleText": "Title text",
   "Visual_Legend_Name": "Nama Penunjuk",
   "Visual_Legend_Color": "Warna",
   "Visual_Group": "Kumpulan",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Label",
   "Visual_Position": "Kedudukan",
   "Visual_Short_Description": "Membandingkan kepentingan relatif pembolehubah antara dua kumpulan",
-  "Visual_Long_Description": "Carta tornado, adalah jenis carta bar khas, di mana kategori data disenaraikan secara menegak dan bukannya persembahan melintang standard, dan kategori diperintahkan supaya bar terbesar muncul di bahagian atas carta, yang kedua terbesar muncul kedua dari atas, dan sebagainya. Mereka dinamakan demikian kerana carta terakhir secara visual menyerupai sama ada separuh daripada atau tornado lengkap.\nA carta pantang pantau adalah alat yang biasa digunakan untuk menggambarkan kepekaan hasil kepada perubahan dalam pembolehubah yang dipilih. Ia menunjukkan kesan pada output yang berbeza-beza setiap pemboleh ubah masukan pada satu masa, menyimpan semua pemboleh ubah input yang lain pada nilai awal (nominal) mereka. Biasanya, anda memilih nilai \\\"rendah\\\" dan \\\"tinggi\\\" untuk setiap input.\nIni adalah visual sumber terbuka. Dapatkan kod dari GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Carta tornado, adalah jenis carta bar khas, di mana kategori data disenaraikan secara menegak dan bukannya persembahan melintang standard, dan kategori diperintahkan supaya bar terbesar muncul di bahagian atas carta, yang kedua terbesar muncul kedua dari atas, dan sebagainya. Mereka dinamakan demikian kerana carta terakhir secara visual menyerupai sama ada separuh daripada atau tornado lengkap.\nA carta pantang pantau adalah alat yang biasa digunakan untuk menggambarkan kepekaan hasil kepada perubahan dalam pembolehubah yang dipilih. Ia menunjukkan kesan pada output yang berbeza-beza setiap pemboleh ubah masukan pada satu masa, menyimpan semua pemboleh ubah input yang lain pada nilai awal (nominal) mereka. Biasanya, anda memilih nilai \\\"rendah\\\" dan \\\"tinggi\\\" untuk setiap input.\nIni adalah visual sumber terbuka. Dapatkan kod dari GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Format legend",
+  "Visual_OnObject_AddTitle": "Add legend title",
+  "Visual_OnObject_Delete": "Delete",
+  "Visual_OnObject_FormatTitle": "Format legend title",
+  "Visual_OnObject_FormatCategories": "Format categories",
+  "Visual_Categories": "Categories",
+  "Visual_OnObject_FormatDataColors": "Format data colors",
+  "Visual_OnObject_FormatLabels": "Format labels"
 }

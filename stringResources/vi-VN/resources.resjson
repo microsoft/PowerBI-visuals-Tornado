@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Ở giữa Bên trái",
   "Visual_Legend_Position_Right_Center": "Chính giữa bên phải",
   "Visual_Title": "Tiêu đề",
+  "Visual_TitleText": "Title text",
   "Visual_Legend_Name": "Tên Chú giải",
   "Visual_Legend_Color": "Màu",
   "Visual_Group": "Nhóm",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Nhãn",
   "Visual_Position": "Vị trí",
   "Visual_Short_Description": "So sánh tầm quan trọng tương đối của các biến giữa hai nhóm",
-  "Visual_Long_Description": "Biểu đồ lốc xoáy là một loại biểu đồ thanh đặc biệt, trong đó các danh mục dữ liệu được liệt kê theo phương thẳng thay vì biểu diễn theo hướng ngang tiêu chuẩn, và các danh mục này được sắp xếp sao cho thanh lớn nhất ở trên cùng của biểu đồ, thanh lớn thứ hai ở ngay dưới thanh lớn nhất và cứ thế cho đến hết. Loại biểu đồ này có tên như vậy vì biểu đồ cuối cùng trông giống như một nửa hoặc một cơn lốc xoáy hoàn chỉnh.\nBiểu đồ lốc xoáy là một công cụ thông dụng được dùng để mô tả độ nhạy của kết quả với các thay đổi trong biến đã chọn. Biểu đồ này hiển thị tác động đến đầu ra của việc thay đổi từng biến đầu vào cùng một lúc, giúp dữ cho tất cả các biến đầu vào khác ở giá trị (danh định) ban đầu của chúng. Thông thường, bạn chọn giá trị “thấp” và “cao” cho từng đầu vào.\nĐây là hình ảnh nguồn mở. Tải mã từ GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Biểu đồ lốc xoáy là một loại biểu đồ thanh đặc biệt, trong đó các danh mục dữ liệu được liệt kê theo phương thẳng thay vì biểu diễn theo hướng ngang tiêu chuẩn, và các danh mục này được sắp xếp sao cho thanh lớn nhất ở trên cùng của biểu đồ, thanh lớn thứ hai ở ngay dưới thanh lớn nhất và cứ thế cho đến hết. Loại biểu đồ này có tên như vậy vì biểu đồ cuối cùng trông giống như một nửa hoặc một cơn lốc xoáy hoàn chỉnh.\nBiểu đồ lốc xoáy là một công cụ thông dụng được dùng để mô tả độ nhạy của kết quả với các thay đổi trong biến đã chọn. Biểu đồ này hiển thị tác động đến đầu ra của việc thay đổi từng biến đầu vào cùng một lúc, giúp dữ cho tất cả các biến đầu vào khác ở giá trị (danh định) ban đầu của chúng. Thông thường, bạn chọn giá trị “thấp” và “cao” cho từng đầu vào.\nĐây là hình ảnh nguồn mở. Tải mã từ GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Format legend",
+  "Visual_OnObject_AddTitle": "Add legend title",
+  "Visual_OnObject_Delete": "Delete",
+  "Visual_OnObject_FormatTitle": "Format legend title",
+  "Visual_OnObject_FormatCategories": "Format categories",
+  "Visual_Categories": "Categories",
+  "Visual_OnObject_FormatDataColors": "Format data colors",
+  "Visual_OnObject_FormatLabels": "Format labels"
 }

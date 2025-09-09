@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Levo na sredino",
   "Visual_Legend_Position_Right_Center": "Desno na sredino",
   "Visual_Title": "Naslov",
+  "Visual_TitleText": "Title text",
   "Visual_Legend_Name": "Ime legende",
   "Visual_Legend_Color": "Barva",
   "Visual_Group": "Skupina",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Oznake",
   "Visual_Position": "Položaj",
   "Visual_Short_Description": "Primerjava relativne pomembnosti spremenljivk v dveh skupinah",
-  "Visual_Long_Description": "Grafikoni tornado so posebna vrsta paličnih grafikonov, kjer so podatkovne kategorije prikazane navpično namesto vodoravno, tako kot v standardni predstavitvi, kategorije pa so razporejene tako, da je največja vrstica prikazana na vrhu grafikona, tej sledi druga največja vrstica itd. Kategorije so tudi poimenovane, ker je končni grafikon vizualno podoben delu ali celemu grafikonu tornado.\nGrafikon tornado je običajno orodje, s katerim upodobite občutljivost rezultata na spremembe v izbranih spremenljivkah. Prikazan je učinek rezultata s spreminjanjem posameznih vnosnih spremenljivk, medtem ko je za vse druge vnosne spremenljivke ohranjena začetna (nominalna) vrednost. Običajno izberete »nizko« in »visoko« vrednost za vsak vnos.\nTo je odprtokodna ponazoritev. Kodo lahko pridobite na spletnem mestu storitve GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Grafikoni tornado so posebna vrsta paličnih grafikonov, kjer so podatkovne kategorije prikazane navpično namesto vodoravno, tako kot v standardni predstavitvi, kategorije pa so razporejene tako, da je največja vrstica prikazana na vrhu grafikona, tej sledi druga največja vrstica itd. Kategorije so tudi poimenovane, ker je končni grafikon vizualno podoben delu ali celemu grafikonu tornado.\nGrafikon tornado je običajno orodje, s katerim upodobite občutljivost rezultata na spremembe v izbranih spremenljivkah. Prikazan je učinek rezultata s spreminjanjem posameznih vnosnih spremenljivk, medtem ko je za vse druge vnosne spremenljivke ohranjena začetna (nominalna) vrednost. Običajno izberete »nizko« in »visoko« vrednost za vsak vnos.\nTo je odprtokodna ponazoritev. Kodo lahko pridobite na spletnem mestu storitve GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Format legend",
+  "Visual_OnObject_AddTitle": "Add legend title",
+  "Visual_OnObject_Delete": "Delete",
+  "Visual_OnObject_FormatTitle": "Format legend title",
+  "Visual_OnObject_FormatCategories": "Format categories",
+  "Visual_Categories": "Categories",
+  "Visual_OnObject_FormatDataColors": "Format data colors",
+  "Visual_OnObject_FormatLabels": "Format labels"
 }
