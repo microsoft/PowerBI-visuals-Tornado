@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "左中",
   "Visual_Legend_Position_Right_Center": "靠右居中",
   "Visual_Title": "标题",
+  "Visual_TitleText": "Title text",
   "Visual_Legend_Name": "图例名称",
   "Visual_Legend_Color": "颜色",
   "Visual_Group": "组",
@@ -34,5 +35,13 @@
   "Visual_Labels": "标签",
   "Visual_Position": "位置",
   "Visual_Short_Description": "比较两个组之间变量的相对重要性",
-  "Visual_Long_Description": "龙卷风图是一种特殊类型的条形图，其中数据类别垂直列出而不是以标准水平形式呈现，并且对类别进行排序，以便最大的条形图显示在图表的顶部，第二大条形图显示在顶部的第二位，依次类推。这些图表的命名由来源于最终图表在视觉上类似于半个龙卷风或一个完整的龙卷风。\n龙卷风图是一种常用工具，用于描述结果对于所选变量更改的敏感度。它显示一次改变每个输入变量对输出的影响，使所有其他输入变量保留为其初始(标称)值。通常，为每个输入选择一个“低”值和一个“高”值。\n这是一个开放源代码视觉对象。从 GitHub 获取代码: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "龙卷风图是一种特殊类型的条形图，其中数据类别垂直列出而不是以标准水平形式呈现，并且对类别进行排序，以便最大的条形图显示在图表的顶部，第二大条形图显示在顶部的第二位，依次类推。这些图表的命名由来源于最终图表在视觉上类似于半个龙卷风或一个完整的龙卷风。\n龙卷风图是一种常用工具，用于描述结果对于所选变量更改的敏感度。它显示一次改变每个输入变量对输出的影响，使所有其他输入变量保留为其初始(标称)值。通常，为每个输入选择一个“低”值和一个“高”值。\n这是一个开放源代码视觉对象。从 GitHub 获取代码: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Format legend",
+  "Visual_OnObject_AddTitle": "Add legend title",
+  "Visual_OnObject_Delete": "Delete",
+  "Visual_OnObject_FormatTitle": "Format legend title",
+  "Visual_OnObject_FormatCategories": "Format categories",
+  "Visual_Categories": "Categories",
+  "Visual_OnObject_FormatDataColors": "Format data colors",
+  "Visual_OnObject_FormatLabels": "Format labels"
 }

@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Centru stânga",
   "Visual_Legend_Position_Right_Center": "Centru dreapta",
   "Visual_Title": "Titlu",
+  "Visual_TitleText": "Title text",
   "Visual_Legend_Name": "Nume legendă",
   "Visual_Legend_Color": "Culoare",
   "Visual_Group": "Grup",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Etichete",
   "Visual_Position": "Poziţie",
   "Visual_Short_Description": "Compararea importanței relative a variabilelor între două grupuri",
-  "Visual_Long_Description": "Diagramele tornadă sunt un tip special de diagramă cu bare în care categoriile de date sunt listate pe verticală, în locul prezentării standard pe orizontală, iar categoriile sunt ordonate astfel încât bara cea mai mare să apară în partea de sus a diagramei, a doua cea mai mare bară să apară a doua de sus și așa mai departe. Acestea sunt numite astfel deoarece diagrama finală seamănă vizual cu jumătate de tornadă sau cu o tornadă întreagă.\nO diagramă tornadă este un instrument utilizat adesea pentru a ilustra sensibilitatea unui rezultat la modificările din variabilele selectate. Aceasta arată efectul rezultat în urma variațiilor fiecărei variabile de intrare la un moment dat, păstrând toate celelalte variabile de intrare la valorile lor inițiale (nominale). În mod normal, alegeți o valoare „minim” și o valoare „maxim” pentru fiecare intrare.\nAcesta este un element vizual open source. Obțineți codul de la GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Diagramele tornadă sunt un tip special de diagramă cu bare în care categoriile de date sunt listate pe verticală, în locul prezentării standard pe orizontală, iar categoriile sunt ordonate astfel încât bara cea mai mare să apară în partea de sus a diagramei, a doua cea mai mare bară să apară a doua de sus și așa mai departe. Acestea sunt numite astfel deoarece diagrama finală seamănă vizual cu jumătate de tornadă sau cu o tornadă întreagă.\nO diagramă tornadă este un instrument utilizat adesea pentru a ilustra sensibilitatea unui rezultat la modificările din variabilele selectate. Aceasta arată efectul rezultat în urma variațiilor fiecărei variabile de intrare la un moment dat, păstrând toate celelalte variabile de intrare la valorile lor inițiale (nominale). În mod normal, alegeți o valoare „minim” și o valoare „maxim” pentru fiecare intrare.\nAcesta este un element vizual open source. Obțineți codul de la GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Format legend",
+  "Visual_OnObject_AddTitle": "Add legend title",
+  "Visual_OnObject_Delete": "Delete",
+  "Visual_OnObject_FormatTitle": "Format legend title",
+  "Visual_OnObject_FormatCategories": "Format categories",
+  "Visual_Categories": "Categories",
+  "Visual_OnObject_FormatDataColors": "Format data colors",
+  "Visual_OnObject_FormatLabels": "Format labels"
 }
