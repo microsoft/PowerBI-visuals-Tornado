@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Ezkerrean erdian",
   "Visual_Legend_Position_Right_Center": "Eskuin-erdialdean",
   "Visual_Title": "Titulua",
+  "Visual_TitleText": "Izenaren testua",
   "Visual_Legend_Name": "Legendaren izena",
   "Visual_Legend_Color": "Kolorea",
   "Visual_Group": "Taldea",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Etiketak",
   "Visual_Position": "Posizioa",
   "Visual_Short_Description": "Bi taldeen arteko aldagaien garrantzi erlatiboa konparatzea",
-  "Visual_Long_Description": "Tornado-diagramak barra-diagrama bereziak dira; haietan, datuen kategoriak bertikalean agertzen dira horizontalean beharrean, eta kategoriak modu zehatz batean ordenatzen dira, barrarik handiena diagramaren goialdean ager dadin, bigarren handiena haren azpian, etab. \\\"Tornado\\\" izena dute emaitzek tornado erdi edo tornado oso baten itxura hartzen dutelako.\nEmaitzek hautatutako aldagaietan egindako aldaketekiko duten sentikortasuna irudikatzeko erabili ohi dira tornado-diagramak. Sartutako aldagaiak banan-banan aldatzearen eragina erakusten dute, beste aldagai guztiak jatorrizko balio nominaletan mantenduz. Normalean, aldagai bakoitzean balio \\\"handi\\\" eta \\\"txiki\\\" bana aukeratzen da.\nKode irekikoa da elementu bisual hau. Eskuratu kodea GitHub-en: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Tornado-diagramak barra-diagrama bereziak dira; haietan, datuen kategoriak bertikalean agertzen dira horizontalean beharrean, eta kategoriak modu zehatz batean ordenatzen dira, barrarik handiena diagramaren goialdean ager dadin, bigarren handiena haren azpian, etab. \\\"Tornado\\\" izena dute emaitzek tornado erdi edo tornado oso baten itxura hartzen dutelako.\nEmaitzek hautatutako aldagaietan egindako aldaketekiko duten sentikortasuna irudikatzeko erabili ohi dira tornado-diagramak. Sartutako aldagaiak banan-banan aldatzearen eragina erakusten dute, beste aldagai guztiak jatorrizko balio nominaletan mantenduz. Normalean, aldagai bakoitzean balio \\\"handi\\\" eta \\\"txiki\\\" bana aukeratzen da.\nKode irekikoa da elementu bisual hau. Eskuratu kodea GitHub-en: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Formatuaren legenda",
+  "Visual_OnObject_AddTitle": "Gehitu legenda bat izenburuari",
+  "Visual_OnObject_Delete": "Ezabatu",
+  "Visual_OnObject_FormatTitle": "Formatuaren legendaren izenburua",
+  "Visual_OnObject_FormatCategories": "Formatuaren kategoriak",
+  "Visual_Categories": "Kategoriak",
+  "Visual_OnObject_FormatDataColors": "Eman formatua datuen koloreei",
+  "Visual_OnObject_FormatLabels": "Formatuaren etiketak"
 }

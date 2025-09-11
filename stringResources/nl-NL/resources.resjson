@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Linksmidden",
   "Visual_Legend_Position_Right_Center": "Rechtsmidden",
   "Visual_Title": "Titel",
+  "Visual_TitleText": "Titeltekst",
   "Visual_Legend_Name": "Legendanaam",
   "Visual_Legend_Color": "Kleur",
   "Visual_Group": "Groep",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Labels",
   "Visual_Position": "Positie",
   "Visual_Short_Description": "Het relatieve belang van variabelen voor twee groepen vergelijken",
-  "Visual_Long_Description": "Tornadodiagrammen zijn een speciaal type staafdiagram waarin de gegevenscategorieën verticaal worden weergegeven in plaats van de gebruikelijke horizontale weergave. Daarnaast zijn de categorieën zo gerangschikt dat de grootste staaf boven in het diagram wordt weergegeven, de een na grootste als tweede van boven, enzovoort. Deze diagrammen worden zo genoemd omdat het uiteindelijke diagram lijkt op een halve of volledige tornado.\nEen tornadodiagram is een hulpmiddel dat vaak wordt gebruikt om de gevoeligheid van een resultaat voor wijzigingen in bepaalde variabelen weer te geven. Het geeft het effect weer op de uitvoer wanneer er steeds een invoervariabele wordt gewijzigd terwijl alle andere invoervariabelen de beginwaarden (nominaal) behouden. Normaal gesproken kiest u een 'lage' en 'hoge' waarde voor elke invoer.\nDit is een open source visual. U kunt de code op GitHub ophalen: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Tornadodiagrammen zijn een speciaal type staafdiagram waarin de gegevenscategorieën verticaal worden weergegeven in plaats van de gebruikelijke horizontale weergave. Daarnaast zijn de categorieën zo gerangschikt dat de grootste staaf boven in het diagram wordt weergegeven, de een na grootste als tweede van boven, enzovoort. Deze diagrammen worden zo genoemd omdat het uiteindelijke diagram lijkt op een halve of volledige tornado.\nEen tornadodiagram is een hulpmiddel dat vaak wordt gebruikt om de gevoeligheid van een resultaat voor wijzigingen in bepaalde variabelen weer te geven. Het geeft het effect weer op de uitvoer wanneer er steeds een invoervariabele wordt gewijzigd terwijl alle andere invoervariabelen de beginwaarden (nominaal) behouden. Normaal gesproken kiest u een 'lage' en 'hoge' waarde voor elke invoer.\nDit is een open source visual. U kunt de code op GitHub ophalen: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Legenda opmaken",
+  "Visual_OnObject_AddTitle": "Legendatitel toevoegen",
+  "Visual_OnObject_Delete": "Verwijderen",
+  "Visual_OnObject_FormatTitle": "Legendatitel opmaken",
+  "Visual_OnObject_FormatCategories": "Categorieën opmaken",
+  "Visual_Categories": "Categorieën",
+  "Visual_OnObject_FormatDataColors": "Gegevenskleuren opmaken",
+  "Visual_OnObject_FormatLabels": "Labels opmaken"
 }
