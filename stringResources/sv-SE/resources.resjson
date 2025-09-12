@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Mitten till vänster",
   "Visual_Legend_Position_Right_Center": "Mitten till höger",
   "Visual_Title": "Rubrik",
+  "Visual_TitleText": "Rubriktext",
   "Visual_Legend_Name": "Förklaringsnamn",
   "Visual_Legend_Color": "Färg",
   "Visual_Group": "Grupp",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Etiketter",
   "Visual_Position": "Position",
   "Visual_Short_Description": "Jämför den relativa vikten för variabler mellan två grupper",
-  "Visual_Long_Description": "Tornado-diagram är en särskild typ av stapeldiagram där datakategorierna visas lodrätt istället för vågrät presentation som annars är standard och kategorierna sorteras så att den största stapeln visas överst i diagrammet, den näst största visas näst överst och så vidare. De heter så eftersom det slutliga diagrammet antingen liknar en hel eller halv tornado.\nEtt tornado-diagram är vanligt att använda för att visa ett resultats känslighet för förändringar i utvalda variabler. Det visar hur utdata påverkas när man varierar varje indatavariabel individuellt och behåller alla andra indatavariabler vid sina initiala (nominella) värden. Vanligtvis väljer du ett lågt och ett högt värde för varje indata.\nDet här är ett visuellt objekt med öppen källkod. Hämta koden från GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Tornado-diagram är en särskild typ av stapeldiagram där datakategorierna visas lodrätt istället för vågrät presentation som annars är standard och kategorierna sorteras så att den största stapeln visas överst i diagrammet, den näst största visas näst överst och så vidare. De heter så eftersom det slutliga diagrammet antingen liknar en hel eller halv tornado.\nEtt tornado-diagram är vanligt att använda för att visa ett resultats känslighet för förändringar i utvalda variabler. Det visar hur utdata påverkas när man varierar varje indatavariabel individuellt och behåller alla andra indatavariabler vid sina initiala (nominella) värden. Vanligtvis väljer du ett lågt och ett högt värde för varje indata.\nDet här är ett visuellt objekt med öppen källkod. Hämta koden från GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Formatera förklaring",
+  "Visual_OnObject_AddTitle": "Lägg till förklaringsrubrik",
+  "Visual_OnObject_Delete": "Ta bort",
+  "Visual_OnObject_FormatTitle": "Formatera förklaringsrubrik",
+  "Visual_OnObject_FormatCategories": "Formatkategorier",
+  "Visual_Categories": "Kategorier",
+  "Visual_OnObject_FormatDataColors": "Formatera datafärger",
+  "Visual_OnObject_FormatLabels": "Formatera etiketter"
 }
