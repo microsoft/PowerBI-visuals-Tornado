@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Centro Esquerdo",
   "Visual_Legend_Position_Right_Center": "Centro Direito",
   "Visual_Title": "Título",
+  "Visual_TitleText": "Texto do título",
   "Visual_Legend_Name": "Nome da Legenda",
   "Visual_Legend_Color": "Cor",
   "Visual_Group": "Grupo",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Etiquetas",
   "Visual_Position": "Posição",
   "Visual_Short_Description": "Comparar a importância relativa de variáveis entre dois grupos",
-  "Visual_Long_Description": "Os gráficos de tornado são um tipo de Gráfico de barras em que as categorias de dados são listadas verticalmente em vez da apresentação horizontal padrão, e as categorias estão ordenados de forma a que a barra maior apareça no topo do gráfico, a segunda maior apareça em segundo lugar, e assim por diante. O nome deve-se ao facto de o gráfico final ser visualmente semelhante a metade ou à totalidade de um tornado.\nUm gráfico de tornado é uma ferramenta comum utilizada para representar a sensibilidade de um resultado a alterações nas variáveis selecionadas. Mostra o efeito sobre o resultado de variar cada variável de entrada de uma vez, mantendo todas as outras variáveis de entrada nos seus valores (nominais) iniciais. Normalmente, deve escolher um valor \\\"baixo\\\" e \\\"alto\\\" para cada tipo de entrada.\nEste é um visual de open source. Obtenha o código do GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Os gráficos de tornado são um tipo de Gráfico de barras em que as categorias de dados são listadas verticalmente em vez da apresentação horizontal padrão, e as categorias estão ordenados de forma a que a barra maior apareça no topo do gráfico, a segunda maior apareça em segundo lugar, e assim por diante. O nome deve-se ao facto de o gráfico final ser visualmente semelhante a metade ou à totalidade de um tornado.\nUm gráfico de tornado é uma ferramenta comum utilizada para representar a sensibilidade de um resultado a alterações nas variáveis selecionadas. Mostra o efeito sobre o resultado de variar cada variável de entrada de uma vez, mantendo todas as outras variáveis de entrada nos seus valores (nominais) iniciais. Normalmente, deve escolher um valor \\\"baixo\\\" e \\\"alto\\\" para cada tipo de entrada.\nEste é um visual de open source. Obtenha o código do GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Formatar legenda",
+  "Visual_OnObject_AddTitle": "Adicionar título da legenda",
+  "Visual_OnObject_Delete": "Eliminar",
+  "Visual_OnObject_FormatTitle": "Formatar título da legenda",
+  "Visual_OnObject_FormatCategories": "Formatar categorias",
+  "Visual_Categories": "Categorias",
+  "Visual_OnObject_FormatDataColors": "Formatar cores de dados",
+  "Visual_OnObject_FormatLabels": "Formatar etiquetas"
 }
