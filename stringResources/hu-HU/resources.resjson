@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Bal középen",
   "Visual_Legend_Position_Right_Center": "Jobb középen",
   "Visual_Title": "Cím",
+  "Visual_TitleText": "Cím szövege",
   "Visual_Legend_Name": "Jelmagyarázat neve",
   "Visual_Legend_Color": "Szín",
   "Visual_Group": "Csoport",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Címkék",
   "Visual_Position": "Pozíció",
   "Visual_Short_Description": "Változók relatív fontosságának összehasonlítása két csoportban",
-  "Visual_Long_Description": "A tornádódiagramok speciális sávdiagramok, amelyekben az adatkategóriák függőlegesen vannak felsorolva a hagyományos vízszintes megjelenítés helyett. A kategóriák úgy vannak elrendezve, hogy a legnagyobb sáv helyezkedjen el felül, a második legnagyobb az alatt, és így tovább. A diagram formája egy tornádó felére vagy egészére emlékeztet, ebből ered az elnevezés.\nA tornádódiagram leggyakrabban arra használatos, hogy az adott változókon való változtatások eredményeinek érzékenységét jelenítse meg. Számításakor minden egyes bemeneti változóra való hatást külön jelenít meg, a többi bemeneti értéket az eredeti (nominális) értékükön hagyva. Az egyes bemenetekhez általában választhat „alacsony” vagy „magas” értéket.\nEz a vizualizáció nyílt forráskódú. A kódot letöltheti a GitHubról: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "A tornádódiagramok speciális sávdiagramok, amelyekben az adatkategóriák függőlegesen vannak felsorolva a hagyományos vízszintes megjelenítés helyett. A kategóriák úgy vannak elrendezve, hogy a legnagyobb sáv helyezkedjen el felül, a második legnagyobb az alatt, és így tovább. A diagram formája egy tornádó felére vagy egészére emlékeztet, ebből ered az elnevezés.\nA tornádódiagram leggyakrabban arra használatos, hogy az adott változókon való változtatások eredményeinek érzékenységét jelenítse meg. Számításakor minden egyes bemeneti változóra való hatást külön jelenít meg, a többi bemeneti értéket az eredeti (nominális) értékükön hagyva. Az egyes bemenetekhez általában választhat „alacsony” vagy „magas” értéket.\nEz a vizualizáció nyílt forráskódú. A kódot letöltheti a GitHubról: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Jelmagyarázat formázása",
+  "Visual_OnObject_AddTitle": "Jelmagyarázat címének hozzáadása",
+  "Visual_OnObject_Delete": "Törlés",
+  "Visual_OnObject_FormatTitle": "Jelmagyarázat címének formázása",
+  "Visual_OnObject_FormatCategories": "Kategóriák formázása",
+  "Visual_Categories": "Kategóriák",
+  "Visual_OnObject_FormatDataColors": "Adatszínek formázása",
+  "Visual_OnObject_FormatLabels": "Címkék formázása"
 }

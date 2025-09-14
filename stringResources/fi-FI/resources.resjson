@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Vasemmalla keskellä",
   "Visual_Legend_Position_Right_Center": "Oikealla keskellä",
   "Visual_Title": "Otsikko",
+  "Visual_TitleText": "Otsikon teksti",
   "Visual_Legend_Name": "Selitteen nimi",
   "Visual_Legend_Color": "Väri",
   "Visual_Group": "Ryhmittele",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Otsikot",
   "Visual_Position": "Sijainti",
   "Visual_Short_Description": "Vertaamalla muuttujien suhteellista tärkeyttä kahden ryhmän välillä",
-  "Visual_Long_Description": "Tornadokaaviot ovat erityinen palkkikaavion tyyppi, jossa tietoluokat on luetteloitu pystysuunnassa tavallisen vaakasuuntaisen esityksen sijaan, ja luokat on järjestetty niin, että suurin palkki näkyy kaavion yläreunassa, toiseksi suurin näkyy toisena ylhäältä ja niin edelleen. Ne nimetään niin, koska viimeinen kaavio muistuttaa visuaalisesti kumpaa tahansa puolta tai valmista tornadoa.\nTornadokaavio on yleinen työkalu, jonka avulla ilmaistaan herkkyyttä valittujen muuttujien muutosten tuloksena. Se näyttää kunkin syötemuuttujan muuttamisen tuloksen vaikutuksen kerrallaan pitäen kaikki muut syötemuuttujat alkuarvoissaan (nimellisarvoissaan). Yleensä kullekin syötteelle valitaan low- ja high-arvo.\nTämä on avoimeen lähdekoodiin perustuva visualisointi. Hanki koodi GitHubista: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Tornadokaaviot ovat erityinen palkkikaavion tyyppi, jossa tietoluokat on luetteloitu pystysuunnassa tavallisen vaakasuuntaisen esityksen sijaan, ja luokat on järjestetty niin, että suurin palkki näkyy kaavion yläreunassa, toiseksi suurin näkyy toisena ylhäältä ja niin edelleen. Ne nimetään niin, koska viimeinen kaavio muistuttaa visuaalisesti kumpaa tahansa puolta tai valmista tornadoa.\nTornadokaavio on yleinen työkalu, jonka avulla ilmaistaan herkkyyttä valittujen muuttujien muutosten tuloksena. Se näyttää kunkin syötemuuttujan muuttamisen tuloksen vaikutuksen kerrallaan pitäen kaikki muut syötemuuttujat alkuarvoissaan (nimellisarvoissaan). Yleensä kullekin syötteelle valitaan low- ja high-arvo.\nTämä on avoimeen lähdekoodiin perustuva visualisointi. Hanki koodi GitHubista: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Muotoile selite",
+  "Visual_OnObject_AddTitle": "Lisää selitteen otsikko",
+  "Visual_OnObject_Delete": "Poista",
+  "Visual_OnObject_FormatTitle": "Muotoile selitteen otsikko",
+  "Visual_OnObject_FormatCategories": "Muotoile luokat",
+  "Visual_Categories": "Luokat",
+  "Visual_OnObject_FormatDataColors": "Muotoile tietojen värit",
+  "Visual_OnObject_FormatLabels": "Muotoile tunnisteet"
 }
