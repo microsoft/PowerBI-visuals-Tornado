@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "À gauche au centre",
   "Visual_Legend_Position_Right_Center": "Centre droite",
   "Visual_Title": "Titre",
+  "Visual_TitleText": "Texte du titre",
   "Visual_Legend_Name": "Nom de la légende",
   "Visual_Legend_Color": "Couleur",
   "Visual_Group": "Groupe",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Étiquettes",
   "Visual_Position": "Position",
   "Visual_Short_Description": "Comparaison de l'importance relative des variables entre deux groupes",
-  "Visual_Long_Description": "Les graphiques en entonnoir sont un type particulier de graphique à barres dans lequel les catégories de données sont répertoriées verticalement, et non horizontalement comme c'est normalement le cas. Les catégories sont triées de telle sorte que la barre la plus grande s'affiche en haut du graphique, la deuxième juste en dessous, et ainsi de suite. Ce visuel est appelé ainsi car le graphique final ressemble à la moitié d'un entonnoir ou à un entonnoir entier.\nUn graphique en entonnoir est un outil couramment utilisé pour représenter la sensibilité d'un résultat aux changements apportés à certaines variables. Il montre l'effet sur la sortie du changement d'une seule variable d'entrée (toutes les autres variables d'entrée conservant leurs valeurs initiales). En général, vous choisissez une valeur faible et une valeur élevée pour chaque entrée.\nCe visuel est open source. Obtenez le code sur GitHub ici : https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Les graphiques en entonnoir sont un type particulier de graphique à barres dans lequel les catégories de données sont répertoriées verticalement, et non horizontalement comme c'est normalement le cas. Les catégories sont triées de telle sorte que la barre la plus grande s'affiche en haut du graphique, la deuxième juste en dessous, et ainsi de suite. Ce visuel est appelé ainsi car le graphique final ressemble à la moitié d'un entonnoir ou à un entonnoir entier.\nUn graphique en entonnoir est un outil couramment utilisé pour représenter la sensibilité d'un résultat aux changements apportés à certaines variables. Il montre l'effet sur la sortie du changement d'une seule variable d'entrée (toutes les autres variables d'entrée conservant leurs valeurs initiales). En général, vous choisissez une valeur faible et une valeur élevée pour chaque entrée.\nCe visuel est open source. Obtenez le code sur GitHub ici : https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Format de légende",
+  "Visual_OnObject_AddTitle": "Ajouter un titre de légende",
+  "Visual_OnObject_Delete": "Supprimer",
+  "Visual_OnObject_FormatTitle": "Mettre en forme le titre de la légende",
+  "Visual_OnObject_FormatCategories": "Mettre en forme les catégories",
+  "Visual_Categories": "Catégories",
+  "Visual_OnObject_FormatDataColors": "Mettre en forme les couleurs des données",
+  "Visual_OnObject_FormatLabels": "Formater les étiquettes"
 }
