@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Pa kreisi centrā",
   "Visual_Legend_Position_Right_Center": "Pa labi centrā",
   "Visual_Title": "Nosaukums",
+  "Visual_TitleText": "Virsraksta teksts",
   "Visual_Legend_Name": "Apzīmējumu nosaukums",
   "Visual_Legend_Color": "Krāsa",
   "Visual_Group": "Grupa",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Etiķetes",
   "Visual_Position": "Pozīcija",
   "Visual_Short_Description": "Relatīvā mainīgo svarīguma salīdzināšana starp divām grupām.",
-  "Visual_Long_Description": "Tornado Chart diagrammas ir īpašs joslu diagrammas tips, kurā datu kategorijas tiek uzskaitītas vertikāli, nevis parādītas standarta horizontālajā izvietojumā, un kategorijas tiek kārtotas tā, lai lielākā josla būtu redzama diagrammas pašā augšā, otrā lielākā — kā otrā no augšas utt. Šīs diagrammas dēvē par tornado, jo gala diagramma vizuāli atgādina pusi no viesuļvētras vai pilnu viesuļvētru.\nTornado Chart diagramma ir bieži lietots rīks, ko izmanto, lai parādītu rezultāta jutīgumu attiecībā pret izmaiņām atlasītajos mainīgajos. Tā parāda atstāto ietekmi uz rezultātu, katrā reizē mainot pa vienam ievades mainīgajam un saglabājot pārējo ievades mainīgo sākotnējās (nominālās) vērtības. Parasti katrai ievadei tiek izvēlēta “zemā” un “augstā” vērtība.\nŠie ir atklātā pirmkoda vizuālie dati. Iegūstiet kodu no GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Tornado Chart diagrammas ir īpašs joslu diagrammas tips, kurā datu kategorijas tiek uzskaitītas vertikāli, nevis parādītas standarta horizontālajā izvietojumā, un kategorijas tiek kārtotas tā, lai lielākā josla būtu redzama diagrammas pašā augšā, otrā lielākā — kā otrā no augšas utt. Šīs diagrammas dēvē par tornado, jo gala diagramma vizuāli atgādina pusi no viesuļvētras vai pilnu viesuļvētru.\nTornado Chart diagramma ir bieži lietots rīks, ko izmanto, lai parādītu rezultāta jutīgumu attiecībā pret izmaiņām atlasītajos mainīgajos. Tā parāda atstāto ietekmi uz rezultātu, katrā reizē mainot pa vienam ievades mainīgajam un saglabājot pārējo ievades mainīgo sākotnējās (nominālās) vērtības. Parasti katrai ievadei tiek izvēlēta “zemā” un “augstā” vērtība.\nŠie ir atklātā pirmkoda vizuālie dati. Iegūstiet kodu no GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Formatēt apzīmējumus",
+  "Visual_OnObject_AddTitle": "Pievienot apzīmējumu nosaukumu",
+  "Visual_OnObject_Delete": "Dzēst",
+  "Visual_OnObject_FormatTitle": "Formatēt apzīmējumu nosaukumu",
+  "Visual_OnObject_FormatCategories": "Formatēt kategorijas",
+  "Visual_Categories": "Kategorijas",
+  "Visual_OnObject_FormatDataColors": "Formatēt datu krāsas",
+  "Visual_OnObject_FormatLabels": "Formatēt etiķetes"
 }
