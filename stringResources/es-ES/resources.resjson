@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Centro izquierda",
   "Visual_Legend_Position_Right_Center": "A la derecha, en el centro",
   "Visual_Title": "Título",
+  "Visual_TitleText": "Texto del título",
   "Visual_Legend_Name": "Nombre de leyenda",
   "Visual_Legend_Color": "Color",
   "Visual_Group": "Grupo",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Etiquetas",
   "Visual_Position": "Posición",
   "Visual_Short_Description": "Permite comparar la importancia relativa de las variables entre dos grupos.",
-  "Visual_Long_Description": "Los gráficos de tornado son un tipo especial de gráficos de barras donde las categorías de datos se muestran verticalmente (en lugar de usar la presentación horizontal estándar) y las categorías se ordenan para que la barra más larga aparezca en la parte superior del gráfico, la segunda barra más larga aparezca en segundo lugar desde la parte superior, etc. Se llaman así porque el gráfico final se parece visualmente a medio tornado o a un tornado completo.\nUn gráfico de tornado es una herramienta común usada para mostrar la sensibilidad de un resultado a los cambios en las variables seleccionadas. Muestra el efecto del resultado de modificar cada variable de entrada, manteniendo el resto de las variables de entrada con los valores iniciales (nominales). Normalmente, se selecciona un valor \\\"alto\\\" y un valor \\\"bajo\\\" para cada entrada.\nEste es un objeto visual de código abierto. Descargue el código desde GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Los gráficos de tornado son un tipo especial de gráficos de barras donde las categorías de datos se muestran verticalmente (en lugar de usar la presentación horizontal estándar) y las categorías se ordenan para que la barra más larga aparezca en la parte superior del gráfico, la segunda barra más larga aparezca en segundo lugar desde la parte superior, etc. Se llaman así porque el gráfico final se parece visualmente a medio tornado o a un tornado completo.\nUn gráfico de tornado es una herramienta común usada para mostrar la sensibilidad de un resultado a los cambios en las variables seleccionadas. Muestra el efecto del resultado de modificar cada variable de entrada, manteniendo el resto de las variables de entrada con los valores iniciales (nominales). Normalmente, se selecciona un valor \\\"alto\\\" y un valor \\\"bajo\\\" para cada entrada.\nEste es un objeto visual de código abierto. Descargue el código desde GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Formato de leyenda",
+  "Visual_OnObject_AddTitle": "Agregar título de leyenda",
+  "Visual_OnObject_Delete": "Eliminar",
+  "Visual_OnObject_FormatTitle": "Formato de título de leyenda",
+  "Visual_OnObject_FormatCategories": "Categorías de formato",
+  "Visual_Categories": "Categorías",
+  "Visual_OnObject_FormatDataColors": "Dar formato a colores de datos",
+  "Visual_OnObject_FormatLabels": "Etiquetas de formato"
 }
