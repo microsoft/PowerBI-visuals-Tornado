@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Vľavo na stred",
   "Visual_Legend_Position_Right_Center": "Vpravo na stred",
   "Visual_Title": "Názov",
+  "Visual_TitleText": "Text názvu",
   "Visual_Legend_Name": "Názov legendy",
   "Visual_Legend_Color": "Farba",
   "Visual_Group": "Skupina",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Označenia",
   "Visual_Position": "Pozícia",
   "Visual_Short_Description": "Porovnanie relatívnej dôležitosti premenných medzi dvomi skupinami",
-  "Visual_Long_Description": "Grafy typu Tornádo sú špeciálnym typom pruhových grafov, v ktorých sú kategórie údajov zoradené vertikálne namiesto štandardnej horizontálnej prezentácie. Kategórie sú usporiadané tak, aby sa v hornej časti grafu zobrazil najväčší pruh, druhý najväčší pruh sa zobrazil druhý zhora a tak ďalej. Názov tohto typu grafu vychádza z toho, že výsledný graf vizuálne pripomína polovicu tornáda alebo celé tornádo.\nGraf typu Tornádo je bežným nástrojom používaným na zobrazenie citlivosti výsledku zmien vo vybratých premenných. Zobrazuje vplyv na výstup zmeny každej vstupnej premennej, pričom všetky ostatné vstupné premenné si zachovajú svoju počiatočné (nominálne) hodnoty. Zvyčajne pre každý vstup vyberiete hodnotu nízka a vysoká.\nTento vizuál je typu open-source. Kód získate na stránke GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Grafy typu Tornádo sú špeciálnym typom pruhových grafov, v ktorých sú kategórie údajov zoradené vertikálne namiesto štandardnej horizontálnej prezentácie. Kategórie sú usporiadané tak, aby sa v hornej časti grafu zobrazil najväčší pruh, druhý najväčší pruh sa zobrazil druhý zhora a tak ďalej. Názov tohto typu grafu vychádza z toho, že výsledný graf vizuálne pripomína polovicu tornáda alebo celé tornádo.\nGraf typu Tornádo je bežným nástrojom používaným na zobrazenie citlivosti výsledku zmien vo vybratých premenných. Zobrazuje vplyv na výstup zmeny každej vstupnej premennej, pričom všetky ostatné vstupné premenné si zachovajú svoju počiatočné (nominálne) hodnoty. Zvyčajne pre každý vstup vyberiete hodnotu nízka a vysoká.\nTento vizuál je typu open-source. Kód získate na stránke GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Formátovať legendu",
+  "Visual_OnObject_AddTitle": "Pridať názov legendy",
+  "Visual_OnObject_Delete": "Odstrániť",
+  "Visual_OnObject_FormatTitle": "Formátovať názov legendy",
+  "Visual_OnObject_FormatCategories": "Formátovať kategórie",
+  "Visual_Categories": "Kategórie",
+  "Visual_OnObject_FormatDataColors": "Formátovať farby údajov",
+  "Visual_OnObject_FormatLabels": "Formátovať označenia"
 }
