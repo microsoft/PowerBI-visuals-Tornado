@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "左中央",
   "Visual_Legend_Position_Right_Center": "右詰め (中央)",
   "Visual_Title": "タイトル",
+  "Visual_TitleText": "タイトルのテキスト",
   "Visual_Legend_Name": "凡例の名前",
   "Visual_Legend_Color": "色",
   "Visual_Group": "グループ",
@@ -34,5 +35,13 @@
   "Visual_Labels": "ラベル",
   "Visual_Position": "位置",
   "Visual_Short_Description": "2 つのグループ間の変数の相対的重要度を比較します",
-  "Visual_Long_Description": "Tornado Chart は、特殊な種類の棒グラフで、データのカテゴリが通常の水平方向ではなく垂直方向に配置され、棒の最も長いカテゴリがグラフの一番上に表示され、2 番目に長いカテゴリが上から 2 番目に表示されます (以下同様)。この名前の由来は、最終的なグラフの見た目が竜巻の半分または全体に似ているところにあります。\nTornado Chart は、選択した変数の変化に対する結果の感度を描画するために使用する一般的なツールです。このグラフには、各入力変数を変えた場合の出力への影響を一度に表示することができ、その他のすべての入力変数は初期 (公称) 値に保持します。通常は、各入力の \\\"低\\\" の値と \\\"高\\\" の値を選択します。\nこれは、オープンソースの視覚エフェクトです。コードは GitHub から取得します : https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Tornado Chart は、特殊な種類の棒グラフで、データのカテゴリが通常の水平方向ではなく垂直方向に配置され、棒の最も長いカテゴリがグラフの一番上に表示され、2 番目に長いカテゴリが上から 2 番目に表示されます (以下同様)。この名前の由来は、最終的なグラフの見た目が竜巻の半分または全体に似ているところにあります。\nTornado Chart は、選択した変数の変化に対する結果の感度を描画するために使用する一般的なツールです。このグラフには、各入力変数を変えた場合の出力への影響を一度に表示することができ、その他のすべての入力変数は初期 (公称) 値に保持します。通常は、各入力の \\\"低\\\" の値と \\\"高\\\" の値を選択します。\nこれは、オープンソースの視覚エフェクトです。コードは GitHub から取得します : https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "凡例の書式設定",
+  "Visual_OnObject_AddTitle": "凡例のタイトルを追加する",
+  "Visual_OnObject_Delete": "削除",
+  "Visual_OnObject_FormatTitle": "凡例のタイトルの書式設定",
+  "Visual_OnObject_FormatCategories": "カテゴリの書式設定",
+  "Visual_Categories": "カテゴリ",
+  "Visual_OnObject_FormatDataColors": "データの色の書式設定",
+  "Visual_OnObject_FormatLabels": "ラベルの書式設定"
 }

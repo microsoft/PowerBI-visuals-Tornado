@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Z lewej na środku",
   "Visual_Legend_Position_Right_Center": "Z prawej na środku",
   "Visual_Title": "Tytuł",
+  "Visual_TitleText": "Tekst tytułu",
   "Visual_Legend_Name": "Nazwa legendy",
   "Visual_Legend_Color": "Kolor",
   "Visual_Group": "Grupuj",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Etykiety",
   "Visual_Position": "Pozycja",
   "Visual_Short_Description": "Porównywanie względnej ważności zmiennych między dwiema grupami",
-  "Visual_Long_Description": "Wykres tornado to specjalny typ wykresu słupkowego, w którym kategorie danych są ułożone pionowo, a nie prezentowane w standardowy sposób w poziomie, kategorie są natomiast uporządkowane w taki sposób, aby największy pasek znajdował się u góry wykresu, drugi największy pod nim i tak dalej. Nazwa wykresu wynika z tego, że jego końcowy wygląd wizualnie przypomina połowę lub całość tornado.\nWykres tornado to typowe narzędzie służące do przedstawiania wrażliwości wyników na zmiany wybranych zmiennych. Pokazuje, jaki wpływ na dane wyjściowe mają zmiany pojedynczych zmiennych wejściowych, zachowując przy tym początkową (nominalną) wartość innych zmienny wejściowych. Zazwyczaj dla każdej zmiennej wejściowej wybierana jest wartość „niska” lub „wysoka”.\nJest to wizualizacja typu open source. Pobierz kod z serwisu GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Wykres tornado to specjalny typ wykresu słupkowego, w którym kategorie danych są ułożone pionowo, a nie prezentowane w standardowy sposób w poziomie, kategorie są natomiast uporządkowane w taki sposób, aby największy pasek znajdował się u góry wykresu, drugi największy pod nim i tak dalej. Nazwa wykresu wynika z tego, że jego końcowy wygląd wizualnie przypomina połowę lub całość tornado.\nWykres tornado to typowe narzędzie służące do przedstawiania wrażliwości wyników na zmiany wybranych zmiennych. Pokazuje, jaki wpływ na dane wyjściowe mają zmiany pojedynczych zmiennych wejściowych, zachowując przy tym początkową (nominalną) wartość innych zmienny wejściowych. Zazwyczaj dla każdej zmiennej wejściowej wybierana jest wartość „niska” lub „wysoka”.\nJest to wizualizacja typu open source. Pobierz kod z serwisu GitHub: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Formatuj legendę",
+  "Visual_OnObject_AddTitle": "Dodaj tytuł legendy",
+  "Visual_OnObject_Delete": "Usuń",
+  "Visual_OnObject_FormatTitle": "Formatuj tytuł legendy",
+  "Visual_OnObject_FormatCategories": "Formatuj kategorie",
+  "Visual_Categories": "Kategorie",
+  "Visual_OnObject_FormatDataColors": "Formatuj kolory danych",
+  "Visual_OnObject_FormatLabels": "Formatuj etykiety"
 }

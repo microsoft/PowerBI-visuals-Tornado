@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "A sinistra al centro",
   "Visual_Legend_Position_Right_Center": "A destra al centro",
   "Visual_Title": "Titolo",
+  "Visual_TitleText": "Testo titolo",
   "Visual_Legend_Name": "Nome legenda",
   "Visual_Legend_Color": "Colore",
   "Visual_Group": "Gruppo",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Etichette",
   "Visual_Position": "Posizione",
   "Visual_Short_Description": "Confronto dell'importanza relativa delle variabili tra due gruppi",
-  "Visual_Long_Description": "I grafici Tornado sono uno speciale tipo di grafico a barre, in cui le categorie dei dati sono elencate verticalmente anziché nella presentazione orizzontale standard e sono ordinate in modo che la barra più grande sia visualizzata nella parte superiore del grafico, la seconda più grande sia la seconda dall'alto e così via. Il nome di questi grafici deriva dal fatto che il grafico finale è simile a un tornado intero o alla metà di un tornado.\nUn grafico Tornado è uno strumento comune usato per rappresentare la sensibilità di un risultato alle variazioni nelle variabili selezionate. Mostra infatti l'effetto prodotto sull'output dalla variazione delle singole variabili di input, mantenendo tutte le altre variabili di input impostate sui valori iniziali (nominali). Per ogni input si sceglie in genere un valore \\\"basso\\\" e uno \\\"alto\\\".\nOggetto visivo open source. Il codice sorgente è disponibile su GitHub all'indirizzo https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "I grafici Tornado sono uno speciale tipo di grafico a barre, in cui le categorie dei dati sono elencate verticalmente anziché nella presentazione orizzontale standard e sono ordinate in modo che la barra più grande sia visualizzata nella parte superiore del grafico, la seconda più grande sia la seconda dall'alto e così via. Il nome di questi grafici deriva dal fatto che il grafico finale è simile a un tornado intero o alla metà di un tornado.\nUn grafico Tornado è uno strumento comune usato per rappresentare la sensibilità di un risultato alle variazioni nelle variabili selezionate. Mostra infatti l'effetto prodotto sull'output dalla variazione delle singole variabili di input, mantenendo tutte le altre variabili di input impostate sui valori iniziali (nominali). Per ogni input si sceglie in genere un valore \\\"basso\\\" e uno \\\"alto\\\".\nOggetto visivo open source. Il codice sorgente è disponibile su GitHub all'indirizzo https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Formato legenda",
+  "Visual_OnObject_AddTitle": "Aggiungi titolo legenda",
+  "Visual_OnObject_Delete": "Elimina",
+  "Visual_OnObject_FormatTitle": "Formatta titolo legenda",
+  "Visual_OnObject_FormatCategories": "Formatta categorie",
+  "Visual_Categories": "Categorie",
+  "Visual_OnObject_FormatDataColors": "Formatta colori dati",
+  "Visual_OnObject_FormatLabels": "Formatta etichette"
 }

@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Vasakul keskel",
   "Visual_Legend_Position_Right_Center": "Paremale keskele",
   "Visual_Title": "Pealkiri",
+  "Visual_TitleText": "Pealkirja tekst",
   "Visual_Legend_Name": "Legendi nimi",
   "Visual_Legend_Color": "Värv",
   "Visual_Group": "Grupp",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Sildid",
   "Visual_Position": "Paigutus",
   "Visual_Short_Description": "Muutujate suhtelise olulisuse võrdlemiseks kahe grupi vahel",
-  "Visual_Long_Description": "Tornaadodiagrammid on erilist tüüpi lintdiagrammid, kus andmekategooriad on tavapärase horisontaalse esituse asemel loetletud vertikaalselt ja kategooriad on järjestatud nii, et suurim lint kuvatakse diagrammi ülaosas, suuruselt teine kuvatakse ülevalt teisena jne. Nimi tuleneb sellest, et lõplik diagramm sarnaneb visuaalselt tervele või poolele tornaadole.\nTornaadodiagramm on tavapärane tööriist, mille abil kujutatakse tulemi tundlikkust valitud muutujates tehtud muudatustele. See kuvab mõju väljundile, muutes iga sisendmuutujat eraldi ja hoides kõik teised sisendmuutujad nende algsetel (nimi) väärtustel. Tavaliselt valitakse iga sisendi jaoks väärtus „kõrge” või „madal”.\nSee on avatud lähtekoodiga visuaal. Hankige kood GitHubist: https://github.com/Microsoft/PowerBI-visuals-tornado."
+  "Visual_Long_Description": "Tornaadodiagrammid on erilist tüüpi lintdiagrammid, kus andmekategooriad on tavapärase horisontaalse esituse asemel loetletud vertikaalselt ja kategooriad on järjestatud nii, et suurim lint kuvatakse diagrammi ülaosas, suuruselt teine kuvatakse ülevalt teisena jne. Nimi tuleneb sellest, et lõplik diagramm sarnaneb visuaalselt tervele või poolele tornaadole.\nTornaadodiagramm on tavapärane tööriist, mille abil kujutatakse tulemi tundlikkust valitud muutujates tehtud muudatustele. See kuvab mõju väljundile, muutes iga sisendmuutujat eraldi ja hoides kõik teised sisendmuutujad nende algsetel (nimi) väärtustel. Tavaliselt valitakse iga sisendi jaoks väärtus „kõrge” või „madal”.\nSee on avatud lähtekoodiga visuaal. Hankige kood GitHubist: https://github.com/Microsoft/PowerBI-visuals-tornado.",
+  "Visual_OnObject_FormatLegend": "Vorminda legendi",
+  "Visual_OnObject_AddTitle": "Lisa legendi pealkiri",
+  "Visual_OnObject_Delete": "Kustuta",
+  "Visual_OnObject_FormatTitle": "Legendi pealkirja vormindamine",
+  "Visual_OnObject_FormatCategories": "Vorminda kategooriaid",
+  "Visual_Categories": "Kategooriad",
+  "Visual_OnObject_FormatDataColors": "Vorminda andmevärve",
+  "Visual_OnObject_FormatLabels": "Siltide vormindamine"
 }

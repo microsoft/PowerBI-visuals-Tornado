@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Vlevo na střed",
   "Visual_Legend_Position_Right_Center": "Vpravo na střed",
   "Visual_Title": "Název",
+  "Visual_TitleText": "Text nadpisu",
   "Visual_Legend_Name": "Název legendy",
   "Visual_Legend_Color": "Barva",
   "Visual_Group": "Skupina",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Popisky",
   "Visual_Position": "Pozice",
   "Visual_Short_Description": "Porovnání relativního významu proměnných mezi dvěma skupinami",
-  "Visual_Long_Description": "Tornádové grafy jsou speciálním typem pruhového grafu, ve kterém jsou kategorie dat uvedeny místo standardní vodorovné prezentace svisle a kategorie jsou uspořádány tak, aby se největší pruh v grafu zobrazil jako první, druhý největší jako druhý a tak dále. Tento název získaly proto, že se konečný graf vizuálně podobá polovině nebo úplnému tornádu.\nTornádový graf je běžný nástroj sloužící k znázornění citlivosti výsledku na změny ve vybraných proměnných. Zobrazuje vliv měnících se proměnných na výstup. Vždy se mění jedna proměnná a všechny ostatní vstupní proměnné si zachovávají své počáteční hodnoty (nominální). Obvykle pro každý vstup zvolíte nízkou nebo vysokou hodnotu.\nTento vizuál je typu open source. Kód můžete získat z Githubu: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Tornádové grafy jsou speciálním typem pruhového grafu, ve kterém jsou kategorie dat uvedeny místo standardní vodorovné prezentace svisle a kategorie jsou uspořádány tak, aby se největší pruh v grafu zobrazil jako první, druhý největší jako druhý a tak dále. Tento název získaly proto, že se konečný graf vizuálně podobá polovině nebo úplnému tornádu.\nTornádový graf je běžný nástroj sloužící k znázornění citlivosti výsledku na změny ve vybraných proměnných. Zobrazuje vliv měnících se proměnných na výstup. Vždy se mění jedna proměnná a všechny ostatní vstupní proměnné si zachovávají své počáteční hodnoty (nominální). Obvykle pro každý vstup zvolíte nízkou nebo vysokou hodnotu.\nTento vizuál je typu open source. Kód můžete získat z Githubu: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Formátovat legendu",
+  "Visual_OnObject_AddTitle": "Přidat nadpis legendy",
+  "Visual_OnObject_Delete": "Odstranit",
+  "Visual_OnObject_FormatTitle": "Nadpis legendy formátů",
+  "Visual_OnObject_FormatCategories": "Formátování kategorií",
+  "Visual_Categories": "Kategorie",
+  "Visual_OnObject_FormatDataColors": "Formátování barev dat",
+  "Visual_OnObject_FormatLabels": "Formátování popisků"
 }
