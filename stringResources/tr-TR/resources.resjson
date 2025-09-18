@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Sol Orta",
   "Visual_Legend_Position_Right_Center": "Sağ orta",
   "Visual_Title": "Başlık",
+  "Visual_TitleText": "Başlık metni",
   "Visual_Legend_Name": "Gösterge Adı",
   "Visual_Legend_Color": "Renk",
   "Visual_Group": "Grup",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Etiketler",
   "Visual_Position": "Konum",
   "Visual_Short_Description": "İki grup arasındaki değişkenlerin göreli önemini karşılaştırma",
-  "Visual_Long_Description": "Hortum grafikleri, veri kategorilerinin standart yatay sunum yerine dikey olarak listelendiği ve en büyüğü ilk sırada, ikincisi üstten ikinci sırada vb. olacak şekilde sıralandığı özel bir tür Çubuk grafiğidir. Bu şekilde adlandırılmasının nedeni son grafiğin görsel olarak bir hortumun yarısını ya da tamamını andırmasıdır.\nHortum grafiği, yaygın olarak bir sonucun seçilen değişkenlerdeki değişikliklere ne kadar duyarlı olduğunu göstermek için kullanılan bir araçtır. Her bir girdi değişkenindeki değişikliklerin çıktı üzerindeki etkisini, diğer girdi değişkenlerini ilk (sayısal) değerlerinde tutarak gösterir. Her girdi için tipik olarak \\\"düşük\\\" veya \\\"yüksek\\\" değer seçersiniz.\nBu, açık kaynaklı bir görseldir. Kodu GitHub'dan alabilirsiniz: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Hortum grafikleri, veri kategorilerinin standart yatay sunum yerine dikey olarak listelendiği ve en büyüğü ilk sırada, ikincisi üstten ikinci sırada vb. olacak şekilde sıralandığı özel bir tür Çubuk grafiğidir. Bu şekilde adlandırılmasının nedeni son grafiğin görsel olarak bir hortumun yarısını ya da tamamını andırmasıdır.\nHortum grafiği, yaygın olarak bir sonucun seçilen değişkenlerdeki değişikliklere ne kadar duyarlı olduğunu göstermek için kullanılan bir araçtır. Her bir girdi değişkenindeki değişikliklerin çıktı üzerindeki etkisini, diğer girdi değişkenlerini ilk (sayısal) değerlerinde tutarak gösterir. Her girdi için tipik olarak \\\"düşük\\\" veya \\\"yüksek\\\" değer seçersiniz.\nBu, açık kaynaklı bir görseldir. Kodu GitHub'dan alabilirsiniz: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Göstergeyi biçimlendir",
+  "Visual_OnObject_AddTitle": "Gösterge başlığı ekleyin",
+  "Visual_OnObject_Delete": "Sil",
+  "Visual_OnObject_FormatTitle": "Gösterge başlığını biçimlendir",
+  "Visual_OnObject_FormatCategories": "Kategorileri biçimlendir",
+  "Visual_Categories": "Kategoriler",
+  "Visual_OnObject_FormatDataColors": "Veri renklerini biçimlendir",
+  "Visual_OnObject_FormatLabels": "Etiketleri biçimlendir"
 }
