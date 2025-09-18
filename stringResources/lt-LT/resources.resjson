@@ -21,6 +21,7 @@
   "Visual_Legend_Position_Left_Center": "Kairėje centre",
   "Visual_Legend_Position_Right_Center": "Dešinėje centre",
   "Visual_Title": "Pavadinimas",
+  "Visual_TitleText": "Pavadinimo tekstas",
   "Visual_Legend_Name": "Legendos pavadinimas",
   "Visual_Legend_Color": "Spalva",
   "Visual_Group": "Grupė",
@@ -34,5 +35,13 @@
   "Visual_Labels": "Žymos",
   "Visual_Position": "Padėtis",
   "Visual_Short_Description": "Santykinės kintamųjų svarbos lyginimas tarp dviejų grupių",
-  "Visual_Long_Description": "Tornado diagramos yra specialus juostinės diagramos tipas, kuriame duomenų kategorijos išvardijamos vertikaliai, o ne standartiškai horizontaliai; o kategorijos surikiuojamos taip, kad didžiausia juosta būtų rodoma diagramos viršuje, antra pagal dydį juosta būtų rodoma antra nuo viršaus ir t. t. Jos taip pavadintos, nes galutinė diagrama vizualiai panaši į pusę tornado arba visą tornadą.\nTornado diagrama yra dažnai naudojamas įrankis, naudojamas rezultato priklausomybei nuo pasirinktų kintamųjų pokyčių vaizduoti. Joje rodomas vienu metu pakeisto kiekvieno kintamojo poveikis išvesčiai, išlaikant pradines (nominaliąsias) visų kitų įvesties kintamųjų reikšmes. Paprastai kiekvienai įvesčiai parenkama maža ir didelė reikšmė.\nTai yra atvirojo kodo vaizdinis elementas. Šį kodą galite gauti iš „GitHub“: https://github.com/Microsoft/PowerBI-visuals-tornado"
+  "Visual_Long_Description": "Tornado diagramos yra specialus juostinės diagramos tipas, kuriame duomenų kategorijos išvardijamos vertikaliai, o ne standartiškai horizontaliai; o kategorijos surikiuojamos taip, kad didžiausia juosta būtų rodoma diagramos viršuje, antra pagal dydį juosta būtų rodoma antra nuo viršaus ir t. t. Jos taip pavadintos, nes galutinė diagrama vizualiai panaši į pusę tornado arba visą tornadą.\nTornado diagrama yra dažnai naudojamas įrankis, naudojamas rezultato priklausomybei nuo pasirinktų kintamųjų pokyčių vaizduoti. Joje rodomas vienu metu pakeisto kiekvieno kintamojo poveikis išvesčiai, išlaikant pradines (nominaliąsias) visų kitų įvesties kintamųjų reikšmes. Paprastai kiekvienai įvesčiai parenkama maža ir didelė reikšmė.\nTai yra atvirojo kodo vaizdinis elementas. Šį kodą galite gauti iš „GitHub“: https://github.com/Microsoft/PowerBI-visuals-tornado",
+  "Visual_OnObject_FormatLegend": "Formatuoti legendą",
+  "Visual_OnObject_AddTitle": "Įtraukti legendos pavadinimą",
+  "Visual_OnObject_Delete": "Naikinti",
+  "Visual_OnObject_FormatTitle": "Formatuoti legendos pavadinimą",
+  "Visual_OnObject_FormatCategories": "Formatuoti kategorijas",
+  "Visual_Categories": "Kategorijos",
+  "Visual_OnObject_FormatDataColors": "Formatuoti duomenų spalvas",
+  "Visual_OnObject_FormatLabels": "Formatuoti žymas"
 }
