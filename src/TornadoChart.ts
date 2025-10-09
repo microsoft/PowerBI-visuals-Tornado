@@ -301,7 +301,6 @@ export class TornadoChart implements IVisual {
             .withMeasure(queryName)
             .createSelectionId();
         const displayName: PrimitiveValue = source?.groupName ?? source?.displayName ?? null;
-
         const columnObjects = columnGroup?.objects || {};
         const metadataObjects = dataView?.metadata?.objects || {};
         const sourceObjects = source?.objects || {};
