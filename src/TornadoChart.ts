@@ -45,7 +45,6 @@ import DataViewObjectPropertyIdentifier = powerbiVisualsApi.DataViewObjectProper
 import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
 import DataViewCategorical = powerbiVisualsApi.DataViewCategorical;
 import DataViewValueColumns = powerbiVisualsApi.DataViewValueColumns;
-import DataViewObjectWithId = powerbiVisualsApi.DataViewObjectWithId;
 import DataViewMetadataColumn = powerbiVisualsApi.DataViewMetadataColumn;
 import DataViewCategoryColumn = powerbiVisualsApi.DataViewCategoryColumn;
 import DataViewValueColumnGroup = powerbiVisualsApi.DataViewValueColumnGroup;
