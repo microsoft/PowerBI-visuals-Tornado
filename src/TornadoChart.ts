@@ -320,14 +320,21 @@ export class TornadoChart implements IVisual {
             colors
         );
 
-        const categoryAxisObject: DataViewObject | DataViewObjectWithId[] | undefined = mergedObjects.categoryAxis;
-        const categoryAxisEnd = (categoryAxisObject as any)?.["end"] ?? null;
+        let categoryAxisEnd: number = null;
+        const categoryAxisObject = mergedObjects.categoryAxis;
+
+        if (categoryAxisObject && !Array.isArray(categoryAxisObject)) {
+            const axis = categoryAxisObject as DataViewObject;
+            if (typeof axis.end === "number") {
+                categoryAxisEnd = axis.end;
+            }
+        }
 
         return {
             fill: fillColor,
             name: displayName,
-            selectionId,
-            categoryAxisEnd
+            selectionId: selectionId,
+            categoryAxisEnd: categoryAxisEnd
         } as TornadoChartSeries;
     }
 

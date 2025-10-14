@@ -1,3 +1,6 @@
+## 3.1.1.0
+* Fixed issue where increasing Data Label text size reduced label clickability.
+* Fixed issue where Data Colors were reset after modifying X-Axis values.
 
 ## 3.1.0.0
 
