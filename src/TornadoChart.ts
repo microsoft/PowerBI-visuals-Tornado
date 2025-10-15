@@ -45,7 +45,6 @@ import DataViewObjectPropertyIdentifier = powerbiVisualsApi.DataViewObjectProper
 import DataViewValueColumn = powerbiVisualsApi.DataViewValueColumn;
 import DataViewCategorical = powerbiVisualsApi.DataViewCategorical;
 import DataViewValueColumns = powerbiVisualsApi.DataViewValueColumns;
-import DataViewObjectWithId = powerbiVisualsApi.DataViewObjectWithId;
 import DataViewMetadataColumn = powerbiVisualsApi.DataViewMetadataColumn;
 import DataViewCategoryColumn = powerbiVisualsApi.DataViewCategoryColumn;
 import DataViewValueColumnGroup = powerbiVisualsApi.DataViewValueColumnGroup;
@@ -300,47 +299,45 @@ export class TornadoChart implements IVisual {
             .withSeries(dataViewValueColumns, columnGroup)
             .withMeasure(queryName)
             .createSelectionId();
+            
+        const displayName: PrimitiveValue = source?.groupName != null 
+            ? String(source.groupName) 
+            : source?.displayName ?? null;
+        const columnObjects = columnGroup?.objects || {};
+        const metadataObjects = dataView?.metadata?.objects || {};
+        const sourceObjects = source?.objects || {};
 
-        let sourceGroupName: string = null;
-        if (source.groupName !== undefined && source.groupName !== null) {
-            sourceGroupName = "" + source.groupName;
-        }
+        const mergedObjects: DataViewObjects = {
+            ...metadataObjects,
+            ...sourceObjects,
+            ...columnObjects,
+            dataPoint: columnObjects["dataPoint"] || sourceObjects["dataPoint"] || metadataObjects["dataPoint"],
+            categoryAxis: columnObjects["categoryAxis"] || sourceObjects["categoryAxis"] || metadataObjects["categoryAxis"]
+        };
 
-        let objects: DataViewObjects,
-        categoryAxisObject: DataViewObject | DataViewObjectWithId[];
-
-        const displayName: PrimitiveValue = source ? sourceGroupName
-                ? sourceGroupName : source.displayName
-                : null;
-
-        if (isGrouped && columnGroup && columnGroup.objects) {
-            categoryAxisObject = columnGroup.objects ? columnGroup.objects["categoryAxis"] : null;
-            objects = columnGroup.objects;
-        } else if (source && source.objects) {
-            categoryAxisObject = objects ? objects["categoryAxis"] : null;
-            objects = source.objects;
-        } else if (dataView && dataView.metadata && dataView.metadata.objects) {
-            objects = dataView.metadata.objects;
-        }
-
-        const fillColor: string = TornadoChart.getColor(
+        const fillColor = TornadoChart.getColor(
             TornadoChart.Properties.dataPoint.fill,
             ["purple", "teal"][index],
-            objects, colors);
+            mergedObjects,
+            colors
+        );
 
-        let categoryAxisEnd: number = categoryAxisObject ? categoryAxisObject["end"] : null;
-        if(!categoryAxisEnd){
-            if(objects?.categoryAxis?.end){
-                categoryAxisEnd = objects.categoryAxis.end as number;
+        let categoryAxisEnd: number = null;
+        const categoryAxisObject = mergedObjects.categoryAxis;
+
+        if (categoryAxisObject && !Array.isArray(categoryAxisObject)) {
+            const axis = categoryAxisObject as DataViewObject;
+            if (typeof axis.end === "number") {
+                categoryAxisEnd = axis.end;
             }
         }
 
-        return <TornadoChartSeries>{
+        return {
             fill: fillColor,
             name: displayName,
             selectionId: selectionId,
-            categoryAxisEnd: categoryAxisEnd,
-        };
+            categoryAxisEnd: categoryAxisEnd
+        } as TornadoChartSeries;
     }
 
     private static getColor(properties: any, defaultColor: string, objects: DataViewObjects, colors: IColorPalette, convertToHighContrastMode: boolean = true): string {
@@ -966,7 +963,6 @@ export class TornadoChart implements IVisual {
             .classed(TornadoChart.LabelText.className, true);
 
         labelSelectionMerged
-            .attr("pointer-events", "none")
             .classed(TornadoChart.Label.className, true);
 
         labelSelectionMerged
@@ -994,13 +990,13 @@ export class TornadoChart implements IVisual {
             .exit()
             .remove();
 
-        this.applyOnObjectStylesToLabels(labelSelection, isFormatMode);
+        this.applyOnObjectStylesToLabels(labelSelectionMerged, isFormatMode);
     }
 
     private applyOnObjectStylesToLabels(labelSelection: Selection<TornadoChartPoint>, isFormatMode: boolean): void {
         labelSelection
             .classed(HtmlSubSelectableClass, isFormatMode)
-            .attr("pointer-events", "auto")
+            .attr("pointer-events", isFormatMode ? "auto" : "none")
             .attr(SubSelectableObjectNameAttribute, TornadoObjectNames.Labels)
             .attr(SubSelectableDisplayNameAttribute, this.localizationManager.getDisplayName("Visual_Labels"));
     }
