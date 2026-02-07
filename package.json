@@ -46,7 +46,7 @@
     "stylelint": "^16.17.0",
     "ts-loader": "9.5.2",
     "typescript": "5.8.2",
-    "webpack": "^5.98.0"
+    "webpack": "^5.105.0"
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^8.29.0",
