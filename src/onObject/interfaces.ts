@@ -31,8 +31,41 @@ export interface IDataPointReference extends GroupFormattingModelReference {
 
 export interface ILabelsReference extends IFontReference {
     show: FormattingId;
+    displayFormat: FormattingId;
     precision: FormattingId;
     displayUnits: FormattingId;
     insideFill: FormattingId;
     outsideFill: FormattingId;
+}
+
+export interface INegativeBarsReference extends GroupFormattingModelReference {
+    show: FormattingId;
+    fill: FormattingId;
+    transparency: FormattingId;
+    borderColor: FormattingId;
+    borderWidth: FormattingId;
+    cornerRadius: FormattingId;
+}
+
+export interface IBarAppearanceReference extends GroupFormattingModelReference {
+    borderColor: FormattingId;
+    borderWidth: FormattingId;
+    cornerRadius: FormattingId;
+    barSpacing: FormattingId;
+}
+
+export interface ICenterLineReference extends GroupFormattingModelReference {
+    show: FormattingId;
+    color: FormattingId;
+    width: FormattingId;
+}
+
+export interface IChartAreaReference extends GroupFormattingModelReference {
+    show: FormattingId;
+    backgroundColor: FormattingId;
+}
+
+export interface ICategoryAxisReference extends GroupFormattingModelReference {
+    normalize: FormattingId;
+    end: FormattingId;
 }

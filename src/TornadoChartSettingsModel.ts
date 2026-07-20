@@ -20,6 +20,11 @@ export const enum TornadoObjectNames {
     Categories = "categories",
     DataPoint = "dataPoint",
     Labels = "labels",
+    NegativeBars = "negativeBars",
+    BarAppearance = "barAppearance",
+    CenterLine = "centerLine",
+    ChartArea = "chartArea",
+    CategoryAxis = "categoryAxis",
 }
 
 class DataColorCardSettings extends Card {
@@ -39,6 +44,13 @@ class DataColorCardSettings extends Card {
 }
 
 class CategoryAxisCardSettings extends Card {
+    normalize = new formattingSettings.ToggleSwitch({
+        name: "normalize",
+        displayName: "Normalize to 100%",
+        displayNameKey: "Visual_Axis_Normalize",
+        value: false
+    });
+
     end = new formattingSettings.NumUpDown({
         name: "end",
         displayName: "End",
@@ -49,19 +61,246 @@ class CategoryAxisCardSettings extends Card {
     name: string = "categoryAxis";
     displayName: string = "X-Axis";
     displayNameKey: string = "Visual_XAxis";
-    slices = [this.end];
+    slices = [this.normalize, this.end];
 }
 
-export class DataLabelSettings extends Card {
+class NegativeBarsCardSettings extends Card {
     show = new formattingSettings.ToggleSwitch({
         name: "show",
         displayName: "Show",
         displayNameKey: "Visual_Show",
-        value: true,
+        value: true
     });
-    
+
     topLevelSlice? = this.show;
 
+    fill = new formattingSettings.ColorPicker({
+        name: "fill",
+        displayName: "Fill",
+        displayNameKey: "Visual_Fill",
+        value: { value: "" }
+    });
+
+    transparency = new formattingSettings.Slider({
+        name: "transparency",
+        displayName: "Transparency (%)",
+        displayNameKey: "Visual_Transparency",
+        value: 0,
+        options: {
+            minValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Min,
+                value: 0,
+            },
+            maxValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Max,
+                value: 100,
+            }
+        }
+    });
+
+    borderColor = new formattingSettings.ColorPicker({
+        name: "borderColor",
+        displayName: "Border color",
+        displayNameKey: "Visual_BorderColor",
+        value: { value: "" }
+    });
+
+    borderWidth = new formattingSettings.Slider({
+        name: "borderWidth",
+        displayName: "Border width (px)",
+        displayNameKey: "Visual_BorderWidth",
+        value: 0,
+        options: {
+            minValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Min,
+                value: 0,
+            },
+            maxValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Max,
+                value: 10,
+            }
+        }
+    });
+
+    cornerRadius = new formattingSettings.Slider({
+        name: "cornerRadius",
+        displayName: "Rounded corners (px)",
+        displayNameKey: "Visual_CornerRadius",
+        value: 0,
+        options: {
+            minValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Min,
+                value: 0,
+            },
+            maxValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Max,
+                value: 50,
+            }
+        }
+    });
+
+    name: string = "negativeBars";
+    displayName: string = "Negative bars";
+    displayNameKey: string = "Visual_NegativeBars";
+    slices = [this.fill, this.transparency, this.borderColor, this.borderWidth, this.cornerRadius];
+}
+
+class BarAppearanceCardSettings extends Card {
+    borderColor = new formattingSettings.ColorPicker({
+        name: "borderColor",
+        displayName: "Border color",
+        displayNameKey: "Visual_BorderColor",
+        value: { value: "" }
+    });
+
+    borderWidth = new formattingSettings.Slider({
+        name: "borderWidth",
+        displayName: "Border width (px)",
+        displayNameKey: "Visual_BorderWidth",
+        value: 0,
+        options: {
+            minValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Min,
+                value: 0,
+            },
+            maxValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Max,
+                value: 10,
+            }
+        }
+    });
+
+    cornerRadius = new formattingSettings.Slider({
+        name: "cornerRadius",
+        displayName: "Rounded corners (px)",
+        displayNameKey: "Visual_CornerRadius",
+        value: 0,
+        options: {
+            minValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Min,
+                value: 0,
+            },
+            maxValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Max,
+                value: 50,
+            }
+        }
+    });
+
+    barSpacing = new formattingSettings.Slider({
+        name: "barSpacing",
+        displayName: "Space between bars (%)",
+        displayNameKey: "Visual_BarSpacing",
+        value: 0,
+        options: {
+            minValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Min,
+                value: 0,
+            },
+            maxValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Max,
+                value: 75,
+            }
+        }
+    });
+
+    name: string = "barAppearance";
+    displayName: string = "Bar appearance";
+    displayNameKey: string = "Visual_BarAppearance";
+    slices = [this.borderColor, this.borderWidth, this.cornerRadius, this.barSpacing];
+}
+
+class CenterLineCardSettings extends Card {
+    show = new formattingSettings.ToggleSwitch({
+        name: "show",
+        displayName: "Show",
+        displayNameKey: "Visual_Show",
+        value: true
+    });
+
+    topLevelSlice? = this.show;
+
+    color = new formattingSettings.ColorPicker({
+        name: "color",
+        displayName: "Color",
+        displayNameKey: "Visual_Color",
+        value: { value: "" }
+    });
+
+    width = new formattingSettings.Slider({
+        name: "width",
+        displayName: "Width (px)",
+        displayNameKey: "Visual_Width",
+        value: 1,
+        options: {
+            minValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Min,
+                value: 1,
+            },
+            maxValue: {
+                type: powerbiVisualsApi.visuals.ValidatorType.Max,
+                value: 10,
+            }
+        }
+    });
+
+    name: string = "centerLine";
+    displayName: string = "Center line";
+    displayNameKey: string = "Visual_CenterLine";
+    slices = [this.color, this.width];
+}
+
+class ChartAreaCardSettings extends Card {
+    show = new formattingSettings.ToggleSwitch({
+        name: "show",
+        displayName: "Show",
+        displayNameKey: "Visual_Show",
+        value: false
+    });
+
+    topLevelSlice? = this.show;
+
+    backgroundColor = new formattingSettings.ColorPicker({
+        name: "backgroundColor",
+        displayName: "Background color",
+        displayNameKey: "Visual_BackgroundColor",
+        value: { value: "#B3B3B3" }
+    });
+
+    name: string = "chartArea";
+    displayName: string = "Chart Area";
+    displayNameKey: string = "Visual_ChartArea";
+    slices = [this.backgroundColor];
+}
+
+export enum LabelDisplayMode {
+    Value = "value",
+    Percentage = "percentage",
+    ValueAndPercentage = "valueAndPercentage",
+}
+
+export const labelContentOptions: IEnumMemberWithDisplayNameKey[] = [
+    { value: LabelDisplayMode.Value, displayName: "Value", key: "Visual_Value" },
+    { value: LabelDisplayMode.Percentage, displayName: "Percentage", key: "Visual_Percentage" },
+    { value: LabelDisplayMode.ValueAndPercentage, displayName: "Value (%)", key: "Visual_ValueAndPercentage" },
+];
+
+class LabelsOptionsGroup extends Card {
+    displayFormat = new formattingSettings.ItemDropdown({
+        name: "displayFormat",
+        displayName: "Label content",
+        displayNameKey: "Visual_LabelContent",
+        items: labelContentOptions,
+        value: labelContentOptions[0]
+    });
+
+    name: string = "options";
+    displayName: string = "Options";
+    displayNameKey: string = "Visual_Options";
+    slices: formattingSettings.Slice[] = [this.displayFormat];
+}
+
+class LabelsValuesGroup extends Card {
     font: formattingSettings.FontControl = new BaseFontControlSettings(9);
 
     labelPrecision = new formattingSettings.NumUpDown({
@@ -102,10 +341,36 @@ export class DataLabelSettings extends Card {
         value: { value: "#666666" }
     });
 
+    negativeFill = new formattingSettings.ColorPicker({
+        name: "negativeFill",
+        displayName: "Negative fill",
+        displayNameKey: "Visual_DataLabels_NegativeFill",
+        value: { value: "" }
+    });
+
+    name: string = "values";
+    displayName: string = "Values";
+    displayNameKey: string = "Visual_Values";
+    slices = [this.font, this.labelPrecision, this.labelDisplayUnits, this.insideFill, this.outsideFill, this.negativeFill];
+}
+
+export class DataLabelSettings extends CompositeCard {
+    show = new formattingSettings.ToggleSwitch({
+        name: "show",
+        displayName: "Show",
+        displayNameKey: "Visual_Show",
+        value: true,
+    });
+    
+    topLevelSlice = this.show;
+
+    public labelsOptionsGroup: LabelsOptionsGroup = new LabelsOptionsGroup();
+    public labelsValuesGroup: LabelsValuesGroup = new LabelsValuesGroup();
+
     name: string = "labels";
     displayName: string = "Data Labels";
     displayNameKey: string = "Visual_DataLabels";
-    slices = [this.font, this.labelPrecision, this.labelDisplayUnits, this.insideFill, this.outsideFill];
+    groups: formattingSettings.Group[] = [this.labelsOptionsGroup, this.labelsValuesGroup];
 }
 
 interface IEnumMemberWithDisplayNameKey extends IEnumMember{
@@ -345,6 +610,10 @@ export class CategoryCardSettings extends Card {
 export class TornadoChartSettingsModel extends Model {
     dataColors = new DataColorCardSettings();
     categoryAxis = new CategoryAxisCardSettings();
+    barAppearance = new BarAppearanceCardSettings();
+    negativeBars = new NegativeBarsCardSettings();
+    centerLine = new CenterLineCardSettings();
+    chartArea = new ChartAreaCardSettings();
     dataLabels = new DataLabelSettings();
     legend = new LegendCardSettings();
     category = new CategoryCardSettings();
@@ -352,14 +621,19 @@ export class TornadoChartSettingsModel extends Model {
     cards = [
         this.dataColors,
         this.categoryAxis,
+        this.barAppearance,
+        this.negativeBars,
+        this.centerLine,
         this.dataLabels,
         this.legend,
-        this.category
+        this.category,
+        this.chartArea
     ];
 
     setLocalizedOptions(localizationManager: ILocalizationManager) {
         this.setLocalizedDisplayName(positionOptions, localizationManager);
         this.setLocalizedDisplayName(categoryPositionOptions, localizationManager);
+        this.setLocalizedDisplayName(labelContentOptions, localizationManager);
     }   
 
     public setLocalizedDisplayName(options: IEnumMemberWithDisplayNameKey[], localizationManager: ILocalizationManager) {
@@ -388,18 +662,21 @@ export class TornadoChartSettingsModel extends Model {
     }
 
     public populateCategoryAxisSlice(dataPoints: TornadoChartSeries[]){
-        this.categoryAxis.slices = [];
-        for (const dataPoint of dataPoints) {
-            this.categoryAxis.slices.push(
-                new formattingSettings.NumUpDown({
-                    name: "end",
-                    displayName: dataPoint.name,
-                    value: dataPoint.categoryAxisEnd ? dataPoint.categoryAxisEnd : 0,
-                    selector: ColorHelper.normalizeSelector(
-                        dataPoint.selectionId.getSelector(),
-                        false)
-                })
-            );
+        const isNormalized = this.categoryAxis.normalize.value;
+        this.categoryAxis.slices = [this.categoryAxis.normalize];
+        if (!isNormalized) {
+            for (const dataPoint of dataPoints) {
+                this.categoryAxis.slices.push(
+                    new formattingSettings.NumUpDown({
+                        name: "end",
+                        displayName: dataPoint.name,
+                        value: dataPoint.categoryAxisEnd ? dataPoint.categoryAxisEnd : 0,
+                        selector: ColorHelper.normalizeSelector(
+                            dataPoint.selectionId.getSelector(),
+                            false)
+                    })
+                );
+            }
         }
     }
 }

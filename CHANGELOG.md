@@ -1,3 +1,12 @@
+## 3.2.0.0
+### New Features
+* Added bar formatting options: border, corner radius, and spacing between bars
+* Added center line customization (visibility, color, width)
+* Added chart area background fill with toggle
+* Added negative bar color customization (independent from positive bars)
+* Added axis normalization option to scale both sides to 100%
+* Added data label display format options: Value, Percentage, or Value (%)
+
 ## 3.1.1.0
 * Fixed issue where increasing Data Label text size reduced label clickability.
 * Fixed issue where Data Colors were reset after modifying X-Axis values.

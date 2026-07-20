@@ -74,11 +74,11 @@ export function getHexColorFromNumber(value: number): string {
 }
 
 export function isColorAppliedToElements(
-    elements: HTMLElement[],
+    elements: Element[],
     color?: string,
     colorStyleName: string = "fill"
 ): boolean {
-    return elements.some((element: HTMLElement) => {
+    return elements.some((element: Element) => {
         const currentColor: string = getComputedStyle(element).getPropertyValue(colorStyleName);
 
         if (!currentColor || !color) {

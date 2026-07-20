@@ -41,6 +41,15 @@
 
 .legend {
     z-index: 1;
+
+    &.legend-position-bottom,
+    &.legend-position-bottomCenter {
+        position: absolute !important;
+        bottom: 0 !important;
+        top: auto !important;
+        left: 0;
+        right: 0;
+    }
 }
 
 .tornado-chart {

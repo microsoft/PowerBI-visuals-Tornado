@@ -48,6 +48,7 @@ export class TornadoWebBehavior {
     private selectionManager: ISelectionManager;
     private tooltipServiceWrapper: ITooltipServiceWrapper;
     private colorHelper: ColorHelper;
+    private negativeBarsTransparency: number = 0;
 
     constructor(selectionManager: ISelectionManager, colorHelper: ColorHelper){
         this.selectionManager = selectionManager;
@@ -153,7 +154,7 @@ export class TornadoWebBehavior {
         // from left to right
         // bright color
         this.gradients.append("stop")
-            .attr("offset", (p: TornadoChartPoint) => ((hasSelection && p.selected) || (!hasSelection && !hasHighlight) ? 100 : p.highlightedValue / p.value * 100) + "%")
+            .attr("offset", (p: TornadoChartPoint) => ((hasSelection && p.selected) || (!hasSelection && !hasHighlight) ? 100 : (p.value ? p.highlightedValue / p.value : 0) * 100) + "%")
             .attr("stop-color", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
             .attr("stop-opacity", 1);
 
@@ -161,18 +162,24 @@ export class TornadoWebBehavior {
         // less bright color
         // but % starts from left to right (so f.e 30% means end point will be at 30% starting from left, but coloring will start from right until reach end point)
         this.gradients.append("stop")
-            .attr("offset", (p: TornadoChartPoint) => p.highlightedValue / p.value * 100 + "%")
+            .attr("offset", (p: TornadoChartPoint) => (p.value ? p.highlightedValue / p.value : 0) * 100 + "%")
             .attr("stop-color", (p: TornadoChartPoint) => this.colorHelper.isHighContrast ? this.colorHelper.getThemeColor() : p.color)
             .attr("stop-opacity", 0.4);
     }
  
     private applySelectionStyleAttribute(elements: Selection<TornadoChartPoint>, attributeName: string, hasSelection: boolean) {
+        const negativeBarsTransparency = this.negativeBarsTransparency;
         elements.style(attributeName, (dataPoint: TornadoChartPoint) => {
-            return TornadoChartUtils.getOpacity(
+            let opacity = TornadoChartUtils.getOpacity(
                 dataPoint.selected,
                 dataPoint.highlight,
                 hasSelection,
                 this.colorHelper.isHighContrast);
+            // Apply negative bars transparency for fill-opacity
+            if (attributeName === "fill-opacity" && dataPoint.value < 0 && negativeBarsTransparency > 0) {
+                opacity = Math.min(opacity, 1 - negativeBarsTransparency / 100);
+            }
+            return opacity;
         });
     }
 
@@ -185,6 +192,7 @@ export class TornadoWebBehavior {
         this.legendClearCatcher = options.legendClearCatcher;
         this.legendIcons = options.legend.selectAll(".legendIcon");
         this.gradients = options.gradients;
+        this.negativeBarsTransparency = options.negativeBarsTransparency ?? 0;
 
         this.applyOnObjectFormatMode(options.isFormatMode, options.tooltipArgs);
     }

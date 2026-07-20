@@ -86,11 +86,128 @@
                 }
             }
         },
+        "barAppearance": {
+            "properties": {
+                "borderColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "borderWidth": {
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "cornerRadius": {
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "barSpacing": {
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "negativeBars": {
+            "properties": {
+                "show": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "fill": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "transparency": {
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "borderColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "borderWidth": {
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "cornerRadius": {
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
         "categoryAxis": {
             "properties": {
+                "normalize": {
+                    "type": {
+                        "bool": true
+                    }
+                },
                 "end": {
                     "type": {
                         "numeric": true
+                    }
+                }
+            }
+        },
+
+        "centerLine": {
+            "properties": {
+                "show": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "color": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "width": {
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "chartArea": {
+            "properties": {
+                "show": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "backgroundColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
                     }
                 }
             }
@@ -100,6 +217,15 @@
                 "show": {
                     "type": {
                         "bool": true
+                    }
+                },
+                "displayFormat": {
+                    "type": {
+                        "enumeration": [
+                            {"value": "value"},
+                            {"value": "percentage"},
+                            {"value": "valueAndPercentage"}
+                        ]
                     }
                 },
                 "labelPrecision": {
@@ -154,6 +280,15 @@
                     }
                 },
                 "outsideFill": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "negativeFill": {
                     "type": {
                         "fill": {
                             "solid": {

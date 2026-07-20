@@ -96,6 +96,8 @@ export interface TornadoChartPoint {
     highlightedValue: number;
     minValue: number;
     maxValue: number;
+    seriesMin: number;
+    seriesMax: number;
     formatString: string;
     selected: boolean;
     identity: ISelectionId;
@@ -131,6 +133,7 @@ export interface TornadoBehaviorOptions {
     tooltipArgs: TooltipArgsWrapper;
     gradients: Selection<TornadoChartPoint>;
     isFormatMode: boolean;
+    negativeBarsTransparency: number;
 }
 
 export interface TooltipCategoryDataItem {
