@@ -3,11 +3,12 @@
     "allowJs": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "module": "es6",
-    "target": "ES6",
+    "module": "ES2020",
+    "moduleResolution": "bundler",
+    "target": "ES2020",
     "sourceMap": true,
+    "rootDir": "./src",
     "outDir": "./.tmp/build/",
-    "moduleResolution": "node",
     "declaration": true
   },
   "files": [
