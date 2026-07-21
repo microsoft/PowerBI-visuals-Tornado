@@ -59,7 +59,7 @@
     "d3-array": "^3.2.4",
     "d3-brush": "^3.0.0",
     "d3-selection": "^3.0.0",
-    "eslint": "^9.23.0",
+    "eslint": "^9.39.4",
     "eslint-plugin-powerbi-visuals": "^1.1.1",
     "powerbi-visuals-api": "^5.11.0",
     "powerbi-visuals-utils-chartutils": "8.3.0",
