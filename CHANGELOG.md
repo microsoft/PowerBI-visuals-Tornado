@@ -8,7 +8,7 @@
 ### Bug Fixes
 * Fixed negative bar scaling so widths are proportional to absolute values
 * Kept negative data labels readable when negative bars use the default transparent fill
-* Fixed legend text and marker colors in High Contrast Mode
+* Fixed legend labels and markers not using the high-contrast foreground color when a custom legend label color is set
 
 ### Behavior and Formatting Changes
 * Disabled negative bars by default and added transparent fill with a visible series-colored outline
