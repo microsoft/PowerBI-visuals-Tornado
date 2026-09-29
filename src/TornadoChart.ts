@@ -1602,7 +1602,7 @@ export class TornadoChart implements IVisual {
                 dataPoints: legend.dataPoints,
                 fontSize: legendSettings.text.font.fontSize.value,
                 fontFamily: legendSettings.text.font.fontFamily.value,
-                labelColor: this.colorHelper.isHighContrast ? this.colorHelper.getHighContrastColor("foreground", legendLabelsColor) : legendLabelsColor
+                labelColor: legendLabelsColor
             };
 
             if (this.dataView.legendObjectProperties) {
@@ -1613,6 +1613,15 @@ export class TornadoChart implements IVisual {
                 if (position) {
                     this.legend.changeOrientation(LegendPosition[position]);
                 }
+            }
+
+            if (this.colorHelper.isHighContrast) {
+                const highContrastForeground: string = this.colorHelper.getHighContrastColor("foreground", legendLabelsColor);
+                legendData.labelColor = highContrastForeground;
+                legendData.dataPoints = legendData.dataPoints.map(dataPoint => ({
+                    ...dataPoint,
+                    color: highContrastForeground
+                }));
             }
 
             this.legend.drawLegend(legendData, { ...this.viewport });

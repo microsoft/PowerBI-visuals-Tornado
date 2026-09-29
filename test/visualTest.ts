@@ -1803,6 +1803,14 @@ describe("TornadoChart", () => {
             dataView.categorical!.values!.source = {
                 displayName: "Series"
             };
+            dataView.metadata.objects = {
+                ...dataView.metadata.objects,
+                legend: {
+                    showTitle: true,
+                    titleText: "Legend Test",
+                    labelColor: getSolidColorStructuralObject("#ff0000")
+                }
+            };
 
             visualBuilder.updateRenderTimeout(dataView, () => {
                 const foregroundElementGroups: { name: string; elements: Element[] }[] = [
@@ -1819,6 +1827,12 @@ describe("TornadoChart", () => {
                             .withContext(`${name} should use the high-contrast foreground color`)
                             .toBeTrue();
                     });
+                });
+                const legendIcons = Array.from(visualBuilder.element.querySelectorAll(".legend path.legendIcon"));
+                expect(legendIcons.length).withContext("legend icons should be rendered").toBeGreaterThan(0);
+                legendIcons.forEach((element: Element) => {
+                    assertColorsMatch(getComputedStyle(element).getPropertyValue("fill"), foregroundColor);
+                    assertColorsMatch(getComputedStyle(element).getPropertyValue("stroke"), foregroundColor);
                 });
                 Array.from(visualBuilder.axis).forEach((element: Element) => {
                     assertColorsMatch(getComputedStyle(element).getPropertyValue("stroke"), foregroundColor);

@@ -1,4 +1,4 @@
-## 3.2.2.0
+## 3.3.0.0
 * Fixed negative bar scaling so widths are proportional to absolute values
 * Disabled negative bars by default and added transparent fill with a visible series-colored outline
 * Kept negative data labels readable when negative bars use the default transparent fill
