@@ -1,15 +1,21 @@
-## 3.2.2.0
-* Fixed negative bar scaling so widths are proportional to absolute values
-* Disabled negative bars by default and added transparent fill with a visible series-colored outline
-* Kept negative data labels readable when negative bars use the default transparent fill
+## 3.3.0.0
+### New Features
 * Added independent Start and End ranges with clipping for the left and right series
-* Changed the default automatic axis to a shared range and Normalize to 100% to use per-series ranges
-* Removed the redundant Auto range controls; empty Start and End values now select the automatic range
 * Added Auto, Outside end, Inside end, Inside center, and Inside base data-label position options
-* Updated default series, category, legend, axis, and data-label colors to follow the active report theme
-* Reorganized formatting pane settings for clearer configuration
 * Added configurable decimal precision for percentage data labels
 * Updated bar spacing to be percentage-based, with 0 removing spacing and a new default of 16%
+
+### Bug Fixes
+* Fixed negative bar scaling so widths are proportional to absolute values
+* Kept negative data labels readable when negative bars use the default transparent fill
+* Fixed legend labels and markers not using the high-contrast foreground color when a custom legend label color is set
+
+### Behavior and Formatting Changes
+* Disabled negative bars by default and added transparent fill with a visible series-colored outline
+* Changed the default automatic axis to a shared range and Normalize to 100% to use per-series ranges
+* Removed the redundant Auto range controls; empty Start and End values now select the automatic range
+* Updated default series, category, legend, axis, and data-label colors to follow the active report theme
+* Reorganized formatting pane settings for clearer configuration
 
 ## 3.2.1.0
 * Added new translations
