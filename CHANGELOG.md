@@ -8,6 +8,7 @@
 ### Bug Fixes
 * Fixed negative bar scaling so widths are proportional to absolute values
 * Kept negative data labels readable when negative bars use the default transparent fill
+* Kept negative data labels visible when negative bars are hidden; the Negative bars toggle now controls only the bars
 * Fixed legend labels and markers not using the high-contrast foreground color when a custom legend label color is set
 
 ### Behavior and Formatting Changes

@@ -737,7 +737,7 @@ describe("TornadoChart", () => {
                     expect(getRenderedColumnWidths()).toEqual(autoWidths);
                 });
 
-                it("does not reserve outside-label space when all negative bars are hidden", () => {
+                it("reserves outside-label space for negative labels when negative bars are hidden", () => {
                     dataViewBuilder.valuesValue1 = [-50, -50, -50, -50, -50, -1000];
                     dataViewBuilder.valuesValue2 = [-50, -50, -50, -50, -50, -1000];
                     dataView = dataViewBuilder.getDataView();
@@ -751,7 +751,7 @@ describe("TornadoChart", () => {
                     (dataView.metadata.objects!).labels.position = "outsideEnd";
                     visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                    expect(getCalculatedColumnWidths()).toEqual(autoWidths);
+                    expect(getCalculatedColumnWidths()).not.toEqual(autoWidths);
                 });
 
                 it("preserves auto inside and outside placement", () => {
@@ -1048,6 +1048,33 @@ describe("TornadoChart", () => {
                 const labelText: SVGTextElement = negativeLabel.querySelector("text.label-text")!;
 
                 assertColorsMatch(labelText.getAttribute("fill")!, themeLabelColor);
+            });
+
+            it("keeps negative labels visible when negative bars are hidden", () => {
+                const themeLabelColor = "#777777";
+                dataViewBuilder.valuesValue1 = [-120000, -45000, 0, 45000, 120000, 60000];
+                dataViewBuilder.valuesValue2 = [0, 0, 0, 0, 0, 0];
+                dataView = dataViewBuilder.getDataView();
+                dataView.metadata.objects = {
+                    labels: { show: true },
+                    negativeBars: { show: false }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                const renderedNegativeBars = Array.from(visualBuilder.columns)
+                    .filter((element: SVGPathElement) => (<TornadoChartPoint>(<any>element).__data__).value < 0);
+                expect(renderedNegativeBars.length).toBe(0);
+
+                const negativeLabels: HTMLElement[] = Array.from(visualBuilder.labels)
+                    .filter((element: HTMLElement) => (<TornadoChartPoint>(<any>element).__data__).value < 0);
+                expect(negativeLabels.length).toBe(2);
+
+                negativeLabels.forEach((label: HTMLElement) => {
+                    const labelText: SVGTextElement = label.querySelector("text.label-text")!;
+                    expect(labelText.textContent).not.toBe("");
+                    assertColorsMatch(labelText.getAttribute("fill")!, themeLabelColor);
+                });
             });
 
             it("uses outside fill for labels outside transparent negative bars", () => {
