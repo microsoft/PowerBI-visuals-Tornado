@@ -1170,17 +1170,19 @@ export class TornadoChart implements IVisual {
         const displayMode: string = this.formattingSettings.dataLabels.labelsOptionsGroup.displayFormat?.value?.value?.toString() ?? LabelDisplayMode.Value;
         const position = this.position;
         const configuredInsideColor = this.formattingSettings.dataLabels.labelsValuesGroup.insideFill.value.value;
-        // Negative labels sit on an unfilled area when negative bars are hidden or fully
-        // transparent, so the default inside color (the background) would make them invisible.
-        const isNegativeBarUnfilled = !this.formattingSettings.negativeBars?.show?.value
-            || this.formattingSettings.negativeBars.transparency?.value === 100;
+        const outsideColor: string = this.formattingSettings.dataLabels.labelsValuesGroup.outsideFill.value.value || this.themeLabelColor;
+        const showNegativeBars = this.formattingSettings.negativeBars?.show?.value ?? false;
+        // A hidden negative bar leaves its label on the chart background, so use the outside label color.
+        const isNegativeBarHidden = value < 0 && !showNegativeBars;
         const useVisibleDefaultInsideColor = value < 0
             && !this.hasExplicitInsideLabelColor
-            && isNegativeBarUnfilled;
-        const insideColor: string = useVisibleDefaultInsideColor
-            ? this.themeLabelColor
-            : configuredInsideColor || this.themeBackgroundColor;
-        const outsideColor: string = this.formattingSettings.dataLabels.labelsValuesGroup.outsideFill.value.value || this.themeLabelColor;
+            && showNegativeBars
+            && this.formattingSettings.negativeBars.transparency?.value === 100;
+        const insideColor: string = isNegativeBarHidden
+            ? outsideColor
+            : useVisibleDefaultInsideColor
+                ? this.themeLabelColor
+                : configuredInsideColor || this.themeBackgroundColor;
         const insideBasePadding = TornadoChart.PositionedLabelPadding;
         const insideEndPadding = insideBasePadding + this.getRoundedEndLabelPadding(value, columnWidth);
         const outsidePadding = position === LabelPosition.OutsideEnd

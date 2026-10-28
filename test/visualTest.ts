@@ -742,16 +742,16 @@ describe("TornadoChart", () => {
                     dataViewBuilder.valuesValue2 = [-50, -50, -50, -50, -50, -1000];
                     dataView = dataViewBuilder.getDataView();
                     dataView.metadata.objects = {
-                        labels: { show: true },
-                        negativeBars: { show: false }
+                        labels: { show: true, position: "outsideEnd" },
+                        negativeBars: { show: true }
                     };
                     visualBuilder.updateFlushAllD3Transitions(dataView);
-                    const autoWidths = getCalculatedColumnWidths();
+                    const shownWidths = getCalculatedColumnWidths();
 
-                    (dataView.metadata.objects!).labels.position = "outsideEnd";
+                    (dataView.metadata.objects!).negativeBars.show = false;
                     visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                    expect(getCalculatedColumnWidths()).not.toEqual(autoWidths);
+                    expect(getCalculatedColumnWidths()).toEqual(shownWidths);
                 });
 
                 it("preserves auto inside and outside placement", () => {
@@ -1074,6 +1074,33 @@ describe("TornadoChart", () => {
                     const labelText: SVGTextElement = label.querySelector("text.label-text")!;
                     expect(labelText.textContent).not.toBe("");
                     assertColorsMatch(labelText.getAttribute("fill")!, themeLabelColor);
+                });
+            });
+
+            it("uses outside fill for all negative labels when negative bars are hidden", () => {
+                const outsideFill = "#CC4466";
+                dataViewBuilder.valuesValue1 = [-120000, -1000, 0, 45000, 120000, 60000];
+                dataViewBuilder.valuesValue2 = [0, 0, 0, 0, 0, 0];
+                dataView = dataViewBuilder.getDataView();
+                dataView.metadata.objects = {
+                    labels: {
+                        show: true,
+                        position: "insideCenter",
+                        insideFill: getSolidColorStructuralObject("#FFFFFF"),
+                        outsideFill: getSolidColorStructuralObject(outsideFill)
+                    },
+                    negativeBars: { show: false }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                const negativeLabels: HTMLElement[] = Array.from(visualBuilder.labels)
+                    .filter((element: HTMLElement) => (<TornadoChartPoint>(<any>element).__data__).value < 0);
+                expect(negativeLabels.length).toBe(2);
+
+                negativeLabels.forEach((label: HTMLElement) => {
+                    const labelText: SVGTextElement = label.querySelector("text.label-text")!;
+                    assertColorsMatch(labelText.getAttribute("fill")!, outsideFill);
                 });
             });
 
