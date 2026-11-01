@@ -602,20 +602,12 @@ export class TornadoChart implements IVisual {
         }
 
         const isNormalized = this.formattingSettings?.categoryAxis?.normalize?.value ?? false;
-        const showNegativeBars = this.formattingSettings?.negativeBars?.show?.value ?? true;
         const labelFormatter = this.dataView.labelFormatter;
         const font = this.formattingSettings.dataLabels.labelsValuesGroup.font;
-        const visibleDataPoints = showNegativeBars
-            ? this.dataView.dataPoints
-            : this.dataView.dataPoints.filter(dataPoint => dataPoint.value >= 0);
-
-        if (!visibleDataPoints.length) {
-            return 0;
-        }
 
         let maximumLabelWidth = 0;
 
-        for (const dataPoint of visibleDataPoints) {
+        for (const dataPoint of this.dataView.dataPoints) {
             const minForWidth = isNormalized ? dataPoint.seriesMin : dataPoint.minValue;
             const maxForWidth = isNormalized ? dataPoint.seriesMax : dataPoint.maxValue;
             const percentage = this.getColumnWidth(dataPoint.value, minForWidth, maxForWidth, 1) * 100;
@@ -1178,14 +1170,19 @@ export class TornadoChart implements IVisual {
         const displayMode: string = this.formattingSettings.dataLabels.labelsOptionsGroup.displayFormat?.value?.value?.toString() ?? LabelDisplayMode.Value;
         const position = this.position;
         const configuredInsideColor = this.formattingSettings.dataLabels.labelsValuesGroup.insideFill.value.value;
+        const outsideColor: string = this.formattingSettings.dataLabels.labelsValuesGroup.outsideFill.value.value || this.themeLabelColor;
+        const showNegativeBars = this.formattingSettings.negativeBars?.show?.value ?? false;
+        // A hidden negative bar leaves its label on the chart background, so use the outside label color.
+        const isNegativeBarHidden = value < 0 && !showNegativeBars;
         const useVisibleDefaultInsideColor = value < 0
             && !this.hasExplicitInsideLabelColor
-            && this.formattingSettings.negativeBars?.show?.value
+            && showNegativeBars
             && this.formattingSettings.negativeBars.transparency?.value === 100;
-        const insideColor: string = useVisibleDefaultInsideColor
-            ? this.themeLabelColor
-            : configuredInsideColor || this.themeBackgroundColor;
-        const outsideColor: string = this.formattingSettings.dataLabels.labelsValuesGroup.outsideFill.value.value || this.themeLabelColor;
+        const insideColor: string = isNegativeBarHidden
+            ? outsideColor
+            : useVisibleDefaultInsideColor
+                ? this.themeLabelColor
+                : configuredInsideColor || this.themeBackgroundColor;
         const insideBasePadding = TornadoChart.PositionedLabelPadding;
         const insideEndPadding = insideBasePadding + this.getRoundedEndLabelPadding(value, columnWidth);
         const outsidePadding = position === LabelPosition.OutsideEnd
@@ -1418,11 +1415,6 @@ export class TornadoChart implements IVisual {
         const labelYOffset: number = this.heightColumn / 2 + this.dataView.labelHeight / 2 - this.InnerTextHeightDelta;
         const categoriesLength: number = this.dataView.categories.length;
 
-        // When negative bars are hidden their columns aren't rendered, so suppress
-        // the matching labels (kept in the join to preserve per-row alignment).
-        const showNegativeBars: boolean = this.formattingSettings?.negativeBars?.show?.value ?? false;
-        const isLabelHidden = (p: TornadoChartPoint): boolean => !showNegativeBars && p.value < 0;
-
         const labelFontFamily : string = formattingSettings.dataLabels.labelsValuesGroup.font.fontFamily.value;
 
         const labelFontIsBold : boolean = formattingSettings.dataLabels.labelsValuesGroup.font.bold.value,
@@ -1450,7 +1442,7 @@ export class TornadoChart implements IVisual {
 
         labelSelectionMerged
             .select(TornadoChart.LabelTitle.selectorName)
-            .text((p: TornadoChartPoint) => isLabelHidden(p) ? "" : p.label!.source);
+            .text((p: TornadoChartPoint) => p.label!.source);
 
         labelSelectionMerged
             .select(TornadoChart.LabelText.selectorName)
@@ -1460,7 +1452,7 @@ export class TornadoChart implements IVisual {
             .attr("font-weight", labelFontIsBold ? "bold" : "normal")
             .attr("font-style", labelFontIsItalic ? "italic" : "normal")
             .attr("text-decoration", labelFontIsUnderlined? "underline" : "normal")
-            .text((p: TornadoChartPoint) => isLabelHidden(p) ? "" : p.label!.value)
+            .text((p: TornadoChartPoint) => p.label!.value)
             .attr("role", "presentation");
 
         if (this.position === LabelPosition.InsideEnd) {
